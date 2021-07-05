@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Start-ups in L.A. and Orange counties</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 210,
+    rightPanelLabelWidth: 140,
+    source: {
+      url: "http://spreadsheets.latimes.com/film-set-accidents/",
+      gdocId: '1ZqZhF545lD11qG_p2IvBqlLecjzgTdmGbH1NmdSr-n8',
+      tables: "Startups"
+    },
+    summaries: [ // Company Name    Founding Year   Capital raised to date (millions)   Industry    City
+      { name: "Founding Year", timeFormat: "%Y", layout: "bottom" },
+      { name: "Capital Raised", unitName: "M$", layout: "bottom" },
+      { name: "Industry", layout: "left" },
+      { name: "City", layout: "right" }
+    ],
+    recordDisplay: {
+      sortColWidth: 82,
+      sortBy: 'Capital Raised',
+      textSearch: "Company Name",
+      recordView: "Company Name",
+    }
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Start-ups in L.A. and Orange counties</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from <a href="http://spreadsheets.latimes.com/start-ups-l-and-orange-counties/" target='_blank'> L.A. Times </a> - 
+      News Story: <a href="http://www.latimes.com/business/la-fi-la-tech-startups-20141123-story.html" target="_blank">
+          Hollywood is giving tech start-ups the star treatment</a>.
+      </div>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>USDA Food Safety Awards</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 200,
+    source: {
+      gdocId: '1XLyXuVv6-zM6yMWcDnhiTHimyC1sYtmfLM6JOjOB5vY',
+      tables: {name: "Awards", id:"application_id"}
+    },
+    summaries: [
+      {	name: "Status", value: "project_status"},
+      {	name: "Sponsor Institution", value: "sponsor_institution"},
+      {	name: "Start Date", value: "start_date", panel: "bottom"},
+      {	name: "End Date", value: "end_date", panel: "bottom", collapsed: true},
+      {	name: "Funding Source", value: "funding_source"},
+      {	name: "Features", 
+        value: function(){
+      		var r=[];
+      		if(this.dementia) r.push("Dementia");
+      		if(this.hci) r.push("HCI");
+      		if(this.nano) r.push("Nano");
+      		return r;
+      	} },
+      { name: "Ratio of Applied", value: function(){ return this.applied*100}, unitName: "%", panel: "right" },
+      { name: "Duration", unitName: "Years", panel: "right", 
+      	value: function(){
+      		var m_end = moment(this.end_date);
+      		var m_start = moment(this.start_date);
+      		return m_end.diff(m_start,'years');
+      	} },
+      { name: "Organization", panel: "right", 
+      	value: function(){ return kshf.Util.toProperCase(this.organization);}},
+      { name: "Performing Department", panel: "right", collapsed: true,
+      	value: function(){ return kshf.Util.toProperCase(this.performing_dept);}},
+    ],
+    recordDisplay: {
+      textSearch: "title",
+      sortColWidth: 55,
+      recordView: function(){ 
+      	return kshf.Util.toProperCase(this.title) + " <a href='"+this.url+"' target='_blank'>info</a>";
+      }
+    }
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">USDA Food Safety Awards</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="http://cris.csrees.usda.gov/search.html" target='_blank'>Data from 
+        United States Department of Agriculture (USDA) -
+        Current Research Information System (CRIS)</a>
+      </div>
+  </body>
+</html>

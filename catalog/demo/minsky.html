@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Marvin Minsky - Bibliography</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback( function() {
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "works",
+    categoryTextWidth: 200,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdDN4Qm5aQTVwQW1fSnE1RTl1LXhzbGc',
+      tables: "Publications"
+    },
+    summaries: [
+      { name: "Topic", catSplit: ", " },
+      { name: "Co-Author", catSplit: /,\b/ },
+      { name: "Pub. Type" },
+      { name: "Date", panel: 'middle' }
+    ],
+    recordDisplay: {
+      sortBy: 'Date',
+      sortColWidth: 72,
+      textSearch: 'Title',
+      recordView: function(){
+        var j;
+        var str="";
+        var ptype=this['Pub. Type'];
+        // paper name
+        str+="<div class=\"iteminfo iteminfo_0\">";
+        str+=this.Title;
+        if(ptype!=='') str+=" <i>("+ptype+")</i>";
+        str+="</div>";
+
+        str+="<span class=\"item_details\">";
+
+        // Venue
+        var year = this.Date.getFullYear();
+        var venue=this.Venue;
+        var subvenue=this['Venue-Sub'];
+        var location=this.Location;
+        var publisher=this.Publisher;
+        if(venue!==''){
+          str+="<div class=\"iteminfo iteminfo_1\"> ["+year+"] "+venue;
+          if(subvenue!=='') str+=", "+subvenue;
+          if(location!=='') str+=", "+location;
+          if(publisher!=='') str+=", "+publisher;
+          str+="</div>";
+        }
+        // co-authors
+        var coAuthors=this['Co-Author'];
+        if(coAuthors && coAuthors.length!==0){
+          str+="<div class=\"iteminfo iteminfo_2\"> <b>Co-Authors</b>: "+coAuthors+"</div>";
+        }
+        // topics
+        var topics=this.Topic;
+        if(topics && topics.length!==0){
+          str+="<div class=\"iteminfo iteminfo_2\"> <b>Topics</b>: "+topics+"</div>";
+        }
+
+        str+="</div>";
+
+        return str;
+      }
+    }
+  });
+});
+    </script>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

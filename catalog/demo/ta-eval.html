@@ -1,0 +1,52 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Teaching Assistant Evaluations</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function () {
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 140,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdEgtRFNsNU9LNTNPanFSUjVyTHlOU2c',
+      tables: ["Assistants", "Instructors"]
+    },
+    summaries: [
+      { name: "Instructor", catLabel: function(){ return kshf.dt_id.Instructors[this.id].data.Name; } },
+      { name: "Performance", catLabel: { 1: "High", 2: "Medium", 3: "Low" } },
+      { name: "Native Speaker", catLabel: {1: "Yes", 2:"No"} },
+      // { name: "Course" },
+      { name: "Semester", catLabel: {1:"Summer", 2:"Regular"} },
+      { name: "Class Size" }
+    ],
+    recordDisplay: {
+      sortBy: { name: 'Performance*', value: function(){ return this.Performance; } },
+      textSearch: 'Name',
+      recordView: 'Name'
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{
+  width: 700px;
+  height: 550px;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div></div>
+  </body>
+</html>

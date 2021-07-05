@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Medals Won by Olympic Athletes</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  function getMedalIcons(v, _class){
+    var str="";
+    for(var i=0; i<v; i++) str+="<span class='fa fa-certificate "+_class+"'></span>";
+    return str;
+  };
+
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 130,
+    rightPanelLabelWidth: 160,
+    recordName: "Winners",
+    source: {
+      gdocId: '14pTPhd44ic_ppJhBEsk0o1-5bVh0l1RAT5tYf17X7-8',
+      tables: "Athletes"
+    },
+    summaries: [
+      { name: "Sport" },
+      { name: "Country" },
+      { name: "Age", panel: 'bottom', intervalScale: 'linear' },
+      { name: "Total Medals", panel: "right" },
+      { name: getMedalIcons(1,'gold')+" Gold Medals "+getMedalIcons(1,'gold'), panel: 'right', 
+        value: function(){ if(this["Gold Medals"]>0) return this["Gold Medals"]; } },
+      { name: getMedalIcons(1,'silver')+" Silver Medals "+getMedalIcons(1,'silver'), panel: 'right', 
+        value: function(){ if(this["Silver Medals"]>0) return this["Silver Medals"]; } },
+      { name: getMedalIcons(1,'bronze')+" Bronze Medals "+getMedalIcons(1,'bronze'), panel: 'right', 
+        value: function(){ if(this["Bronze Medals"]>0) return this["Bronze Medals"]; } },
+      { name: "Year", panel: 'right',  catSortBy: "id",
+        catLabel: function(){ return ((this.id%4===0)?"Winter ":"Summer ")+this.id; } }
+    ],
+    recordDisplay: {
+      sortColWidth: 30,
+      sortBy: 'Total Medals',
+      textSearch: "Athlete",
+      recordView: function(){
+        return "<span class='athleteName'>"+this.Athlete+"</span>" + 
+            " <span class='medals'>"+
+                getMedalIcons(this["Gold Medals"],'gold')+
+                getMedalIcons(this["Silver Medals"],'silver')+
+                getMedalIcons(this["Bronze Medals"],'bronze')+
+                "</span>"+
+            "<div class='atheleteInfo'>"+
+                "Age: "+this.Age+" , "+this.Sport+"-"+ this.Year+
+                "</div>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  max-width: 1000px;
+}
+.athleteName{
+  font-weight: 700;
+}
+.atheleteInfo{
+  font-weight: 300;
+}
+.medals{
+  float: right;
+}
+.fa.total{
+  color: rgb(183, 212, 215);
+  text-shadow: 0px 0px 1px gray;
+}
+.fa.gold{
+  color: gold;
+  text-shadow: 0px 0px 1px gray;
+}
+.fa.silver{
+  color: silver;
+  text-shadow: 0px 0px 1px gray;
+}
+.fa.bronze{
+  color: rgb(205, 127, 50);
+  text-shadow: 0px 0px 1px gray;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Medals Won in Olympic Games, 2000-2012</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

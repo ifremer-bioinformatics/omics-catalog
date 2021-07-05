@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Columbia University CNMTL - Project Portfolio</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 160,
+    recordName: "CNMTL Projects",
+    source: {
+      url: "http://ccnmtl.columbia.edu/portfolio/exhibit_view.html",
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'json',
+      tables: "cnmtl_portfolio"
+    },
+    summaries: [
+      { name: "Disciplines"},
+      { name: "Types"},
+      { name: "Status" },
+      { name: "Group", collapsed: true },
+      { name: "Access", collapsed: true },
+      { name: "Release Time", value: "released", timeFormat: "%Y-%m-%d", panel: "middle"},
+    ],
+    recordDisplay: {
+      sortBy: 'Release Time',
+      textSearch: 'title',
+      displayType: 'grid',
+      recordView: function(d){
+        return "<a target='_blank' href='"+this.entry+"' class='thumbnail'>"+
+          "<img class='thumbImg' src='"+this.thumb_URL+"' title='"+this.description+"'></a>"+
+        "<span class='title'>"+this.label+"</span>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{
+  max-width: 820px;
+  height: calc(100vh - 130px);
+}
+.kshfRecord{ width: 130px; }
+.thumbImg{ border-radius: 9px; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">CCNMTL Project Portfolio</div>
+      <div id="demo_PageSubtitle">This page demonstrates the projects that <a href="http://ccnmtl.columbia.edu/" target="_blank">CCNMTL</a> has developed since its inception in early 1999. The unifying feature across these efforts is the innovative use of learning technologies and the high level of interaction among faculty and technologists as they share ideas and collaboratively design curricular resources and tools. Projects emphasize collaboration, interaction, and student activity.
+      </div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

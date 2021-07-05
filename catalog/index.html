@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Bioinformatics software list available on DATARMOR</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="./js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="./js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./helpin/helpin_material.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./helpin/helpin.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="./js/papaparse.min.js" charset="utf-8"></script>
+
+    <link rel="stylesheet" href="./keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./helpin/helpin.css" type="text/css">
+
+    <link rel="stylesheet" href="./genomes-catalog.css" type="text/css">
+    <style>
+    img {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 15%;
+
+    }
+    </style>
+    <script type="text/javascript">
+
+//
+var socialShare = false, demoHeader = false;
+//
+
+		function formatName(Name, Submitter, Version){
+		 var idx=Name.lastIndexOf("-");
+		 var str="<span class='Name'>";
+		 if (idx<0){
+		   str+=Name;
+		   str+="</span> ";
+         	   str+="</span> - <span class='Version'>";
+		   str+=Submitter;
+		   str+=" v"+Version; 
+		   return str+"</span> ";
+         }
+         //str+=Name.substring(0,idx).trim();
+         //str+="</span> - <span class='Version'>";
+	 //str+=Submitter;
+         //str+=Name.substring(idx+1).trim();
+         //str+="</span> ";
+         //return str;
+		}
+
+
+		function formatSimpleTopics(topicClass, topicName){
+          var str="<div><span class='topics topicsbold'>";
+          str+=topicClass;
+          str+=": </span><span class='topics'>";
+          str+=topicName;
+          str+="</span></div>";
+          return str;
+		}
+		google.charts.setOnLoadCallback(function(){
+		  browser = new kshf.Browser({
+			domID: "#Genomes-Catalog",
+			barChartWidth: 160,
+			leftPanelLabelWidth: 150,
+			recordName: "genomes",
+			rightPanelLabelWidth: 90,
+			source: {
+              //Three possible solutions to load a data file:
+              // solution 1: using Google Docs, e.g.:
+              //gdocId: '1Kf3WkhhhnUn9hclYh2erI6tSpiLgLum5mYtOO_3rxnQ',
+
+              // solution 2: using a URL, e.g.:
+              //dirPath: "http://localhost/~ifremer/ToolDirectory/test/",
+
+              // solution 3: using a relative path (to this script), e.g.:
+              dirPath: "./",
+              fileType: 'csv',
+              // note that using 'dirPath' and 'fileType' are only relevant
+              //   for solutions 2 and 3; see Keshif doc for more details
+              //   (https://github.com/adilyalcin/Keshif/wiki/Docs:-Loading-Data).
+
+			  //Name of data table containing list of softwares
+			  tables: "Genomes"
+			},
+			summaries: [
+			  { name : "Kingdom"},
+                          { name  : "Phylum"},
+                          { name : "Class"},
+                          { name : "Order"},
+                          { name : "Family"},
+                          { name : "Genus"},
+			  { name : "Level"},
+			],
+			recordDisplay: {
+			  sortColWidth: 45,
+			  sortBy: { title: 'id', inverse: true },
+			  textSearch: "Name",
+			  detailsToggle: "one",
+			  recordView: function() {
+				var str="";
+				str+="<div class=''>";
+				str+=formatName(this.Name, this.Submitter, this.Version);
+				if(this.JBrowse!==""){
+					str+="<a class='pubLink fa fa-external-link externallink' target='_blank' href='";
+					str+=this.JBrowse;
+					str+="'>   JBrowse2</a>";
+				}
+				//str+="<a class='pubLink fa fa-external-link externallink' target='_blank' href='";
+				//str+=this.Genenotebook;
+				//str+="'>   GeneNotebook</a>";
+				str+="</div>";
+				str+="<span class='item_details'>";
+				if(this.CommonName!==""){
+					str+=formatSimpleTopics("Common Name", this.CommonName);
+				}
+				str+=formatSimpleTopics("Lineage", this.Lineage);
+				str+=formatSimpleTopics("Assembly level", this.Level);
+				str+=formatSimpleTopics("Taxonomy ID", this.TaxID);
+				str+=formatSimpleTopics("Submitter", this.Submitter);
+				str+=formatSimpleTopics("Genome Version", this.Version);
+				if(this.Bioproject!==""){
+					str+=" <span class='topics topicsbold'>BioProject :</span><span class='topics'> ";
+                                        str+=this.Bioproject;
+					str+="<a class='pubLink fa fa-external-link' target='_blank' href='";
+                                        str+=this.NCBI;
+                                        str+="'> NCBI</a></span>";
+					str+=formatSimpleTopics("BioSample", this.Biosample);
+					str+=formatSimpleTopics("Assembly accession", this.Accession);
+                                }
+                                str+="<a><img  src='"+this.Image+"' style='display: block'></a>"; 
+				str+="</span>";
+                                return str;
+
+			  }
+			}
+		  });
+		});
+    </script>
+</head>
+<body>
+  <div class="contents">
+    <div id="Genomes-Catalog"></div>
+    <div id="Infobox"> Data compiled from DATAREF SeBiMER public |
+    <span class="fa fa-github"></span> Made with
+    <a href="https://github.com/ifremer-bioinformatics/omics-catalog" target="_blank">Omics-Catalog</a> </div>
+  </div>
+</body>
+</html>

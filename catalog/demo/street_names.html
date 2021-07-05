@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Road Map - Street Names, # of Homes, Values, &amp; More</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+function loadData(browser){
+  $.ajax({
+    url: "http://asset.keshif.me/data/street_names.json",
+    success: function(data){
+      browser.primaryTableName = "StreetNames";
+      kshf.dt.StreetNames = [];
+      var nameRegistry={};
+      data.forEach(function(streetName, i){
+        var n= kshf.Util.toProperCase(streetName.text);
+        if(nameRegistry[n]) return;
+        nameRegistry[n] = true;
+        streetName.text = n;
+        streetName.id = i;
+        kshf.dt.StreetNames.push(new kshf.Record(streetName,"id"));
+      });
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Street Names",
+    categoryTextWidth: 150,
+    source: { 
+      url: "http://www.nytimes.com/interactive/2015/01/29/sunday-review/road-map-home-values-street-names.html?_r",
+      callback: loadData
+    },
+    summaries: [
+      { name: "<span class='fa fa-home'></span> # of Homes", value: "homes", unitName: "hm" },
+      { name: "<span class='fa fa-money'></span> Average Value", value: "value", unitName: "$" },
+      { name: "Name Features",
+        value: function(){
+          var r=[];
+          if(this.president) r.push("President Name <span class='fa fa-flag-checkered featIcon'></span>");
+          if(this.tree) r.push("Trees <span class='fa fa-tree featIcon'></span>");
+          if(this.scenic) r.push("Scenic <span class='fa fa-picture-o featIcon'></span>");
+          if(this.geoname) r.push("Geo-name <span class='fa fa-map-marker featIcon'></span>");
+          if(parseInt(this.text)) r.push("Numbered");
+          return r;
+        } },
+      { name: "In # Counties", value: "in_counties", unitName: "cty"}
+    ],
+    recordDisplay: {
+      sortBy: 'value',
+      displayType: 'grid',
+      textSearch: 'text',
+      detailsToggle: "off",
+      maxVisibleItems_Default: 400,
+      recordView: function(){
+        var str=this.text;
+        if(this.president) str+="<span class='fa fa-flag-checkered featIcon'></span>";
+        if(this.tree) str+="<span class='fa fa-tree featIcon'></span>";
+        if(this.scenic) str+="<span class='fa fa-picture-o featIcon'></span>";
+        if(this.geoname) str+="<span class='fa fa-map-marker featIcon'></span>";
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{
+  padding: 2px !important;
+  border: solid 1px lightgray  !important;
+  border-radius: 4px;
+  margin: 2px;
+}
+.featIcon{ display: inline-block; }
+.theLabel .featIcon{ width: 15px; }
+.kshfRecord .featIcon{
+  color: gray;
+  margin: 0px 2px 0px 2px;
+  font-size: 0.7em;
+  vertical-align: top;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Road Map - Street Names, # of Homes, Values, &amp; More</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="http://www.nytimes.com/interactive/2015/01/29/sunday-review/road-map-home-values-street-names.html?_r=0" target='_blank'>Data</a> was curated by the <b>New York Times</b>. <a href="hhttp://www.nytimes.com/2015/01/25/opinion/sunday/the-secrets-of-street-names-and-home-values.html" target='_blank'>Original Story</a>.
+      </div>
+  </body>
+</html>

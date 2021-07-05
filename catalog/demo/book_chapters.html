@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Book Chapters</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+        <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+        <script type="text/javascript">
+function pad(num, size) {
+  var s = num+"";
+  while (s.length < size) s = "0" + s;
+  return s;
+};
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 230,
+    source: {
+      gdocId: '1nqZTWMr2xsYawyQlT6zjwV4pW5ZKRiQPd24jOkNJVYM',
+      tables: "Book Chapters"
+    },
+    summaries: [
+      { name: "Domain Properties",
+        value: function(){
+          var r=[];
+          if(this['Number & Quantity']===1) r.push('Number & Quantity = 1.0');
+          if(this['Shape & Space']===1) r.push('Shape & Space = 1.0');
+          if(this['Shape & Space']===0.5) r.push('Shape & Space = 0.5');
+          if(this['Function']===1) r.push('Function = 1.0');
+          if(this['Function']===0.5) r.push('Function = 0.5');
+          if(this['Chance & Data']===1) r.push('Chance & Data = 1.0');
+          if(this['Arrangement']===1) r.push('Arrangement = 1.0');
+          return r;
+        },
+        catSortBy: [
+          'Number & Quantity = 1.0',
+          'Shape & Space = 0.5',
+          'Shape & Space = 1.0',
+          'Function = 0.5',
+          'Function = 1.0',
+          'Chance & Data = 1.0',
+          'Arrangement = 1.0'
+        ] },
+      { name: "Modeling / Formulating" },
+      { name: "Manipulating / Transforming" },
+      { name: "Inferring / Drawing Conclusions" },
+      { name: "Communicating" },
+    ],
+    recordDisplay: {
+      sortColWidth: 45,
+      sortBy: { name: 'id', label: function(){ return this.Code+pad(this.id,3); }, inverse: true },
+      textSearch: "Name",
+      recordView: function(){
+        var str="";
+        str+="<div class='chapterTitle'>"+this.Name+"</div>";
+        str+="<span class='numTable'>";
+            str+="<span class='act_mf act_"+this["Modeling / Formulating"]+"'>M/F</span>"
+            str+="<span class='act_tf act_"+this["Manipulating / Transforming"]+"'>M/T</span>"
+            str+="<span class='act_id act_"+this["Inferring / Drawing Conclusions"]+"'>I/D</span>"
+            str+="<span class='act_c  act_"+this["Communicating"]+"'>C</span>"
+        str+="</span>";
+        str+="<span class='attrGroup'>Domains:</span> <span class='attrList'>";
+        if(this['Number & Quantity']){
+            str+="Number & Quantity ["+this['Number & Quantity']+"], ";
+        }
+        if(this['Shape & Space']){
+            str+="Shape & Space ["+this['Shape & Space']+"], ";
+        }
+        if(this['Function']){
+            str+="Function ["+this['Function']+"], ";
+        }
+        if(this['Arrangement']){
+            str+="Arrangement ["+this['Arrangement']+"], ";
+        }
+        if(this['Chance & Data']){
+            str+="Chance & Data ["+this['Chance & Data']+"], ";
+        }
+        str+="</span>";
+        return str;
+      }
+    }
+  });
+});
+        </script>
+<style id="kshfStyle">
+#demo_Browser {
+  width: 1000px;
+  height: 690px;
+}
+.chapterTitle{
+  font-weight: 700;
+  text-decoration: underline;
+  font-size: 1.1em;
+}
+.attrGroup{
+  font-weight: 300;
+  font-size: 0.9em;
+}
+.attrList{
+  font-size: 0.9em;
+  font-weight: 300;
+  color: gray;
+}
+.numTable{
+  float: right;
+}
+.numTable span{
+  display: inline-block;
+  width: 45px;
+  border-left: solid 1px gray;
+  border-right: solid 1px gray;
+  padding: 0px 3px;
+  text-align: center;
+  font-size: 0.8em;
+  color: gray;
+}
+.act_0:after{
+  content: ":0"; color:;
+}
+.act_1:after{
+  content: ":1";
+}
+.act_2:after{
+  content: ":2";
+}
+.act_3:after{
+  content: ":3";
+}
+.act_4:after{
+  content: ":4";
+}
+.act_0{
+  background-color: rgba(255, 204, 204,0.1);
+}
+.act_1{
+  background-color: rgba(255, 204, 204,0.4);
+}
+.act_2{
+  background-color: rgba(255, 204, 204,0.6);
+}
+.act_3{
+  background-color: rgba(255, 204, 204,0.8);
+}
+.act_4{
+  background-color: rgba(255, 204, 204,1);
+}
+</style>
+  </head>
+  <body>
+    <div class="contents"><div id="demo_Browser"></div></div>
+  </body>
+</html>

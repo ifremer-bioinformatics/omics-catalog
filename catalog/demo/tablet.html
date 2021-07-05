@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Tablet Computers</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css" type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./helpin/helpin_material.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./helpin/helpin.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./helpin/helpin.css" type="text/css">
+
+    <link rel="stylesheet" href="./css/demo.css"type="text/css">
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Tablets",
+    categoryTextWidth: 200,
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: {name:"tablets", id:"ASIN"}
+    },
+    summaries: [
+      { name: "Brand Name" },
+      { name: "Operating System" },
+      { name: "Flash Memory Size", panel: 'right', unitName: "GB", intervalScale: 'log',
+        value: function(){
+          var n= parseFloat(this['Flash Memory Size']);
+          if(n>=1) return n;
+        } },
+      { name: "Screen Size", unitName: "″",
+        value: function(){
+          var x= parseFloat(this['Screen Size']);
+          if(!isNaN(x)) return x;
+        } },
+      { name: "Weight", panel: 'right', unitName: 'oz' },
+      { name: "Battery Life", panel: 'right', unitName: 'hr' },
+      { name: "Rating", panel: 'right', value: "Customer Reviews", showPercentile: true },
+      { name: "Release Date", value: "Date First Available", timeFormat: "%m/%d/%y", panel: 'bottom'}
+    ],
+    recordDisplay: {
+      sortBy: "Rating",
+      textSearch: 'name',
+      recordView: function(){
+        return "<div class='iteminfo iteminfo_0'><a target='_blank' href='"+this.url+"'>"+this.name+"</a></div>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.iteminfo a{
+  color:#606060;
+  font-style:italic;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>A Multi-Level Typology of Abstract Visualization Tasks</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 200,
+    source: {
+      gdocId: '16zQtOlLLugoSvDw_87IiGVJK6FW2vyUtfVfxfMTkoQ0',
+      tables: [ "Papers", {name:"Keywords",id:"Task"}, {name:"Levels",id:"Category"} ]
+    },
+    summaries: [
+      { name: "Tasks", catSplit: "*",
+        /*catTableName: "Keywords",
+        catLabel: "Task",
+        summaries: [
+            {   name: "Categories", value: "Category"
+            },{ name: "Levels", value: function(){ return kshf.dt_id.Levels[this.Category].data.Level; }
+            }
+        ] */
+        },
+      { name: "Authors", catSplit: ", ", panel: 'right',  },
+      { name: "Features", panel: 'right', 
+        value: function(){
+          var r=[];
+          if(this.H==="*") r.push("Highlighted Work");
+          if(this.Tasks) r.push("Presents Taxonomy");
+          return r;
+        } },
+      { name: "Venue", panel: 'right',  },
+      { name: "Year", timeFormat: "%Y", panel: 'bottom' }
+    ],
+    recordDisplay: {
+      sortBy: { name: 'Year', inverse: true },
+      textSearch: "Title",
+      recordView: "Title"
+    }
+  });
+});
+      </script>
+<style id="kshfStyle">
+#demo_Browser{
+  height: calc(100vh - 90px);
+}
+</style>
+
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">References in "A Multi-Level Typology of Abstract Visualization Tasks"</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from: M. Brehmer and T. Munzner. "A multi-level typology of abstract visualization tasks." <br>Visualization and Computer Graphics, IEEE Transactions on 19.12 (2013): 2376-2385.</div>
+  </body>
+</html>

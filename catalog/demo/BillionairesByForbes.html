@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Billionaires By Forbes</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 130,
+    recordName: "Billionaires",
+    source: {
+      url: "http://www.forbes.com/billionaires/list/",
+      // http://www.forbes.com/ajax/list/data?year=2015&uri=billionaires&type=person
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'json',
+      tables: "BillionairesByForbes"
+    },
+    onLoad: function(){
+      this.records.forEach(function(d){
+        d.data.Worth = (d.data.worth) ? d.data.worth*1000000 : null;
+      });
+    },
+    summaries: [
+      {name: "Gender", value: "gender", catLabel: { "M": "Male "+getIcon("m"), "F": "Female "+getIcon("f") } },
+      {name: "Industry", value: "industry"},
+      {name: "Age", value: "age", panel: "right"},
+      {name: "Worth", unitName: "$", panel: "right"},
+      {name: "Country", value: "country", panel: "right"},
+      {name: "Source", value: "source", catSplit: ", ", minAggrValue: 2, collapsed: true },
+    ],
+    recordDisplay: {
+      sortColWidth: 50,
+      sortBy: { name: "Worth", label: function(){ return d3.format(".2s")(this.Worth).replace("G","B"); }},
+      showRank: true,
+      textSearch: "name",
+      recordView: function(){ 
+        var str="";
+        if(this.uri){
+          str+="<a href='http://www.forbes.com/profile/"+this.uri+"' target='blank'>";
+        }
+        if(this.imageUri){
+          str+="<img src='http://i.forbesimg.com/media/lists/people/"+this.imageUri+"_100x100.jpg' class='bilPhoto'>"
+        }
+        str+="<div class='bilName'>"+this.name +" <span class='fa fa-arrow-right'></span></div>";
+        if(this.uri){
+          str+="<a>";
+        }
+        str+="<div class='bilIndustry'>"+this.industry+"<div>";
+        str+="<div class='bilOther'>"+this.age+', '+this.country+"<div>";
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  width: 950px;
+  height: 680px;
+}
+.bilName{
+  color: black;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.kshfRecord:hover .bilName{
+  color: orangered;
+}
+.bilName > .fa-arrow-right{
+  font-size: 0.8em;
+  color: gray;
+}
+.bilPhoto{
+  float: left;
+  width: 50px;
+  height: 50px;
+  margin: 2px 5px 2px 0px;
+  border-radius: 8px;
+  border: solid 1px lightgray;
+}
+.bilIndustry{
+  color: gray;
+  font-size: 0.9em;
+  font-weight: 300;
+}
+.bilOther{
+  color: gray;
+  font-size: 0.8em;
+  font-weight: 100;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Billionaires - By Forbes</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from <a href='http://www.forbes.com/billionaires/list' target='_blank'>"The World's Billionaires"</a> by Forbes.
+      </div>
+
+  </body>
+</html>

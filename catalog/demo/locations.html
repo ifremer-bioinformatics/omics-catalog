@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Locations</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+function loadData(browser){
+  $.ajax( {
+    url: "./data_private/locations.json",
+    dataType: "json",
+    async: false,
+    success: function(data){
+      browser.primaryTableName = "Locations";
+      kshf.dt.Locations = [];
+
+      // create the categories list
+      data.locations.forEach(function(location,i){
+        if(location.l_type==="city") return;
+        location.id = location.path.substring(location.path.lastIndexOf("/")+1);
+        location.pos = i;
+        kshf.dt.Locations.push(new kshf.Record(location,"id"));
+      });
+
+      browser.loadCharts();
+    }
+  });
+})
+
+function resetSize(){
+    $('#demo_Browser').height(700);
+    $('#demo_Browser').width (1000);
+};
+
+$(document).ready( function(){
+  resetSize();
+
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 300,
+    recordName: "Locations",
+    source: { callback: loadData },
+    summaries: [
+      { name: "Type", value: "l_type" },
+      { name: "Part of", value: "parent_location_uuid", catTableName: "Locations", catLabel: "name", }
+    ],
+    recordDisplay: {
+      sortColWidth: 80,
+      sortBy: 'pos',
+      linkText: "Part of",
+      recordView: "name"
+    }
+    });
+});
+    </script>
+    <style>
+    </style>
+  </head>
+  <body>
+    <div class="contents"><div id="demo_Browser"></div></div>
+  </body>
+</html>

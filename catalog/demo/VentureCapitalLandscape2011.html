@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Venture Capital Landscape 2011</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Investments",
+    leftPanelLabelWidth: 250,
+    rightPanelLabelWidth: 160,
+    middlePanelLabelWidth: 160,
+    barChartWidth: 150,
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: "csv",
+      tables: "VentureCapitalLandscape2011",
+      callback: function(){ US_States.loadGeo(this); }
+    }, 
+    onLoad: function(){
+      kshf.dt.VentureCapitalLandscape2011.forEach(function(item){
+        item.data.Raised = parseInt(item.data.Raised);
+        if(isNaN(item.data.Raised) || item.data.Raised===undefined || item.data.Raised===null){
+          item.data.Raised = 0;
+        } else {
+          item.data.Raised *= 1000000;
+        }
+      });
+    },
+    summaries: [
+      { name: "Industry Group" },
+      { name: "Industry Segment" },
+      { name: "IndustryCode", collapsed: true },
+      { name: "PrimaryRegion" },
+      { name: "Subregion", collapsed: true },
+      { name: "City" },
+      { name: "State", panel: "middle", viewAs: "map",
+        catLabel: function(){ return US_States.index_code[this.id].name; },
+        catMap: function(){ return US_States.index_code[this.id].geo; } },
+      { name: "RoundBusStat", panel: "right" },
+      { name: "RoundClassDescr", panel: "right" },
+      { name: "Raised", panel: "right", unitName: "$" }
+    ],
+  });
+});
+    </script>
+<style id="kshfStyle">
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Money Raised in Venture Capital Investments, 2011</div>
+      <div id="demo_Browser"></div>
+      <div id="demo_Infobox">
+        Re-Vis from <a href='https://dc-js.github.io/dc.js/vc/index.html' target='_blank'>dc-js</a>. Public data from 
+        <a href='http://buzzdata.com/azad2002/the-united-states-of-venture-capital-2011#!/data' target='_blank'>BuzzData.com</a>
+        </div>
+      </div>
+  </body>
+</html>

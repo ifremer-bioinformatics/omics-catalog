@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Significant Volcanic Eruption Database</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  kshf.map.wrapLongitude = 180;
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 150,
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 200,
+    source: {
+      gdocId: '1q4YPlEpK8IEM66IePytf_906Knpzt96zlSQ1RtzKwto',
+      tables: "Volcano Eruptions",
+      callback: function(){ kshf.Countries.loadGeo(this); }
+    },
+    summaries: [
+      { name: "Country", panel: 'middle', viewAs: "map",
+        catMap: function(){ 
+          var x = kshf.Countries.index_name[this.id];
+          if(x) return x.geo;
+        } },
+      { name: "Elevation", unitName: "m" },
+      { name: "Type" },
+      { name: "Status" },
+      { name: "Year", timeFormat: "%Y", panel: 'middle' },
+      { name: "Label" },
+      { name: "Events", catSplit: " "},
+      { name: "Volcanic Explosivity Index", value: "VEI", panel: 'right',
+        description: "A widely used classification scheme to describe the size of explosive eruptions. It is based principally on the erupted mass or volume of a deposit" },
+      { name: "Agent", panel: 'right', catSplit: ",",
+        catLabel: {
+          'A': 'Avalanche (Debris and landslides)',
+          'E': 'Electrical (lightning)',
+          'F': 'Floods (& Jokulhlaups)',
+          'G': 'Gas (emission from eruptive craters as well as fumarolic/solfataric activity)',
+          'I': 'Indirect deaths (disease, starvation, exposure, desolation)',
+          'L': 'Lava flows',
+          'M': 'Mudflows/Lahars',
+          'm': 'Secondary (post-eruption) mudflows',
+          'P': 'Pyroclastic flows, surges, & direct blasts',
+          'S': 'Seismic, or volcanic earthquake (tectonic earthquake deaths excluded)',
+          'T': 'Tephra (ash, bombs, lapilli, steam blasts. Killing either by ballistic impact, or with finer-grained ash, by suffocation, collapse of ash-covered roogs, etc.)',
+          'W': 'Waves or tsunami',
+        }},
+      { name: "Deaths", panel: "right"},
+      { name: "Missing", panel: "right"},
+      { name: "Injuries", panel: "right"},
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      sortColWidth: 45,
+      recordView: function(){ 
+        return "<span class='volcanoName'>"+this.Name+"</span>, <span class='countryName'>"+this.Country+"</span>"; 
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.countryName{
+  font-size: 0.9em;
+}
+.volcanoName{
+  font-weight: 600;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Significant Volcanic Eruptions in the World</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from 
+      <a href="http://www.ngdc.noaa.gov/nndc/servlet/ShowDatasets?dataset=102557&search_look=50&display_look=5" target="_blank">The Significant Volcanic Eruption Database</a>, National Oceanic and Athmospheric Administration.
+      </div>
+      
+  </body>
+</html>

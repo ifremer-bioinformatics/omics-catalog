@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Publications of Steve Drucker</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./data/pub_sdrucker.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+function dataLoad(browser){
+  browser.primaryTableName = "Publications";
+  kshf.dt.Publications = [];
+  myData.data.forEach(function(publication,id){
+    publication.id = id;
+    kshf.dt.Publications.push(new kshf.Record(publication,"id"));
+  });
+  browser.loadCharts();
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 150,
+    source: { 
+      url: "http://research.microsoft.com/en-us/um/people/sdrucker/research.html",
+      callback: dataLoad
+    },
+    summaries: [
+      { name: "Primary Tag", value: "Primary"},
+      { name: "Tag: Subject", value: function(){ return this.tags.subject;}},
+      { name: "Publication", value: function(){ return this.tags.publication;}},
+      { name: "Collaborators", value: function(){ return this.tags.collaborators;}},
+      { name: "Year", value: "year", timeFormat: "%Y", panel: "bottom"},
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      displayType: 'grid',
+      textSearch: "caption",
+      recordView: function(d){
+        return "<img class='thumbImg' src='http://research.microsoft.com/en-us/um/people/sdrucker/images/"+this.thumb+"'>"+
+          "<div class='links'>"+
+          (this.pdf!==""?" <a href='"+this.pdf+"' target='_blank' class='fa fa-file-pdf-o'></a>":"")+
+          (this.video!==""?" <a href='"+this.video+"' target='_blank' class='fa fa-file-video-o'></a>":"")+
+          //(this.reference!==""?" <a href='"+this.reference+"' target='_blank' class='fa fa-external-link'></a>":"")+
+          "</div>"+
+          "<span class='title'>"+this.caption+"</span>"
+          ;
+      },
+      onDOM: function(d){ d.DOM.record.setAttribute("title",this.pabstract); }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{ width: 140px; }
+.content{ padding: 3px; }
+.content > .links{
+  float: right;
+  padding-top: 2px;
+  font-size: 0.8em;
+}
+.content .fa{
+  color: gray !important;
+  text-decoration: none !important;
+}
+.content .fa:hover{
+  color: orangered !important;
+  text-decoration: underline !important;
+}
+.thumbImg{
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  -webkit-transition: all 250ms ease;
+     -moz-transition: all 250ms ease;
+       -o-transition: all 250ms ease;
+      -ms-transition: all 250ms ease;
+          transition: all 250ms ease;
+  -webkit-filter: grayscale(100%);
+     -moz-filter: grayscale(100%);
+       -o-filter: grayscale(100%);
+      -ms-filter: grayscale(100%);
+          filter: grayscale(100%);
+  box-shadow: 0px 0px 0px black;
+}
+.kshfRecord[highlight='true'] .thumbImg {
+  box-shadow: 0px 0px 5px black;
+  -webkit-filter: grayscale(0%);
+     -moz-filter: grayscale(0%);
+       -o-filter: grayscale(0%);
+      -ms-filter: grayscale(0%);
+          filter: grayscale(0%);
+}
+.kshfRecord:hover .thumbImg {
+  box-shadow: 0px 0px 5px black;
+  -webkit-filter: grayscale(0%);
+     -moz-filter: grayscale(0%);
+       -o-filter: grayscale(0%);
+      -ms-filter: grayscale(0%);
+          filter: grayscale(0%);
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Publications of Steve Drucker</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

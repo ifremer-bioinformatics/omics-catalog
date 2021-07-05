@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Architecture Work of Mies van der Rohe</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 180,
+    source: {
+      gdocId: '1hHNh0p0dt1b8ucEnxL_TspCE8V7Mi6e3WkpF3RAa27k',
+      tables: "Projects"
+    },
+    summaries: [
+      { name: "Continent" },
+      { name: "City / Location", value: function(){ return "<span style='color:gray'>"+this.Country+" </span> - "+this.City; } },
+      { name: "Year", panel: 'bottom', timeFormat: "%Y" },
+      { name: "Type", panel: 'right' }
+    ],
+    recordDisplay: {
+      sortBy: 'Year',
+      textSearch: "Name",
+      recordView: function(){
+        var str="<span class='workTitle'>"+this.Name+"</span>";
+        if(this.Image) str+="<img class='workPhoto' src='"+this.Image+"'>";
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style type="text/css" media="screen" id="kshfStyle">
+.content{ padding-bottom: 3px; }
+.workTitle{
+  display: block;
+  text-align: center;
+  font-size: 1.2em;
+}
+.workPhoto{
+  display: block;
+  width: 70%;
+  margin: 0 auto;
+  -webkit-transition: all 1s ease;
+     -moz-transition: all 1s ease;
+       -o-transition: all 1s ease;
+      -ms-transition: all 1s ease;
+          transition: all 1s ease;
+  -webkit-filter: grayscale(100%);
+     -moz-filter: grayscale(100%);
+       -o-filter: grayscale(100%);
+      -ms-filter: grayscale(100%);
+          filter: grayscale(100%);
+  box-shadow: 0px 0px 0px black;
+}
+.kshfRecord:hover .workPhoto {
+  box-shadow: 0px 0px 5px black;
+  -webkit-filter: grayscale(0%);
+     -moz-filter: grayscale(0%);
+       -o-filter: grayscale(0%);
+      -ms-filter: grayscale(0%);
+          filter: grayscale(0%);
+}
+</style>
+    </head>
+  <body>
+  <div class="contents">
+    <div id="demo_PageTitle" align="center">Architecture Work of Mies van der Rohe</div>
+    <div id="demo_Browser"></div>
+    </div>
+
+  <div id="demo_Infobox">
+    Data Credits:
+    <a href="http://www.miessociety.org/legacy/projects/">Mies Society</a> and
+    <a href="http://library.iit.edu/grc/mies/mies_work_geo.html">IIT Library</a>
+    </div>
+  </body>
+</html>

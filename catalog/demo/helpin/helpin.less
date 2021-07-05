@@ -1,0 +1,1221 @@
+/*********************************
+
+keshif library
+
+Copyright (c) 2014-2016, University of Maryland
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the University of Maryland nor the names of its contributors
+  may not be used to endorse or promote products derived from this software
+  without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL MICHAEL BOSTOCK BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+************************************ */
+
+@import "../../lesshat";
+
+
+@color_bars: #B1BDC5; 
+@color_distr_total: #DEE2E6;
+@color_preview: lighten(orangered, 10%);
+@color_Compare_A: darkslategray;
+@color_Compare_B: #39ef4f;
+@color_Compare_C: #FFFEDC;
+@color_axis_line: rgb(182, 179, 179);
+@color_item_count: #969DA3;;
+@color_filter_clear: #788D9B;
+@color_preview_clear: orangered;
+@color_onRecord_back: #EFEADF;
+@color_hoverAction: #cb5454;
+
+
+.kshf {
+  .bolder{ font-weight: bolder; }
+
+  .helpin-breadcrumb{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    color: white !important;
+    padding: 2px;
+    font-size: 0.7em;
+    vertical-align: top;
+    text-align: center;
+    text-shadow: none;
+    &.fa-mouse-pointer{ background-color: @color_preview_clear; }
+    &.fa-filter{        background-color: @color_filter_clear; }
+    &.fa-lock{          background-color: @color_Compare_A; }
+  }
+
+  .topicMedia{
+    display: block;
+    margin: 0 auto;
+    max-width: 95%;
+    margin-bottom: 12px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px gray;
+  }
+
+  // Custom fa flip style for categorical summary
+  .fa-histogram-flip{ .transform(~'scale(1, -1) rotate(90deg)'); }
+
+  &[drag_cursor="grabbing"] .SelectedThing_Header{
+    cursor: -moz-grabbing !important;
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+  }
+
+  *[class^="colorCoding"]{
+    display: inline-block;
+    vertical-align: top;
+    padding: 2px 2px;
+  }
+  .colorCoding_Total     { color: black; background-color: @color_distr_total; }
+  .colorCoding_Active    { color: white; background-color: darken(@color_bars, 10%); }
+  .colorCoding_Highlight { color: white; background-color: @color_preview; }
+  .colorCoding_Compare_A { color: white; background-color: @color_Compare_A; }
+  .colorCoding_Compare_B { color: white; background-color: @color_Compare_B; }
+  .colorCoding_Compare_C { color: black; background-color: @color_Compare_C;
+    border: solid 1px black;
+    padding: 1px 1px;
+  }
+
+  .colorText_Compare_A { color: @color_Compare_A; }
+  .colorText_Compare_B { color: @color_Compare_B; }
+  .colorText_Compare_C { color: @color_Compare_C; }
+
+  .topicWeight{
+    display: inline-block;
+    display: none; // clear this to show the weights
+    font-weight: 200;
+    font-size: 0.9em
+  }
+
+
+  .panel_overlay{
+    &[lockedPointNLearn] {
+      .DescriptionToUnFreeze{ display: block !important; }
+      .DescriptionToFreeze  { display: none; }
+    }
+    &[show^="help"]{
+      > .overlay_help_control{ display: block; }
+    }
+  }
+
+  .overlay_help_control{
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 75px;
+    background-color: #efeadf;
+    padding: 2px;
+    z-index: 100;
+    border-radius: 6px;
+    cursor: default;
+    box-shadow: 0px 0px 5px black;
+    .user-select(none);
+    .transition(all 200ms);
+
+    > .GetHelpHeader{
+      display: block;
+      font-size: 0.9em;
+      letter-spacing: 1px;
+      font-weight: 500;
+      color: #444;
+    }
+
+    > .overlay_Close{
+      position: absolute;
+      top: -20px;
+      right: 16px;
+      font-size: 1.1em;
+      background-color: #eae4da;
+      padding: 2px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      color: @color_hoverAction;
+      cursor: pointer;
+      .transition(all 200ms);
+    }
+    > .helpInModes{
+      max-height: 0px;
+      overflow: hidden;
+      .transition(max-height 500ms ease-in-out);
+    }
+
+    [class^="helpInMode_"]{
+      display: block;
+      position: relative;
+      border: solid 1px gray;
+      text-align: left;
+      width: 115px;
+      padding: 1px 2px 1px 5px;
+      margin-top: 2px;
+      background-color: white;
+      font-size: 0.8em;
+      font-weight: 300;
+      border-radius: 7px;
+      border: solid 1px gray;
+      cursor: pointer;
+      z-index: 100;
+      color: gray;
+      text-decoration: none;
+      .transition(color 200ms);
+      > .fa{
+        width: 13px;
+        text-align: center;
+      }
+      &:hover{ 
+        border-color: @color_hoverAction;
+        color: @color_hoverAction !important;
+      }
+      &[active]{
+        border-color: #5a2f1f;
+        box-shadow: 0px 0px 3px #9a968c, 0px 0px 1px #9a968c;;
+        color: #5a2f1f;
+        font-weight: 700;
+      }
+      &.helpInMode_Wiki{
+        font-size: 0.6em;
+        letter-spacing: 2px;
+      }
+    }
+
+    .helpInMode_Notification:not(.enabled) {
+      color: gray !important;
+      >.fa-toggle-on:before{
+        content: "\f204"; // OFF
+      }
+    }
+
+    &.expanded {
+      right: 0px;
+      width: 120px;
+
+      [class^="helpInMode_"]{ color: black; }
+      > .helpInModes{ max-height: 150px; }
+      > .overlay_Close{ right: 36px; }
+    }
+  }
+
+  .animateState{
+    text-align: right;
+    position: absolute;
+    top: 5px;
+    right: 0px;
+    > .animationProgress{
+      display: inline-block;
+      margin-right: 4px;
+      width: 60px;
+      height: 1em;
+      border: solid 1px lightgray;
+      position: relative;
+      vertical-align: bottom;
+      background-color: white;
+      > .animationProgressIn{
+        display: block;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        height: 100%;
+        width: 1px;
+        background-color: lightgray;
+        .transform-origin(0% 0%);
+        .transform(scaleX(58));
+        &[play]{
+          .animation(progressAction 2s 1 linear);
+        }
+      }
+    }
+    
+    > .animationReplay{
+      cursor: pointer;
+      cursor: pointer;
+      position: absolute;
+      top: 2px;
+      right: 7px;
+      font-size: 0.9em;
+      font-weight: 300;
+      text-shadow: 0px 0px 4px white;
+      &:hover{ color: @color_hoverAction};
+    }
+  }
+
+  .overlay_answer{
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    pointer-events: none;
+    .transition(opacity 0.5s);
+
+    .stencilBox{
+      position: absolute;
+      border: solid 1px green;
+      border-radius: 3px;
+      box-shadow: 0px 0px 5px rgba(0, 128, 0, 0.78);
+      .user-select(none);
+      &[locked]{
+        border-color: #cc2525;
+        box-shadow: 0px 0px 5px #cc2525;
+      }
+      &.deEmph{
+        border-color: #e2e2d9;
+        box-shadow: 0px 0px 5px white;
+      }
+      > .pointerAction{
+        z-index: 99999;
+        position: absolute;
+        overflow: visible;
+        width: 50px;
+        color: #cd3c06;
+        text-shadow: 0px 0px 4px white;
+        transform: scale(0);
+        .animation(pointerAction 1.5s 1 cubic-bezier(0.14, 0.99, 0.85, 1.79)); 
+      }
+    }
+  }
+
+  .tipsy.tipsy-helpin {
+    > .tipsy-arrow{ border-color: white; }
+    > .tipsy-inner{
+      padding: 6px;
+      border-radius: 6px;
+      color: black;
+      background-color: white;
+      box-shadow: 0px 0px 10px black;
+      font-size: 1.35em;
+      font-weight: 300;
+      > .fa{ font-size: 1.3em; }
+    }
+    &.tipsy-primary{
+      > .tipsy-inner{ font-weight: 600; }
+    }
+    &.tipsy-primary2{
+      > .tipsy-inner{ 
+        font-weight: 600; 
+        border: solid 1px @color_hoverAction;
+        color: @color_hoverAction;
+      }
+    }
+    &[locked]{
+      > .tipsy-arrow{ border-color: #cc2525; }
+      > .tipsy-inner{
+        border: solid 1px #cc2525;
+        box-shadow: 0px 0px 10px #cc2525;
+        padding: 5px;
+      }
+    }
+    .breadCrumb{
+      font-size: 0.9em;
+      vertical-align: bottom;
+    }
+  }
+
+
+  .BrowseOptions{
+    padding: 3px 6px;
+    border-top: solid 1px #cb5454;
+    background-color: #f6f6f6;
+    > .checkBoxArea{
+      font-weight: 300;
+      font-size: 0.8em;
+      text-align: left;
+      padding: 3px 0px;
+
+      // Modified from https://codepen.io/CreativeJuiz/pen/BiHzp
+      /* Base for label styling */
+      > [type="checkbox"] {
+        position: absolute;
+        left: -9999px;
+        + label{
+          position: relative;
+          padding-left: 1.5em;
+          cursor: pointer;
+          &:hover{
+            color: @color_hoverAction;
+          }
+          /* checkbox aspect */
+          &:before {
+            content: '';
+            position: absolute;
+            left:0; top: 0px;
+            width: 1em; height: 1em;
+            border: 1px solid #aaa;
+            background: #f8f8f8;
+            border-radius: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+          }
+          /* checked mark aspect */
+          &:after {
+            content: '✔';
+            position: absolute;
+            top: 3px; left: 2px;
+            font-size: 1em;
+            line-height: 0.8;
+            color: @color_hoverAction;
+            .transition(all 200ms);
+            pointer-events: none;
+          }
+        }
+        /* checked mark aspect changes */
+        &:not(:checked) + label:after {
+          opacity: 0;
+          transform: scale(0);
+        }
+        &:checked + label:after {
+          opacity: 1;
+          transform: scale(1);
+        }
+        /* accessibility */
+        &:focus + label:before{
+          border: solid 1px @color_hoverAction;
+        }
+        &:disabled{
+          + label { 
+            color: #aaa;
+            &:before {
+              box-shadow: none;
+              border-color: #bbb;
+              background-color: #ddd;
+            }
+          }
+          &:checked + label:after { color: #999; }
+        }
+
+        + label{
+          .ShowHide:before{
+            content: "Show";
+          }
+        }
+        &:checked + label{
+          .ShowHide:before{
+            content: "Show";
+          }
+        }
+      }
+    }
+  }
+
+  .topicLink{
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover{ 
+      color: orangered;
+    }
+    /*
+    &:after{
+      content: "*"; // "⚬";
+      position: relative;
+      font-size: 0.6em;
+      top: -6px;
+      //width: 8px;
+      display: inline-block;
+    }*/
+    &.weakTopicLink{
+      color: gray;
+      font-weight: 200;
+      font-size: 0.9em;
+      &:after{ display: none; }
+    }
+  }
+
+  .encodingInfo {
+    padding-bottom: 1px;
+    .breadCrumb{
+      vertical-align: bottom;
+      position: relative;
+      top: -2px;
+    }
+    > [class^="colorCoding"]{ height: 0.9em; width: 1em; }
+    &:hover{ background-color: white; box-shadow: 0px 0px 4px white; }
+  }
+
+}
+
+.kshf{
+  &[exp="basis"]{
+    .BrowseOptions{ display: none; }
+    .ContextItem > .RelevantIcon{ display: none; }
+    .MakeRelevantTopic{ display: none; }
+    .animateState{ display: none !important; }
+    .ContextItem{ color: black !important; }
+  }
+  &[exp="train"]{
+    /*.TopicInfoBlock{ display: none; }
+    .RelatedTopics{ display: none !important; }
+    //.GuidedTourStep.GuidedTourOneStep{ pointer-events: none !important; }
+    .topicLink{ 
+      pointer-events: none !important;
+      &:after{ display: none; }
+    }
+    .showHelpIn{ display: none; }
+    .overlay_help_control{ display: none !important; }*/
+  }
+  &[exp]{
+    .rightBoxes > {
+      .authorButton  { display: none !important; }
+      .datasource    { display: none !important; }
+      .notifyButton  { display: none !important; }
+      .viewFullscreen{ display: none !important; }
+      .logoHost      { display: none !important; }
+      .showHelpIn{ animation: none; }
+    }
+  }
+}
+
+
+.kshf .overlay_help{
+  width: 540px;
+  position: absolute;
+  top: 20px;
+  bottom: inherit;
+  .calc(left, ~"50% - 310px");
+  border-radius: 10px;
+  font-family: Roboto, sans-serif;
+  cursor: default;
+
+  .flex-direction(column);
+  .transition(opacity 500ms linear, box-shadow 200ms ease-in-out, width 600ms ease-in-out, left 600ms ease-in-out, right 600ms ease-in-out, top 600ms ease-in-out, height 600ms ease-in-out );
+  .user-select(none);
+
+  > .PointNClick_Info{ 
+    display: none;
+    font-size: 0.8em;
+    font-weight: 300;
+    padding: 5px 0px 3px 10px;
+    text-align: center;
+    cursor: default;
+    background-color: #efeadf;
+  }
+  .DescriptionToUnFreeze{ 
+    display: none;
+    cursor: pointer;
+    &:hover{ color: @color_hoverAction; }
+  }
+
+  > .helpin_Header{
+    width: 100%;
+    background-color: #9a968c;
+    min-height: 10px;
+    //box-shadow: 0px 0px 5px #403b31;
+    z-index: 3;
+
+    .transition(background-color 400ms);
+
+    > .BackButton{
+      display: none;
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      cursor: pointer;
+      color: white;
+      text-shadow: 0px 0px 2px black;
+      font-size: 1.3em;
+      &:hover { 
+        color: @color_hoverAction;
+        text-shadow: none;
+      }
+    }
+
+  }
+
+  > .GuidedTour{
+    display: none;
+    background-color: #efeadf;
+    position: relative;
+    min-height: 30px;
+    > .GuidedTourHead{
+      padding-top: 7px;
+      padding-bottom: 10px;
+      display: block;
+      font-weight: 500;
+      letter-spacing: 2px;
+      color: gray;
+      font-size: 0.9em;
+    }
+    > .TourStep{
+      position: absolute;
+      font-size: 0.8em;
+      margin: 5px;
+      top: 0px;
+      display: inline-block;
+      cursor: pointer;
+      border: solid 1px gray;
+      padding: 1px 5px;
+      border-radius: 6px;
+      &:hover{ color: @color_hoverAction; }
+    }
+    > .NextStep{
+      right: 0px;
+      background-color: rgba(255,255,255,0.6);
+      font-weight: 500;
+    }
+    > .PreviousStep{
+      left: 0px;
+      font-weight: 100;
+    }
+    > .GuidedTourProgressBar{
+      position: relative;
+      width: 96%;
+      left: 2%;
+      height: 2px;
+      background-color: lightgray;
+      z-index: 10;
+      > .GuidedTourStep{
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        color: red;
+        .transition(width 500ms ease-in-out);
+      }
+      > .GuidedTourCurrentStep{
+        height: 3px;
+        background-color: #6f6e6d;
+        &:after{
+          content: "";
+          display: block;
+          position: absolute;
+          right: -4px;
+          height: 8px;
+          width: 8px;
+          top: -2px;
+          border-radius: 10px;
+          background-color: #6f6e6d;
+          border-radius: 10px;
+          z-index: 100;
+        }
+      }
+      > .GuidedTourOneStep:hover:after{
+        border-color: @color_hoverAction;
+        background-color: @color_hoverAction;
+      }
+      > .GuidedTourOneStep:after{
+        content: "";
+        cursor: pointer;
+        display: block;
+        position: absolute;
+        right: -4px;
+        height: 6px;
+        width: 6px;
+        top: -5px;
+        background-color: white;
+        border: solid 1px gray;
+        border-radius: 10px;
+      }
+    }
+  }
+
+  .QuestionTypes{
+    border-width: 1px 0px 0px 0px;
+    padding-bottom: 2px;
+    border-style: solid;
+    border-color: gray;
+    background-color: #F6F6F6;
+    width: 100%;
+    .flex(1);
+    .display(flex);
+    .flex-direction(column);
+    > .TypeLabel{
+      display: block;
+      margin: 10px 0px 0px;
+      padding-bottom: 4px;
+      font-size: 0.9em;
+      color: @color_hoverAction;
+      text-align: center;
+      border-bottom: solid 1px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      font-variant: small-caps;
+    }
+    > .TypeGroup{
+      overflow-x: hidden;
+      overflow-y: scroll;
+      white-space: nowrap;
+      height: 36px;
+      text-align: left;
+      font-size: 0.9em;
+      .flex(1);
+    }
+    &.ActionTypes > .TypeLabel:before{ content: "Actions"  }
+    &.TopicTypes  > .TypeLabel:before{ content: "Components" }
+  }
+
+
+  > .TopicInfoBlock{
+    cursor: default;
+    position: relative;
+    > .TopicInfoHeader{
+      font-weight: 400;
+      border-bottom: solid 1px lightgray;
+      font-size: 1.1em;
+      margin: 3px 0px;
+      position: relative;
+    }
+    > .TopicInfoShowHide{
+      font-weight: 300;
+      font-size: 0.9em;
+      cursor: pointer;
+      position: absolute;
+      right: 10px;
+      top: 3px;
+      &:before{ content: "(Hide)"; }
+      &:hover{ color: @color_hoverAction; }
+    }
+    &[showBlockContent=false]{
+      > .TopicInfoBlockContent{ display: none; }
+      > .TopicInfoShowHide:before{ content: "(Show)"; }
+    }
+  }
+
+  >.heyooo{
+    .display(flex);
+    .flex-direction(row);
+    .browseTopicBlock{
+      display: none;
+      width: 170px;
+      min-height: 300px;
+      border-right: solid 1px gray;
+      box-shadow: 0px 0px 2px gray;
+      cursor: default;
+    }
+  }
+
+
+  > .SimilarTopicsBlock{
+    font-weight: 300;
+    font-size: 0.8em;
+    margin: 5px 0px;
+    > .SimilarTopicsContent{
+      font-weight: 300;
+      padding: 0px 10px;
+    }
+    .SimilarTopicItem{
+      margin: 5px;
+      text-align: left;
+    }
+    .SimilarTopicItemText{
+      cursor: pointer;  
+      &:hover{ 
+        color: @color_hoverAction;
+        text-decoration: underline;
+      }
+    }
+    .SimilarTopicSelect{
+      cursor: pointer;
+      margin-left: 5px;
+      display: inline-block;
+      text-decoration: underline;
+      &:hover{ color: @color_hoverAction; }
+      &:before{ content: "("; }
+      &:after { content: ")"; }
+    }
+  }
+
+  > .TopicRelWhenBlock{
+    display: none;
+    font-weight: 300;
+    font-size: 0.8em;
+    margin: 0px;
+    > .ContextContent{
+      text-align: left;
+      padding: 0px 10px;
+      > .ContextItem{
+        margin: 5px;
+        > .RelevantIcon{ margin-right: 4px; }
+        > .MakeRelevantTopic{
+          margin: 0px 5px;
+          font-size: 0.9em;
+          color: gray;
+          cursor: pointer;
+          text-decoration: underline;
+          &:hover{ color: @color_hoverAction; }
+          //&:before{ content: "( "; }
+          //&:after { content: " )"; }
+        }
+        &[isRelevant=true]{
+          color: black;
+          > .fa:before{ color: green; } // 
+        }
+        &[isRelevant=false]{
+          color: red;
+          > .fa:before{ } // 
+        }
+        > .fa-times-circle{ color: red; }
+        > .fa-check-circle{ color: green; }
+      }
+    }
+  }
+
+  > .TopicMoreInfo{
+    font-weight: 300;
+    font-size: 0.8em;
+    cursor: default;
+    > .TopicMoreInfoHeader{
+      font-weight: 500;
+      border-bottom: solid 1px lightgray;
+      font-size: 1.1em;
+      margin-bottom: 3px;
+    }
+  }
+
+  > .answer_box{
+    position: absolute;
+    top: 30px;
+    font-weight: 300;
+    border: solid 1px gray;
+    border-radius: 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    padding: 0px 3px;
+    background-color: white;
+    z-index: 100;
+    &.answer_ok{ 
+      right: 3px;
+      background-color: #918D85;
+      color: white;
+      font-weight: 400;
+      &:hover{ background-color: @color_hoverAction; }
+    }
+    &.answer_back{ 
+      left: 3px;
+      &:hover{ color: @color_hoverAction; }
+    }
+    
+  }
+  .SearchBlock{
+    position: relative;
+    overflow: hidden;
+    background-color: #efeadf;
+    .transition(background-color 200ms linear);
+    .flex-shrink(0);
+  }
+
+  .TopicsList{
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    border-color: gray;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+
+    .flex(1);
+    > .TopicBlock{
+      margin: 13px 4px;
+      padding: 4px;
+      border: solid 1px lightgray;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      display: block;
+      text-align: left;
+      &:hover{ background-color: #efeadf; }
+      > .notInContext{
+        display: none;
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        text-align: center;
+        font-size: 0.8em;
+        color: gray;
+      }
+      > .TopicText{
+        padding: 0px 10px;
+        > .fa-question-circle{ 
+          color: gray;
+          margin: 0px 3px;
+        }
+      }
+      > .recentlyUsedIcon{
+        position: absolute;
+        right: 2px;
+        bottom: 2px;
+        color: black;
+        display: none;
+        font-size: 0.9em;
+      }
+      > .TopicIcons{
+        position: absolute;
+        right: 2px;
+        top: 4px;
+        display: none; // TODO: This was too much information, hard to read?
+        .icon{ 
+          font-size: 0.8em;
+          font-weight: 300;
+          margin-top: 4px;
+          color: gray;
+          width: 13px;
+          text-align: center;
+          vertical-align: top;
+        }
+      }
+      &[outOfContext] > .notInContext{ display: block; }
+    }
+  }
+
+  > .RelatedTopics{ 
+    display: none;
+    font-weight: 300;
+    text-align: center;
+    cursor: default;
+    font-size: 0.9em;
+    box-shadow: 0px 0px 3px #54524e;
+    background-color: #d6d2cc;
+    padding: 2px 0px 0px 0px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    &:after{ 
+      font-size: inherit;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      display: block;
+      position: absolute;
+      right: 10px;
+      top: 2px;
+      content: "(hide)";
+      font-size: 0.9em;
+      letter-spacing: initial;
+    }
+    &:hover{
+      background-color: darken(#d6d2cc, 5%);
+      &:after{ color: orangered; }
+    }
+  }
+
+  > .SelectedThing_Header{
+    padding: 7px 25px;
+    border-bottom: solid 1px gray;
+    font-size: 1.1em;
+    font-weight: 400;
+    background-color: #9a968c;
+    color: white;
+    text-shadow: 0px 0px 4px black;
+
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    cursor: grab;
+    .transition(all 200ms linear);
+    &:after{
+      display: inline-block;
+      font: normal normal normal 14px/1 FontAwesome;
+      font-size: inherit;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      content: "\f047";
+      position: absolute;
+      right: 2px;
+      top: 8px;
+      font-size: 0.7em;
+      color: lighten(#9a968c, 15%);
+      text-shadow: initial;
+    }
+    .backButton{
+      display: none;
+      position: absolute;
+      left: 4px;
+      top: 5px;
+      font-size: 1.1em;
+      color: lighten(#9a968c, 15%);
+      text-shadow: initial;
+      cursor: pointer;
+      &:hover{ color: @color_hoverAction !important; }
+    }
+    &:hover { 
+      background-color: darken(#9a968c, 20%);
+      &:after{ color: white; }
+      .backButton{ color: white; }
+    }
+  }
+  > .SelectedThing_Content{
+    position: relative;
+    background-color: #f5f4f2; //#efeadf;
+    padding: 7px 10px;
+    box-shadow: 0px 2px 2px gray;
+    font-weight: 300;
+    font-size: 0.9em;
+    text-align: left;
+    > .answerTooltip{
+      text-align: center;
+      &:not(:first-child):before{
+        display: block;
+        content: "-OR-";
+        color: #BF360C;
+        font-size: 1.3em;
+        font-family: monospace;
+        font-weight: 600;
+        padding: 0px 4px 2px;
+      }
+      > .subAnswer{
+       &:not(:first-child):before{
+         display: block;
+         content: "then";
+         color: #BF360C;
+         font-family: monospace;
+         font-weight: 600;
+         padding: 0px 4px;
+       } 
+      }
+    }
+    > p{
+      margin: 0 0 0.7em 0;
+    }
+    .breadCrumb{ 
+      font-size: 0.8em;
+      vertical-align: bottom;
+    }
+  }
+  > .SelectedThing_Content_More{
+    margin: 5px 0px 5px 0px;
+    padding: 4px 10px;
+    font-size: 0.8em;
+    font-weight: 300;
+    border-bottom: solid 1px gray;
+    text-align: left;
+    > p{ margin: 0 0 0.7em 0; }
+    .breadCrumb{ 
+      font-size: 0.8em;
+      vertical-align: bottom;
+    }
+  }
+
+  > .overlay_Close{ z-index: 1000; }
+
+  &[hideRelatedTopics]{
+    > .RelatedTopics:after{ content: "(show)" };
+    .TopicsList{ display: none; }
+  }
+}
+
+.kshf .panel_overlay{
+  &[show="help-pointnlearn"] {
+    cursor: help; // pointer
+    &[lockedPointNLearn] { cursor: default; }
+
+    > .overlay_answer{ pointer-events: all; }
+    > .overlay_help{
+      width: 370px;
+      top: 60px;
+      .calc(left, ~'50% - 185px');
+      > .PointNClick_Info{ display: block; }
+      > .FilterBlock{ display: none; }
+      > .RelatedTopics{ display: block; }
+      .TopicsList{ max-height: 90px; }
+      .TopicBlock{ 
+        margin: 3px;
+        padding: 2px;
+        font-size: 0.8em;
+        > .TopicIcons{ display: none !important; }
+        > .TopicText{ padding-right: 5px;}
+      }
+      .TextSearchBlock{ display: none; }
+    }
+  }
+  &[show="help-guidedtour"] {
+    > .overlay_help{
+      width: 370px;
+      top: 60px;
+      .calc(left, ~'50% - 185px');
+      > .GuidedTour{ display: block; }
+      .SelectedThing_Header > .fa-hand-pointer-o{ display: none; }
+      > .RelatedTopics{ display: block; }
+      .TopicsList{ max-height: 90px; }
+      .TopicBlock{ 
+        margin: 3px;
+        padding: 2px;
+        font-size: 0.8em;
+        > .TopicIcons{ display: none !important; }
+      }
+      .TextSearchBlock{ display: none; }
+    }
+  }
+  &[show="help-overview"]{
+    > .overlay_help{
+      width: 400px;
+    }
+    .SelectedThing_Content_More{ display: none}
+  }
+  &[show="help-overlayonly"]{
+    > .overlay_help{ display: none }
+  }
+  &[show="help-topiclisting"]{
+    &:not([topicAnswer]) {
+      [class^="SelectedThing"]{ display: none !important; }
+      > .overlay_help{
+        height: 90%;
+        > .heyooo{ height: 100%; }
+      }
+    }
+    .heyooo > .browseTopicBlock{
+      .display(flex);
+      .flex-direction(column);
+    }
+    .TopicBlock{ font-size: 0.9em; }
+  }
+  &[topicAnswer] {
+    
+    &:not([show="help-guidedtour"]) {
+      > .overlay_answer{ pointer-events: all; }
+      .stencilBox{ cursor: pointer; }
+      .SelectedThing_Header > .backButton{ display: block; }
+    }
+
+    > .overlay_help{
+      width: 370px;
+      .calc(left, ~'50% - 170px');
+      top: 100px;
+      > .TopicRelWhenBlock{ display: block; }
+      > .RelatedTopics{ display: block; }
+      .browseTopicBlock{ display: none !important; }
+      .TopicsList{ max-height: 250px; }
+      .TopicBlock{
+        margin: 3px;
+        font-size: 0.8em;
+        > .TopicIcons{ display: none !important; }
+      }
+    }
+  }
+}
+
+
+.QuestionTypeSelect{
+  display: block;
+  border-radius: 5px;
+  border: solid 1px #BCBCBC;
+  margin: 9px 1px;
+  padding: 1px 3px;
+  height: 21px;
+  cursor: pointer;
+  background-color: white;
+  font-weight: 300;
+  position: relative;
+  .user-select(none);
+  &:hover{ color: @color_hoverAction; }
+  &[selected=true]{
+    color: @color_hoverAction;
+    font-weight: 500;
+    border-color: @color_hoverAction;
+  }
+  &[hasIcon]{
+    > .label{ max-width: calc(~'100% - 25px'); }
+  }
+  &[noTopics]{
+    pointer-events: none;
+    color: gray;
+  }
+  > .label{
+    max-width: calc(~'100% - 10px');
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+  }
+  > .topicInfoMark{
+    position: absolute;
+    top: 2px;
+    right: 1px;
+    color: gray;
+    display: none; // TODO: This was too much informtion, hard to read??
+    &:hover{ color: @color_hoverAction; }
+  }
+  > .num {
+    margin-left: 2px;
+    font-size: 0.7em;
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 2px;
+    &:before{ content: "(";}
+    &:after { content: ")";}
+  }
+}
+.TextSearchBlock{
+  text-align: center;
+  padding: 3px;
+  font-weight: 600;
+  padding-bottom: 3px;
+  font-family: sans-serif;
+  cursor: default;
+
+  > .fa-search{
+    color: gray;
+    font-size: 0.8em;
+  }
+  > .SearchTextBox{
+    display: inline-block;
+    width: 120px;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    border-color: @color_hoverAction;
+    text-align: center;
+    margin: 1px 1px 0px 1px;
+    font-family: Roboto;
+    font-size: 1em;
+    font-style: italic;
+    padding: 0px;
+    color: @color_hoverAction;
+    background-color: #efeadf;
+    &:focus{
+      outline-color: @color_hoverAction;
+      outline-width: 0px;
+      margin: 0px;
+      border-width: 1px;
+      font-style: italic;
+    }
+    &:hover{
+      border-width: 1px;
+      margin: 0px 1px 0px 1px;
+      background-color: white;
+    }
+    &::-webkit-input-placeholder{
+      font-weight: 300;
+      font-style: italic;
+    }
+    &:focus::-webkit-input-placeholder{
+      color: #F3CDCD;
+    }
+  }
+}
+.textSearch_highlight{
+  background-color: yellow;
+}
+
+.closePanel{
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  cursor: pointer;
+  font-size: 1.3em;
+  width: 20px;
+  text-align: right;
+  color: gray;
+  &:hover{ color: @color_hoverAction;}
+}
+
+.keyframes(~'pointerAction, 0% { transform: scale(0); } 100%{ transform: scale(3); }');
+
+.keyframes(~'progressAction, 0% { transform: scaleX(1); } 100%{ transform: scaleX(58); }');
+

@@ -1,0 +1,22 @@
+Bootstrap : docker
+From: ubuntu:16.04
+
+%post
+        apt-get -y update
+        apt-get -y install wget
+	apt-get -y install build-essential
+        apt-get -y install autoconf automake make gcc perl zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libssl-dev
+	apt-get -y install libcairo2-dev libpango1.0-dev
+	apt-get -y install tabix
+
+        #Installation of GENOMETOOLS
+	cd /opt
+	wget https://github.com/genometools/genometools/archive/refs/tags/v1.6.1.tar.gz
+	tar -zxvf v1.6.1.tar.gz
+	rm v1.6.1.tar.gz
+	cd genometools-1.6.1
+	make
+	make install
+
+%environment
+        export PATH="/opt/:$PATH"

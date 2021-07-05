@@ -1,0 +1,2 @@
+Name,CommonName,Submitter,Bioproject,Biosample,Accession,Version,Level,TaxID,Lineage,Kingdom,Phylum,Class,Order,Family,Genus,JBrowse,Genenotebook,NCBI,Image,Owner
+"Crassostrea gigas","Pacific oyster","THE ROSLIN INSTITUTE","PRJEB35351","SAMEA6259236","GCA_902806645.1","1.0","Chromosome","29159","Eukaryota;Mollusca;Bivalvia;Ostreida;Ostreidae;Crassostrea;Crassostrea gigas","Eukaryota","Mollusca","Bivalvia","Ostreida","Ostreidae","Crassostrea","","","https://www.ncbi.nlm.nih.gov/assembly/GCA_902806645.1","images/c_gigas.jpg","owner"

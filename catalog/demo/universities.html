@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Universities</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+
+var AAU_Group = {
+    "Georgia Institute of Technology-Main Campus": true,
+    "Indiana University-Bloomington": true,
+    "Iowa State University": true,
+    "Michigan State University": true,
+    "Ohio State University-Main Campus": true,
+    "Pennsylvania State University-Main Campus": true,
+    "Purdue University-Main Campus": true,
+    "Rutgers University-New Brunswick": true,
+    "The State University of New Jersey": true, //?
+    "Stony Brook University": true,//-State University of New York": true,
+    "Texas A & M University-College Station": true,
+    "University at Buffalo": true,//, The State University of New York": true,
+    "University of Arizona": true,
+    "University of California-Davis": true,
+    "University of California-Berkeley": true,
+    "University of California-Irvine": true,
+    "University of California-Los Angeles": true,
+    "University of California-San Diego": true,
+    "University of California-Santa Barbara": true,
+    "University of Colorado Boulder": true,
+    "University of Florida": true,
+    "University of Illinois at Urbana-Champaign": true,
+    "University of Iowa": true,
+    "University of Kansas": true,
+    "University of Maryland-College Park": true,
+    "University of Michigan-Ann Arbor": true,
+    "University of Minnesota-Twin Cities": true,
+    "University of Missouri-Columbia": true,
+    "University of North Carolina at Chapel Hill": true,
+    "University of Oregon": true,
+    "University of Pittsburgh-Pittsburgh Campus": true,
+    "The University of Texas at Austin": true,
+    "University of Virginia-Main Campus": true,
+    "University of Washington-Seattle Campus": true,
+    "University of Wisconsin-Madison": true,
+    "Boston University": true,
+    "Brandeis University": true,
+    "Brown University": true,
+    "California Institute of Technology": true,
+    "Carnegie Mellon University": true,
+    "Case Western Reserve University": true,
+    "Columbia University in the City of New York": true, // I guess
+    "Cornell University": true,
+    "Duke University": true,
+    "Emory University": true,
+    "Harvard University": true,
+    "Johns Hopkins University": true,
+    "Massachusetts Institute of Technology": true,
+    "New York University": true, //?
+    "Northwestern University": true,
+    "Princeton University": true,
+    "Rice University": true,
+    "Stanford University": true,
+    "Tulane University of Louisiana": true,
+    "University of Chicago": true,
+    "University of Pennsylvania": true,
+    "University of Rochester": true,
+    "University of Southern California": true,
+    "Vanderbilt University": true,
+    "Washington University in St Louis": true,
+    "Yale University": true,
+    "McGill University": true,
+    "University of Toronto": true,
+};
+
+var CIC_Group = {
+    "University of Chicago": true,
+    "University of Illinois at Urbana-Champaign": true,
+    "Indiana University-Bloomington": true,
+    "University of Iowa": true,
+    "University of Maryland-College Park": true,
+    "University of Michigan-Ann Arbor": true,
+    "Michigan State University": true,
+    "University of Minnesota-Twin Cities": true,
+    "University of Nebraska-Lincoln": true,
+    "Northwestern University": true,
+    "Ohio State University-Main Campus": true,
+    "Pennsylvania State University-Main Campus": true,
+    "Purdue University-Main Campus": true,
+    "Rutgers University-New Brunswick": true,
+    "University of Wisconsin-Madison": true
+};
+
+var ACC_Group = {
+    "Boston College": true,
+    "Clemson University": true,
+    "Duke University": true,
+    "Florida State University": true,
+    "Georgia Institute of Technology-Main Campus": true,
+    "University of Louisville": true,
+    "University of Miami": true,
+    "University of North Carolina at Chapel Hill": true,
+    "North Carolina State University at Raleigh": true,
+    "University of Notre Dame": true,
+    "University of Pittsburgh-Pittsburgh Campus": true,
+    "Syracuse University": true,
+    "University of Virginia-Main Campus": true,
+    "Virginia Polytechnic Institute and State University": true,
+    "Wake Forest University": true,
+};
+
+var Unizin_Group = {
+    "Colorado State University-Fort Collins": true,
+    "Indiana University-Bloomington": true,
+    "University of Florida": true,
+    "University of Michigan-Ann Arbor": true,
+    "Oregon State University": true,
+    "University of Wisconsin-Madison": true,
+    "University of Minnesota-Twin Cities": true,
+    "University of Iowa": true,
+    "Ohio State University-Main Campus": true,
+    "Pennsylvania State University-Main Campus": true,
+};
+
+google.charts.setOnLoadCallback(function(){
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 230,
+    barChartWidth: 100,
+    source: {
+      url: "https://nces.ed.gov/ipeds/datacenter/",
+      gdocId: '1UsMPgGSTyaYj93CkGp7ez_q4bbNY6KAdZGvreYXJ_YM',
+      tables: "Universities",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    onLoad: function(){
+      // Add group information to the Universities
+      kshf.dt.Universities.forEach(function(u){
+        var name = u.data['institution name'];
+        u.data.Name = name;
+        u.data.Groups=[];
+        if(AAU_Group[name]){ u.data.Groups.push("AAU"); }
+        if(CIC_Group[name]){ u.data.Groups.push("CIC (Big 10)"); }
+        if(ACC_Group[name]){ u.data.Groups.push("ACC"); }
+        if(Unizin_Group[name]){ u.data.Groups.push("Unizin"); }
+      })
+    },
+    summaries: [
+        { name: "Groups", collapsed: false },
+        { name: "Undergraduate enrollment", value: "DRVEF2013.Undergraduate enrollment", skipZero: true },
+        { name:'Total Enrollment', 
+          value: function(){ 
+            return this["DRVEF2013.Undergraduate enrollment"]+this["DRVEF2013.Graduate enrollment"]; 
+          },
+          panel: 'none' },
+        { name: "Graduate enrollment", value: "DRVEF2013.Graduate enrollment", skipZero: true },
+        { name: "% Transfers",
+          value: function(){
+              var transfer = this["DRVEF2013.Transfer-in degree/certificate-seeking undergraduate enrollment"];
+              var firstTime = this["DRVEF2013.First-time degree/certificate-seeking undergraduate enrollment"];
+              return 100*transfer/(transfer+firstTime);
+          }, 
+          unitName: "%" },
+        { name: "Institution Type", value: "HD2013.Sector of institution",
+          catSortBy: [
+            'Public, 4-year or above',
+            'Private not-for-profit, 4-year or above',
+            'Private for-profit, 4-year or above'
+          ] },
+        { name: "State", 
+          value: "HD2013.State abbreviation", panel: "middle",
+          catMap: function(){ return US_States.index_name[this.id].geo; },
+          },
+        { name: "Geographic region", value: "HD2013.Geographic region", panel: "middle", collapsed: true, },
+        { name: "Degree of urbanization", panel: "middle", collapsed: true,
+          value: "HD2013.Degree of urbanization (Urban-centric locale)" },
+        { name: "Carnegie Class. - Basic", collapsed: true,
+          value: "HD2013.Carnegie Classification 2010: Basic" },
+        { name: "Carnegie Class. - Size and Setting", collapsed: true,
+          value: "HD2013.Carnegie Classification 2010: Size and Setting" },
+        { name: "Carnegie Class. - Undergrad. Instr. Prog.", collapsed: true,
+          value: "HD2013.Carnegie Classification 2010: Undergraduate Instructional Program" },
+        { name: "Carnegie Class. - Grad. Instr. Prog.", collapsed: true,
+          value: "HD2013.Carnegie Classification 2010: Graduate Instructional Program" },
+        {/*
+            name: "Undergraduate Profile", collapsed: true,
+            value: "HD2013.Carnegie Classification 2010: Undergraduate Profile",
+        },{
+            name: "Enrollment Profile", collapsed: true,
+            value: "HD2013.Carnegie Classification 2010: Enrollment Profile",
+        },{ name: "Diversity", panel: 'right',
+            facets: [
+                {*/   name: "% A. Indian / Alaska Native", collapsed: true, panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are American Indian or Alaska Native",
+                    description: "Percent of total enrollment that are American Indian or Alaska Native",
+                    unitName: "%"
+                },{ name: "% Asian", collapsed: true, panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are Asian",
+                    description: "Percent of total enrollment that are Asian",
+                    unitName: "%"
+                },{ name: "% Hispanic / Latino", collapsed: true, panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are Hispanic/Latino",
+                    description: "Percent of total enrollment that are Hispanic/Latino",
+                    unitName: "%"
+                },{ name: "% Nativa Hawaiian / Pac. Isl.", collapsed: true, panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are Native Hawaiian or Other Pacific Islander",
+                    description: "Percent of total enrollment that are Native Hawaiian or Other Pacific Islander",
+                    unitName: "%"
+                },{ name: "% Nonresident Alien", collapsed: true, panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are Nonresident Alien",
+                    description: "Percent of total enrollment that are Nonresident Alien",
+                    unitName: "%"
+                },{ name: "% White",
+                    value: "DRVEF2013.Percent of total enrollment that are White",panel: 'right',
+                    description: "Percent of total enrollment that are White",
+                    unitName: "%"
+                },{ name: "% Black / African American",panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are Black or African American",
+                    description: "Percent of total enrollment that are Black or African American",
+                    unitName: "%"
+                },{ name: "% Women",panel: 'right',
+                    value: "DRVEF2013.Percent of total enrollment that are women",
+                    description: "Percent of total enrollment that are women",
+                    unitName: "%"
+                /*}
+            ]*/
+
+        },{ name: "6-Year Grad Rate", panel: 'right',
+            value: "DRVGR2013.Graduation rate, total cohort",
+            description: "Graduation rate, total cohort", unitName: "%"
+        },{ name: "6-Year Grad Rate: Men", panel: 'right', collapsed: true, unitName: "%",
+            value: "DRVGR2013.Graduation rate, men",
+            description: "Graduation rate, men"
+        },{ name: "6-Year Grad Rate: Women", panel: 'right', collapsed: true, unitName: "%",
+            value: "DRVGR2013.Graduation rate, women",
+            description: "Graduation rate, women"
+        }
+    ],
+    recordDisplay: {
+      sortBy: "Total Enrollment",
+      showRank: true,
+      textSearch: "Name",
+      recordView: function(){
+          return "<a href='http://"+this["HD2013.Institution's internet website address"]
+              +"' target='_blank'>"+this["institution name"]+"</a>"
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{
+  height: calc(100vh - 90px);
+}
+.kshfRecord a{
+  color: black;
+  text-decoration: none;
+}
+.kshfRecord a:hover{
+  color: #2A5DB0;
+  text-decoration: underline;
+}
+</style>
+    </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Universities in the U.S.</div>
+      <div id="demo_Browser"></div></div>
+
+    <div id="demo_Infobox">
+      Data from 
+      <a href="https://nces.ed.gov/ipeds/datacenter/" target='_blank'>
+          The Integrated Postsecondary Education Data System (IPEDS), National Center of Education Statistics, U.S. Dep. of Education.</a><br>
+      <b>770 Selected Institutions:</b>
+      Offering Doctorate Degree.
+      Instituion size > 1000.
+      U.S. Only.
+      Based on 2013 records.
+      </div>
+  </body>
+</html>

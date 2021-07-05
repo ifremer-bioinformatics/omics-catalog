@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>U.S. Presidents</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Presidents",
+    categoryTextWidth: 160,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdG1WX29BanYzRHU4VHpDUTNPX3JLaUE',
+      tables: {name: "Presidents", id:"Position"},
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    summaries: [
+      "Party",
+      { name: "State of Birth", catMap: function(){ return US_States.index_name[this.id].geo; } },
+      { name: "Occupation" },
+      { name: "College", panel: 'right' },
+      { name: "Religion", panel: 'right' },
+      { name: "Notes", panel: 'right' },
+      { name: "Age at inaguration", panel: 'right' },
+      { name: "Term Start", panel: 'bottom' }
+    ],
+    recordDisplay: {
+      displayType: 'grid',
+      textSearch: "Name",
+      recordView: function(){ 
+        return "<a href='http://www.whitehouse.gov/about/presidents/"+this.Link+"' target='_blank'>"+
+          "<img src='"+this.Image+"' style='display: block; width: 100%'></a>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  max-width: 900px;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">The Presidents of the United States</div>
+      <div id="demo_Browser"></div>
+
+      <div id="demo_Infobox">
+        Data from 
+        <a href="http://www.infoplease.com/ipa/A0194030.html" target="_blank"> http://www.infoplease.com/ipa/A0194030.html</a>
+        </div>      
+      </div>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Foodborne Outbreaks</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 150,
+    categoryTextWidth: 210,
+    rightPanelLabelWidth: 180,
+    source: {
+      url: 'http://wwwn.cdc.gov/foodborneoutbreaks/Default.aspx',
+      gdocId: '1x73EFLhTr87zquJmdLkT4wjcZ0UyQl2i-h94Fc717eM',
+      tables: "Foodborne Outbreaks",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    summaries: [
+      { name: "Year", panel: 'bottom', timeFormat: "%Y" },
+      { name: "State", panel: 'middle', viewAs: 'map',
+        catMap: function(){ 
+          var x=US_States.index_name[this.id];
+          if(x) return x.geo;
+        } },
+      { name: "Month", value: function(){ return this.Month-1; }, catLabel: _demo.Month, catSortBy: "id", panel: 'right' },
+      { name: "Location of Preparation", panel: 'left', catSplit: ";" },
+      { name: "Contaminated Ingredient", panel: 'left', catSplit: ";" },
+      { name: "Food Vehicle", panel: 'left', minAggrValue: 5 },
+      { name: "Illnesses", panel: 'middle', intervalScale: 'log', unitName: "ppl", showPercentile: true, skipZero: true },
+      { name: "Hospitalizations", panel: 'middle', collapsed: true, unitName: "ppl", skipZero: true },
+      { name: "Deaths", panel: 'middle', collapsed: true, unitName: "ppl", skipZero: true },
+      { name: "Genus Species", panel: 'right', catSplit: "; " },
+      { name: "Etiology Status", catSplit: "; ", panel: 'right', collapsed: true }
+    ]
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  height: calc(100vh - 50px);
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">
+        <a href="http://wwwn.cdc.gov/foodborneoutbreaks/Default.aspx" target='_blank'
+          ><img src="https://upload.wikimedia.org/wikipedia/commons/7/71/US_CDC_logo.svg" style="height: 30px; vertical-align: top;"></a>
+        Foodborne Outbreak Online Database
+        </div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

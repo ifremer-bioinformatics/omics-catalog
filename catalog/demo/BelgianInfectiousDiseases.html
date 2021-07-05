@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Belgian Infectious Diseases Dataset</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+var DiseaseMap = {
+  "BORPER": "Bordetella pertussis",
+  "BRRBUR": "Borrelia burgdorferi (Lyme)",
+  "CAM_SP": "Campylobacter",
+  "CHLPSI": "Chlamydia psittaci",
+  "CHLTRA": "Chlamydia trachomatis",
+  "CRS_SP": "Cryptosporidium",
+  "ENTHIS": "Entamoeba histolytica",
+  "GIA_SP": "Giardia",
+  "HAEINF": "Haemophilus influenzae",
+  "LIS_SP": "Listeria monocytogenes",
+  "MENI": "Neisseria meningitidis",
+  "NEIGON": "Neisseria gonorrhoeae",
+  "PNEU": "Streptococcus pneumoniae",
+  "SALM": "Salmonella",
+  "SHIG": "Shigella",
+  "STRPYO": "Streptococcus pyogenes",
+  "TBEV": "Tick-borne encephalitis",
+  "V_ADV": "Adenovirus",
+  "V_HAV": "Hepatitis A virus",
+  "V_HCV": "Hepatitis C virus",
+  "V_HTV": "Hantavirus",
+  "V_PIV": "Parainfluenza",
+  "V_RSV": "Respiratory Syncytial Virus",
+  "V_RTV": "Rotavirus",
+  "VTEC": "Escherichia coli (VTEC)",
+  "WNF": "West Nile virus",
+  "YERENT": "Yersinia enterocolitica",
+  "AGAL": "S. agalactiae",
+  "AMR": "Antibiotic resistant Pseudomonas and Acinetobacter",
+  "ANAP": "Anaplasma (Ehrlichia)",
+  "BAR_SP": "Bartonella",
+  "BORPAR": "Bordetella parapertussis",
+  "BORR": "Borrelia burgdorferi",
+  "BOTU": "C. botulinum and perfringens and pseudotuberculosis",
+  "BRU_SP": "Brucella",
+  "BRUC": "Brucella",
+  "BURK": "Burkholderia cepacia",
+  "CAMP": "Campylobacter",
+  "CAN_SP": "Candida",
+  "CHIK": "Chikungunya virus",
+  "CHLPNE": "C. pneumoniae",
+  "CHOL": "V. cholerae and V. parahaemolyticus",
+  "CLSDIF": "C. difficile",
+  "COLBUR": "C. burnetii",
+  "CONG": "Congenital infections",
+  "CONSYPH": "T. pallidum congenital",
+  "CRY_SP": "Cryptococcus",
+  "CYC_SP": "Cyclospora",
+  "DENGUE": "Dengue virus",
+  "DIFF": "C. difficile",
+  "DIPH": "C. diphtheriae and ulcerans",
+  "ENC": "Enterococcus",
+  "ENTE": "Enterovirus",
+  "ESBL": "ESBL + carbapenemase producing Enterobacteriaceae",
+  "ESCCOL": "Escherichia coli (VTEC)",
+  "GONOAMR": "N. gonorrhoeae",
+  "HANTA": "Hantavirus",
+  "HELI": "H. pylori",
+  "HELPYL": "H. pylori",
+  "HEPA": "Hepatitis A virus",
+  "HEPB": "Hepatitis B virus",
+  "HEPC": "Hepatitis C virus",
+  "HEPD": "Hepatitis D virus",
+  "HEPE": "Hepatitis E virus",
+  "INFL": "Influenza virus",
+  "INFLANTIVIR": "Influenza virus",
+  "INFLVIRAGGR": "Influenza virus",
+  "LEGI": "Legionella",
+  "LEGPNE": "L. pneumophila",
+  "LEI_SP": "Leishmania",
+  "LEP_SP": "Leptospira",
+  "LGV": "C. trachomatis",
+  "LIST": "Listeria monocytogenes",
+  "MEAS": "Measles virus",
+  "MUMP": "Mumps virus",
+  "MYC_SP": "Mycobacterium",
+  "MYCO": "Mycosis",
+  "MYCOISO": "M. tuberculosis genotyping (ECDC project)",
+  "MYCTUB": "M. tuberculosis",
+  "MYPPNE": "M. pneumoniae",
+  "NEIMEN": "N. meningitidis",
+  "NORO": "Norovirus",
+  "PAS_SP": "Pasteurella",
+  "PERT": "Bordetella pertussis and parapertussis",
+  "PLA_SP": "Plasmodium",
+  "POLI": "Poliovirus",
+  "QFEV": "C. burnetii",
+  "RABI": "Rabies virus",
+  "RESP": "Respiratory pathogens",
+  "RICK": "Rickettsia",
+  "ROTA": "Rotavirus",
+  "RUBE": "Rubella virus",
+  "SAL_SP": "Salmonella",
+  "SARS": "Severe Acute Respiratory Syndrome",
+  "SHI_SP": "Shigella",
+  "STAAUR": "S. aureus",
+  "STAU": "S. aureus",
+  "STRBHB": "S. agalactiae",
+  "STRPNE": "S. pneumoniae",
+  "STRPYO": "S. pyogenes",
+  "STRPYOG": "S. pyogenes",
+  "SYPH": "T. pallidum",
+  "TOP_SP": "Toxoplasma",
+  "TREPAL": "T. pallidum",
+  "TUBE": "Mycobacterium",
+  "TUBECULT": "Mycobacterium identification",
+  "TUBEGENO": "M. tuberculosis genotyping (Brussels)",
+  "V_ENV": "Enterovirus",
+  "V_HBV": "Hepatitis B virus",
+  "V_HEV": "Hepatitis E virus",
+  "V_HSV": "Herpes simplex virus",
+  "V_INF": "Influenza virus",
+  "V_MEV": "Measles virus",
+  "V_MTV": "Human metapneumovirus",
+  "V_MUV": "Mumps virus",
+  "V_NWA": "Norovirus",
+  "V_PAV": "Human Papillomavirus",
+  "V_PVV": "Parvovirus B19",
+  "V_RBV": "Rubella virus",
+  "V_RHI": "Rhinovirus",
+  "YELF": "Yellow fever virus",
+  "YERS": "Y"
+};
+
+var ProvinceMap = {
+  10: "Brussels",
+  21: "Antwerp",
+  22: "Limburg", 
+  23: "East Flanders",
+  24: "Flemish Brabant",
+  25: "West Flanders",
+  31: "Walloon Brabant",
+  32: "Hainaut",
+  33: "Liege",
+  34: "Luxembourg",
+  35: "Namur"
+  // the rest: Unknown;
+};
+
+var ProvinceFeatures = {};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 200,
+    barChartWidth: 200,
+    recordName: "Cases",
+    source: {
+      url: "https://epistat.wiv-isp.be/",
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "epistat_public_cases",
+      callback: function(){
+        var browser=this;
+        $.ajax({
+          // Load state geometries
+          url: 'http://asset.keshif.me/data/GeoJSONs/Belgium-provinces-unk.geo.json',
+          success: function(topojsonData){
+            topojsonData.features.forEach(function(feature){
+              ProvinceFeatures[feature.properties.name] = feature;
+            });
+            browser.loadCharts();
+          }
+        });
+      }
+    },
+    summaries: [
+      { name: "Disease", value: "Subject", catLabel: DiseaseMap },
+      { name: "Province", 
+        value: "NUTS2", 
+        catLabel: ProvinceMap, 
+        catMap: function(){ return ProvinceFeatures[ProvinceMap[this.id]]; },
+        panel: "middle",
+        viewAs: "map"},
+      { name: "Gender",
+        value: function(){ 
+          switch(this.Gender){
+            case "M": return "Male "+getIcon("M");
+            case "F": return "Female "+getIcon("F");
+            default: return "Unknown <span class='fa fa-question'></span>";
+          }
+        } },
+      { name: "Age", value: function(){if(this.Age>0 && this.Age<100) return this.Age;}},
+      { name: "Date", value: "DateMonday", timeFormat: "%Y-%m-%d", panel: "bottom" }
+    ],
+  });
+});
+        </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Belgian Infectious Diseases Dataset</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data Re-Vis, from Mathias Leroy's <a href="https://epistat.wiv-isp.be/" target='_blank'>https://epistat.wiv-isp.be/</a>.
+      </div>
+  </body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Data Breaches</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+
+/*      http://www.breachlevelindex.com/csv/DataBreachUpdate.csv
+        http://www.bloomberg.com/infographics/2014-05-14/target-data-breach.html
+        http://www.breachlevelindex.com
+        http://www.informationisbeautiful.net/visualizations/worlds-biggest-data-breaches-hacks/
+        http://www.bloomberg.com/infographics/2014-08-21/top-data-breaches.html
+*/
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Data Breaches",
+    leftPanelLabelWidth: 190,
+    rightPanelLabelWidth: 200,
+    source: {
+      gdocId: '14vd0RHPy-JyetjppxJ4R5UywaeszV0HR599MX91KkjI',
+      tables: "Breaches"
+    },
+    summaries: [
+      { name: "Type", panel: 'left' },
+      { name: "Industry" },
+      { name: "# of Records", showPercentile: true },
+      { name: "Source", panel: 'right'},
+//      { name: "Data Source", panel: 'right' },
+      { name: "Record Types", panel: 'right', catSplit: ",",
+        catLabel: {
+          'NAM': 'Name',
+          'PII': 'Personally Identifying Information',
+          'SSN': 'Social Security Number',
+          'DOB': 'Day of Birth',
+          'ADD': 'Address',
+          'EMA': 'Email',
+          'CCN': 'Credit Card Number',
+          'PSS': 'Password',
+          'LOG': 'Log',
+          'MED': 'Medical Records',
+          'PHO': 'Phone Number',
+          'FIN': 'Financial',
+        } },
+      { name: "Date", panel: "bottom" }
+    ],
+    recordDisplay: {
+      sortBy: 'Date',
+      sortColWidth: 85,
+      textSearch: {name: "Organization", value: "org" },
+      recordView: function(){
+        var str = this.org;
+        if(this.source_1){
+          str+="<span class='item_source'>";
+          str+="<a href='"+this.source_1+"' target='_blank' class='fa fa-info-circle'></a>";
+          if(this.source_2)
+          str+="<a href='"+this.source_2+"' target='_blank' class='fa fa-info-circle'></a>";
+          str+="</span>";
+        }
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.item_source{
+  float: right;
+  font-size: 0.8em;
+  color: gray;
+}
+.item_source a{
+  color: lightgray !important;
+  text-decoration: none;
+  margin-right: 3px;
+}
+.item_source a:hover{
+  color: gray !important;
+}
+.item_source::before{
+}
+.columnLabel{
+  font-size: 0.9em;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Data Breaches Around the Globe, 2013-2015</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data collected by 
+        <a href='http://www.privacyrights.org/data-breach' target='_blank'>Privacy Rights Clearinghouse</a>.
+      </div>
+  </body>
+</html>

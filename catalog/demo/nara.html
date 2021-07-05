@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>National Archives - Collection Browser</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+function loadData(browser){
+  browser.primaryTableName = "Photos";
+
+  kshf.dt.Photos = [];
+  var arr = kshf.dt.Photos;
+  var parentId = $("#naraParentID")[0].value;
+  var resultFields = $("#naraResultFields")[0].value;
+  var rows=$("#naraRows")[0].value;
+
+  $.ajax({
+    url:"https://catalog.archives.gov/api/v1/?naIds="+parentId,
+    async:false,
+    success: function(data){
+      browser.itemName = data.opaResponse.results.result[0].description.series.title;
+    }
+  });
+
+  $.ajax({
+    //url: "http://apps.washingtonpost.com/investigative/homicides/api/v1/victim/?limit=0&offset=0&format=json",
+    // url: "./data_private/dc_homicides.json", // original source
+    url: "https://catalog.archives.gov/api/v1/?description.item.parentSeries.naId="+
+      parentId+"&rows="+rows+"&resultFields="+resultFields,
+    error: function(e,f){
+      console.log(e+" - "+f);
+    },
+    success: function(data){
+      data.opaResponse.results.result.forEach(function(poster){
+        poster.id = 1*poster.naId;
+        arr.push(new kshf.Record(poster,"id"))
+      });
+      browser.loadCharts();
+    }
+  });
+}
+
+var loadBrowser = function(){
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Civil Rights March on Washington Photos",
+    categoryTextWidth: 200,
+    source: { 
+      url: "http://www.archives.gov",
+      callback: loadData
+    },
+    summaries: [
+      { name: "Tags",
+        value: function(){
+          var contribs = this.publicContributions;
+          if(contribs===undefined) return;
+          var tags = contribs.tags;
+          if(tags===undefined) return;
+          var r=[];
+          if(tags.tag.length===undefined){
+              r.push(tags.tag['$']);
+          } else {
+              tags.tag.forEach(function(tag){
+                  r.push(tag['$']);
+              });
+          }
+          return r;
+        }
+      },{ name: "Tag Contributors",
+          value: function(){
+              var contribs = this.publicContributions;
+              if(contribs===undefined) return;
+              var tags = contribs.tags;
+              if(tags===undefined) return;
+              var r=[];
+              if(tags.tag.length===undefined){
+                  r.push(tags.tag['@user']);
+              } else {
+                  tags.tag.forEach(function(tag){
+                      r.push(tag['@user']);
+                  });
+              }
+              return r;
+          }
+      },{ name: "contributors",
+      },{ name: "Types", value: "typesOfArchivalMaterials"
+      },{ name: "levelOfDescription", collapsed: true
+      },{ name: "Use Restrictions", value: "useRestrictions", collapsed: true,
+      },{ name: "Access Restrictions", value: "accessRestrictions", collapsed: true,
+      }
+    ],
+    recordDisplay: {
+      sortBy: "id",
+      displayType: 'grid',
+      textSearch: "title",
+      recordView: function(){
+        var url="";
+        if(this.objects) {
+          if(this.objects.object.length){
+            url = this.objects.object[0].thumbnail['@url'];
+          } else {
+            url = this.objects.object.thumbnail['@url'];
+          }
+          url = url.replace("govOpaAPI","gov/OpaAPI");
+        }
+        return "<a target='_blank' href='"+this.url+"' class='thumbnail'>"+
+            "<img class='thumbImg' src='"+url+"'></a>"+
+            "<span class='title'>"+this.title+"</span>";
+      }
+    }
+  });
+};
+
+// Custom controls
+$(document).ready(function(){
+    $("#naraPreset").on("change",function(a){
+        var v=this.selectedOptions[0].getAttribute("value");
+        $("#naraParentID")[0].value = 1*v;
+    });
+    $("#naraLoadButton").on("click",function(){
+        loadBrowser(); 
+    })
+});
+
+</script>
+
+<style id="kshfStyle">
+.kshfRecord{
+  width: 150px;
+  overflow: visible !important;
+}
+.kshfRecord > .itemRow{
+  overflow: visible !important;
+}
+.content{
+  padding: 3px;
+}
+.thumbnail{
+  overflow: visible !important;
+}
+.kshfRecord:hover{
+  z-index: 200 !important;
+}
+.kshfRecord .content img.thumbImg:hover{
+  transform: scale(1.5);
+}
+.content img.thumbImg{
+  border: solid;
+  border-color: black;
+  border-width: 1px;
+  border-radius: 0px;
+  width: 100%;
+  transition: all 150ms ease-in;
+  -webkit-transition: all 150ms ease-in;
+  -o-transition: all 150ms ease-in;
+  -moz-transition: all 150ms ease-in;
+}
+
+#loadOptions{
+    border: solid 1px gray;
+    border-radius:4px;
+    padding: 3px;
+    margin:3px;
+    display: inline-block;
+}
+#naraResultFields{
+    width: 200px;
+}
+#naraRows{
+    width: 50px;
+}
+</style>
+	</head>
+  <body>
+    <div style="text-align:center">
+      <span id="loadOptions">
+        <select id="naraPreset">
+          <option value="">Choose Dataset :</option>
+          <option value="541992">Civil Rights March</option>
+          <option value="513498">World War 2 posters</option>
+          </select>
+        parentID: <input type="number" id="naraParentID">
+        resultFields: <input type="text" id="naraResultFields" value="naId,publicContributions,objects">
+        rows: <input type="number" id="naraRows" value="200">
+        <input type="button" id="naraLoadButton" value="Load Collection">
+        </span>
+      </div>
+    <div id="demo_PageTitle" align="center">National Archives Data Browser</div>
+    <div class="contents"><div id="demo_Browser"></div></div>
+
+    <div id="demo_Infobox">
+      <a href="https://catalog.archives.gov" target='_blank'>Data</a> is provided by the <b>National Archives</b>.
+      </div>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+Bootstrap : docker
+From : ubuntu:18.04
+
+%post
+
+	apt-get -y update
+	apt-get -y install curl
+	cd ~
+	
+	#Installation of node.js
+	curl -sL https://deb.nodesource.com/setup_10.x | bash
+	apt-get install -y nodejs
+	
+	
+	#Installation of jbrowse2
+	cd /opt
+	npm install -g @jbrowse/cli
+	jbrowse create jbrowse2
+	which jbrowse
+
+%files
+	exec_jbrowse.sh /opt
+	fix_symlink.sh /opt
+
+
+
+

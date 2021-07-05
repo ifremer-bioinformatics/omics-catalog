@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Mushrooms</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+var getName = {
+    Class: {
+      e: 'Edible',
+      p: 'Poisonous',
+    },
+    Shape: {
+      b: "Bell",
+      c: "Conical",
+      x: "Convex",
+      f: "Flat",
+      k: "Knobbed",
+      s: "Sunken",
+      e: "Enlarging",
+      t: "Tapering",
+    },
+    Surface: {
+      f: "Fibrous",
+      g: "Grooves",
+      y: "Scaly",
+      s: "Smooth",
+      k: "Silky",
+    },
+    Color: {
+      n: "Brown",
+      b: "Buff",
+      c: "Cinnamon",
+      g: "Gray",
+      r: "Green",
+      p: "Pink",
+      u: "Purple",
+      e: "Red",
+      w: "White",
+      y: "Yellow",
+      k: "Black",
+      h: "Chocolate",
+      o: "Orange",
+    },
+    Odor: {
+      a: "Almond",
+      l: "Anise",
+      c: "Creosote",
+      y: "Fishy",
+      f: "Foul",
+      m: "Musty",
+      n: "None",
+      p: "Pungent",
+      s: "Spicy",
+    },
+    GillAttachment: {
+      a: 'Attached',
+      d: 'Descending',
+      f: 'Free',
+      n: 'Notched',
+    },
+    GillSpacing: {
+      c: 'Close',
+      w: 'Crowded',
+      d: 'Distant',
+    },
+    GillSize: {
+      b: 'Broad',
+      n: 'Narrow',
+    },
+    Population: {
+      a: 'Abundant',
+      c: 'Clustered',
+      n: 'Numerous',
+      s: 'Scattered',
+      v: 'Several',
+      y: 'Solitary',
+    },
+    Habitat: {
+      g: 'Grasses',
+      l: 'Leaves',
+      m: 'Meadows',
+      p: 'Paths',
+      u: 'Urban',
+      w: 'Waste',
+      d: 'Woods',
+    },
+    RingNumber: {
+      n: 'None',
+      o: 'One',
+      t: 'Two',
+    },
+    RingType: {
+      c: 'Cobwebby',
+      e: 'Evanescent',
+      f: 'Flaring',
+      l: 'Large',
+      n: 'None',
+      p: 'Pendant',
+      s: 'Sheathing',
+      z: 'Zone',
+    },
+    Root: {
+      b: 'Bulbous',
+      c: 'Club',
+      u: 'Cup',
+      e: 'Equal',
+      z: 'Rhizomorphs',
+      r: 'Rooted',
+      '?': '?'
+    }
+};
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Mushroom Species",
+    barChartWidth: 110,
+    leftPanelLabelWidth: 148,
+    rightPanelLabelWidth: 148,
+    middlePanelLabelWidth: 148,
+    source: {
+      gdocId: '1G_itMKOz-mxZNZNT_71JaCBghX9RbudADiFz4X1pc7I',
+      tables: "Mushrooms"
+    },
+    summaries: [
+      { name: "Class", catLabel: getName.Class },
+      { name: "Habitat", catLabel: getName.Habitat },
+      { name: "Odor", catLabel: getName.Odor },
+      { name: "Bruises", collapsed: true, },
+
+      { name: "Gill - Attachment", value: "Gill Attachment", catLabel: getName.GillAttachment },
+      { name: "Gill - Spacing", value: "Gill Spacing", catLabel: getName.GillSpacing },
+      { name: "Gill - Size", value: "Gill Size", catLabel: getName.GillSize },
+      { name: "Gill - Color", value: "Gill Color", catLabel: getName.Color },
+
+      { name: "Population", panel: "middle", catLabel: getName.Population },
+      { name: "Cap - Shape", panel: "middle", value: "Cap Shape", catLabel: getName.Shape },
+      { name: "Cap - Surface", panel: "middle", value: "Cap Surface", catLabel: getName.Surface },
+      { name: "Cap - Color", panel: "middle", value: "Cap Color", catLabel: getName.Color },
+       
+      { name: "Ring - Number", panel: "middle", value: "Ring Number", catLabel: getName.RingNumber },
+      { name: "Ring - Type", panel: "middle", value: "Ring Type", catLabel: getName.RingType },
+       
+      { name: "Spore Print Color", panel: 'right', catLabel: getName.Color },
+       
+      { name: "Stalk - Shape", panel: 'right', value: "Stalk Shape", catLabel: getName.Shape },
+      { name: "Stalk - Root", panel: 'right', value: "Stalk Root", catLabel: getName.Root },
+      { name: "Stalk - Surface Above Ring", panel: 'right', value: "Stalk Surface Above Ring", catLabel: getName.Surface },
+      { name: "Stalk - Surface Below Ring", panel: 'right', value: "Stalk Surface Below Ring", catLabel: getName.Surface },
+      { name: "Stalk - Color Above Ring", panel: 'right', value: "Stalk Color Above Ring", catLabel: getName.Color },
+      { name: "Stalk - Color Below Ring", panel: 'right', value: "Stalk Color Below Ring", catLabel: getName.Color }
+    ]
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{
+  height: calc(100vh - 90px);
+  max-width: 1100px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="http://archive.ics.uci.edu/ml/datasets/Mushroom" target='_blank'>Mushroom Data Set</a> from
+      UC Irvine Machine Learning Repository. 
+      This data set includes descriptions of hypothetical samples corresponding to 23 species of gilled mushrooms in the Agaricus and Lepiota Family (pp. 500-525). The Guide states that there is no simple rule for determining the edibility of a mushroom; no rule like ``leaflets three, let it be'' for Poisonous Oak and Ivy.
+      </div>
+  </body>
+</html>

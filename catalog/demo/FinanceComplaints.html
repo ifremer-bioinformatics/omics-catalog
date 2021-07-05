@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Consumer Complaint Database - 2015</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+
+function response(){
+  switch(this.id){
+    case "NR": return "Company chooses not to provide a public response";
+    case "TP": return "Company believes complaint caused principally by actions of third party outside the control or direction of the company";
+    case "APR": return "Company believes it acted appropriately as authorized by contract or law";
+    case "OP": return "Company believes complaint represents an opportunity for improvement to better serve consumers";
+    case "MIS": return "Company believes the complaint is the result of a misunderstanding";
+    case "CVD": return "Company can't verify or dispute the facts in the complaint";
+    case "DIS": return "Company disputes the facts presented in the complaint";
+    case "ERR": return "Company believes complaint is the result of an isolated error";
+    case "PAS": return "Company believes complaint relates to a discontinued policy or procedure";
+  };
+  return this.id;
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  var timeParse = d3.timeParse("%m-%b-%Y");
+
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    leftPanelLabelWidth: 170,
+    barChartWidth: 125,
+    recordName: "Complaints to Financial Institutions",
+    categoryTextWidth: 200,
+    source: {
+      url: 'http://www.consumerfinance.gov/complaintdatabase',
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "Consumer_Complaints_2015",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    summaries: [
+      { name: "Product", 
+        catLabel: {
+          D:  "Debt collection",
+          M:  "Mortgage",
+          B:  "Bank account or service",
+          P:  "Payday loan",
+          S:  "Student loan",
+          CR: "Credit reporting",
+          CC: "Credit card",
+          CL: "Consumer loan",
+          PC: "Prepaid card",
+          MT: "Money transfers",
+          O:  "Other financial service",
+        } },
+      { name: "Sub-product" },
+      { name: "Submitted via", 
+        catLabel: {
+          W: "Web",
+          P: "Phone",
+          R: "Referral",
+          M: "Postal mail",
+          F: "Fax",
+        }},
+      { name: "Company response to consumer", 
+        catLabel: {
+          I: "In Progress",
+          C: "Closed",
+          E: "Closed with explanation",
+          N: "Closed with non-monetary relief",
+          M: "Closed with monetary relief",
+          U: "Untimely response",
+          C: "Closed",
+        }},
+      { name: "Timely response?" },
+      { name: "Consumer disputed?" },
+      { name: "Company", panel: "middle", minAggrValue: 100},
+      { name: "State", panel: "middle", viewAs: "map",
+        catLabel: function(){ return getStateName(this.id); },
+        catMap:   function(){ 
+          var state = US_States.index_code[this.id];
+          if(state) return state.geo;
+        } },
+      { name: "Issue", panel:"right", 
+        catLabel: {
+          IIOCR: "Incorrect information on credit report",
+          CACDNO: "Cont'd attempts collect debt not owed",
+          LMCF: "Loan modification,collection,foreclosure",
+          LSPEA: "Loan servicing, payments, escrow account",
+          AOCM: "Account opening, closing, or management",
+          CRCI: "Credit reporting company's investigation",
+          DVD: "Disclosure verification of debt",
+          MLL: "Managing the loan or lease",
+          TTIA: "Taking/threatening an illegal action",
+          PWUP: "Problems when you are unable to pay",
+          AOMB: "Application, originator, mortgage broker",
+          DW: "Deposits and withdrawals",
+          DLS: "Dealing with my lender or servicer",
+          CT: "Communication tactics",
+          FSR: "False statements or representation",
+          ITFE: "Identity theft / Fraud / Embezzlement",
+          ICSI: "Improper contact or sharing of info",
+          CCA: "Closing/Cancelling account",
+          BD: "Billing disputes",
+          PCFL: "Problems caused by my funds being low",
+          UGCR: "Unable to get credit report/credit score",
+          IUCR: "Improper use of my credit report",
+          CDU: "Credit decision / Underwriting",
+          CRL: "Can't repay my loan",
+          DA: "Delinquent account",
+          MRPSM: "Making/receiving payments, sending money",
+          SPC: "Settlement process and costs",
+          AM: "Advertising and marketing",
+          UDAC: "Using a debit or ATM card",
+          CMIP: "Credit monitoring or identity protection",
+          CFIE: "Charged fees or interest I didn't expect",
+          CSCR: "Customer service / Customer relations",
+          SFLL: "Shopping for a loan or lease",
+          UTTI: "Unauthorized transactions/trans. issues",
+          UICC: "Unsolicited issuance of credit card",
+          TOLL: "Taking out the loan or lease",
+          MNA: "Money was not available when promised",
+          CCPDP: "Credit card protection / Debt protection",
+          CD: "Credit determination",
+          FS: "Fraud or scam",
+          MOCA: "Managing, opening, or closing account",
+          R: "Rewards",
+          BT: "Balance transfer",
+          RLDAF: "Received a loan I didn't apply for",
+          OTI: "Other transaction issues",
+          CLID: "Credit line increase/decrease",
+          PNC: "Payment to acct not credited",
+        } },
+      { name: "Sub-issue", panel: "right"},
+      { name: "Date Received", panel: "middle",
+        value: function(){ return timeParse(this["Date received"]+"-2015"); } }
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">
+        <a href="http://www.consumerfinance.gov/complaintdatabase" target='_blank'>Consumer Complaint Database</a>
+         , 01/01/2015 ... 27/08/2015</div>
+      <div id="demo_Browser"></div>
+
+      
+    </div>
+
+    <div id="demo_Infobox">
+      Data from 
+      <a href="http://www.consumerfinance.gov/complaintdatabase" target="_blank">Consumer Complaint Database</a>, 
+      by <a href="http://www.consumerfinance.gov/" target="_blank">Consumer Financial Protection Bureau</a>.
+      </div>
+
+  </body>
+</html>

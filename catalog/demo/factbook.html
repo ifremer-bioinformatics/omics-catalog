@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>World Factbook</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <!-- Demos - shared -->
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+var factsXML;
+/*
+var r= [];
+kshf.dt.Countries.forEach(function(country){
+  country = country.data;
+  r.push({
+    Name: country.Name,
+    "Education Expenditures": country["Education Expenditures"],
+    "Health expenditures": country["Health expenditures"],
+    "Life Expectancy": country["Life Expectancy"],
+    "Median Age": country["Median Age"],
+    "Military expenditures": country["Military expenditures"],
+    "Population": country["Population"],
+    "Urbanization": country["Urbanization"]
+  })
+});
+*/
+
+function loadData(browser){
+  $.ajax( {
+    url: 'http://asset.keshif.me/data/factbook.xml',
+    type: "GET",
+    dataType: "xml",
+    async: true,
+    success: loadFactbook
+  });
+};
+
+function cleanUpText(n){
+    n = n.replace(/( \d*\.*\d*\%)/g, ''); // Remove LANG 2.232% - percentage
+    n = n.replace(/ \(.*\)/g, ''); // Remove things inside paranthesis
+    n = n.replace(/\(|\)/g, ''); // remove any remainign paranthesis characters
+    if(n.length>20) return null; // Probably an improper string
+    return kshf.Util.toProperCase(n);
+};
+
+function loadFactbook(facts){
+    factsXML = $(facts);
+    browser.primaryTableName = "Countries";
+    kshf.dt.Countries = [];
+    kshf.dt.Category = [];
+    var arr_cat = kshf.dt.Category;
+    var arr_cat_id = {};
+
+    factsXML.find("> factbook > category").each(function(){
+        var catName = this.getAttribute("name");
+        $(this).find("> field").each(function(){
+            var catData = {};
+            catData.Name = this.getAttribute("name");
+            catData.id = this.getAttribute("id");
+            catData.Unit = this.getAttribute("unit");
+            catData['Rank Order'] = this.getAttribute("rankorder");
+            catData.Description = $(this).find("description").text();
+            // TODO: some categories include fields, and store info per each country! like population, etc
+
+            var item = new kshf.Record(catData,"id");
+            arr_cat.push(item);
+            arr_cat_id[catData.id] = item;
+        });
+    });
+
+    factsXML.find('> factbook > region').each(function(){
+        var region = this;
+        var regionName = region.getAttribute("name");
+        var regionID = region.getAttribute("id");
+        $(this).find("> country").each(function(d,i){
+            // if(d>10) return;
+            var country = this;
+            var cData = {};
+            cData.id = this.getAttribute("id"); // ag, tr, us, ...
+            var notCountries = {
+                'xx' : 'World',
+                'ee' : 'European Union',
+                'ay' : 'Antarctica',
+                'oo' : 'Southern Ocean',
+                'xo' : 'Indian Ocean',
+                'xq' : 'Arctic Ocean',
+                'zh' : 'Atlantic Ocean',
+                'zn' : 'Pacific Ocean'
+            };
+            if(notCountries[cData.id]!==undefined) return; // Not a country
+            cData.Name = this.getAttribute("name");
+            cData.Region = regionName;
+            cData.RegionID = regionID; // using it to lookup image
+            cData.Flag = this.getAttribute("flag"); // if "1", country has a flag in the database
+            $(this).find("> field").each(function(){
+                var ref = this.getAttribute("ref");
+                info = arr_cat_id[ref].data;
+                var columnName = info.Name;
+                switch(ref){
+                  case 'f2177':
+                    cData["Median Age"] = parseFloat(this.childNodes[1].textContent.replace(" years",""));
+                    break;
+                  case "f2212":
+                    cData["Urbanization"] = parseFloat(this.childNodes[1].textContent);
+                    break;
+                  case "f2102":
+                    cData["Life Expectancy"] = parseFloat(this.childNodes[1].textContent);
+                    break;
+                  case "f2225":
+                    cData["Health expenditures"] = parseFloat(this.textContent);
+                    break;
+//                  case "f2206":
+//                    cData["Education Expenditures-2"] = parseFloat(this.textContent);
+//                    break;
+                  case "f2232":
+                    cData["Electricity - production"] = this.textContent;
+                    break;
+                  case "f2034":
+                    cData["Military expenditures"] = parseFloat(this.textContent);
+                    break;
+                    case 'f2111': // Natural resources
+                        cData[columnName] = [];
+                        this.textContent.split(", ").forEach(function(n){
+                            cData[columnName].push(kshf.Util.toProperCase(n));
+                        });
+                        break;
+                    case 'f2098': // Languages
+                        cData[columnName] = [];
+                        this.textContent.split(", ").forEach(function(n){
+                            var lang = cleanUpText(n);
+                            if(lang===null) return;
+                            lang = lang.replace(" (official)","");
+                            lang = lang.replace(" (official","");
+                            // if there's a number component at the end, remove it
+                            cData[columnName].push(lang);
+                        });
+                        break;
+                    case 'f2122': // Religions
+                        cData[columnName] = [];
+                        this.textContent.split(", ").forEach(function(n){
+                            var rlgn = cleanUpText(n);
+                            cData[columnName].push(rlgn);
+                        });
+                        break;
+                    case 'f2096':
+                        cData["Border countries"] = [];
+                        var dataIndex=-1;
+                        for(var i=0; i<this.childNodes.length; i++) {
+                            var node = this.childNodes[i];
+                            if(i===dataIndex){
+                                countriesStr = node.textContent;
+                                if(countriesStr==="") return;
+                                countriesStr.split(", ").forEach(function(n){
+                                    cData["Border countries"].push(n.replace(/ (\d|,|\.)* km/g,''));
+                                });
+                            }
+                            if(node.tagName!==undefined){
+                                if(node.getAttribute("name")==="border countries:") {
+                                    dataIndex = i+1;
+                                }
+                            }
+                        };
+                        break;
+                    case 'f2109': // Independence
+                        cData["Independence"] = this.textContent;
+                        break;
+                    case 'f2057': // Capital
+                        cData.Capital = this.childNodes[1].textContent;
+                        break;
+                    case 'f2177': // Median age
+                        if(this.childNodes!==undefined && this.childNodes[1]!==undefined){
+                            // remove years, turn it into string
+                            var age = this.childNodes[1].textContent.replace(" years","");
+                            age = parseFloat(age);
+                            if(age!==NaN) cData['Median Age'] = age;
+                        }
+                        break;
+                    case 'f2119': // Population
+                        // remove (estimate...) and comma's
+                        var n = this.textContent.replace(/,|\.|(\(.*\))/g,'');
+                        n = parseInt(n);
+                        if(isNaN(n)) break;
+                        cData.Population = n;
+                        break;
+                    case 'f2206': //  EDUCATION EXPENDITURES
+                        var n = this.textContent.replace(/\% of GDP (\(.*\))/g,'');
+                        n = parseFloat(n);
+                        if(isNaN(n)) break;
+                        cData["Education Expenditures"] = n;
+                        break;
+                    default:
+                        break;
+
+                }
+//                var fieldInfo = categories.find(">field[id='"+ref+"']");
+//                var fieldName = 232;
+            });
+
+            kshf.dt.Countries.push(new kshf.Record(cData,"id"));
+        });
+    });
+    browser.loadCharts();   
+};
+
+$(document).ready( function(){
+	browser = new kshf.Browser({
+    domID : "#demo_Browser",
+    categoryTextWidth: 200,
+    barChartWidth: 120,
+    source: { url: "http://jmatchparser.sourceforge.net/",
+      callback: loadData
+    },
+    facets : [
+      { name: "Region" },
+      { name: "Natural resources",
+        description: "This entry lists a country's mineral, petroleum, hydropower, and other resources of commercial importance, such as rare earth elements (REEs). In general, products appear only if they make a significant contribution to the economy, or are likely to do so in the future." },
+      { name: "Religions", panel: "left",
+        description: "This entry is a listing of religions in a country." },
+      { name: "Border countries", panel: "right" },
+//            },{
+//                name: "Independence", panel: "right"
+      { name: "Education Expenditures", panel: "right", unitName: "%",
+        description: "This entry provides the public expenditure on education as a percent of GDP.",
+        value: "Education Expenditures" },
+      { name: "Population", panel: "right",
+        description: "This entry gives an estimate from the US Bureau of the Census based on statistics from population censuses, vital statistics registration systems, or sample surveys pertaining to the recent past and on assumptions about future trends. The total population presents one overall measure of the potential impact of the country on the world and within its region. Note: Starting with the 1993 <italic>Factbook</italic>, demographic estimates for some countries (mostly African) have explicitly taken into account the effects of the growing impact of the HIV/AIDS epidemic. These countries are currently: The Bahamas, Benin, Botswana, Brazil, Burkina Faso, Burma, Burundi, Cambodia, Cameroon, Central African Republic, Democratic Republic of the Congo, Republic of the Congo, Cote d'Ivoire, Ethiopia, Gabon, Ghana, Guyana, Haiti, Honduras, Kenya, Lesotho, Malawi, Mozambique, Namibia, Nigeria, Rwanda, South Africa, Swaziland, Tanzania, Thailand, Togo, Uganda, Zambia, and Zimbabwe."},
+//            { name: "Languages" },
+      { name: "Median Age", panel: "right",
+        description: "This entry is the age that divides a population into two numerically equal groups; that is, half the people are younger than this age and half are older. It is a single index that summarizes the age distribution of a population. Currently, the median age ranges from a low of about 15 in Uganda and Gaza Strip to 40 or more in several European countries and Japan."
+      }
+    ],
+    recordDisplay: {
+      sortColWidth: 90,
+      sortBy: 'Population',
+      /*{ 
+        title: 'Population',
+        label: function(){
+          var p=this.Population;
+          if(p===undefined) return "-";
+          return d3.format(".4s")(p);
+        }
+      },*/
+      showRank: true,
+      textSearch: "Name",
+      recordView : function(){
+        var str="";
+        // Country locator
+        str +="<img class='locator' src='https://www.cia.gov/library/publications/the-world-factbook/graphics/locator/"
+            +this.RegionID+"/"+this.id+"_large_locator.gif'/>"; 
+        // Country flag
+        str += "<img class='flag' src='https://www.cia.gov/library/publications/the-world-factbook/graphics/flags/large/"+this.id+"-lgflag.gif'/>"; 
+        // Country name
+        str += "<div class='name'>"+this.Name+" <a target='_blank' href='"+
+            "https://www.cia.gov/library/publications/the-world-factbook/geos/"+this.id+".html' class='fa fa-external-link'></a></div>";
+        // Country capital
+        str +="<div class='capital'> Capital: <span>"+this.Capital+"</span></div>";
+        
+        return str;
+      }
+    }
+  });
+});
+
+</script>
+<style id="kshfStyle">
+.content .name{
+  font-weight: 700;
+}
+.content .name a{
+  text-decoration: none;
+  color: black;
+  font-weight: 300;
+  font-size: 0.8em;
+  vertical-align: middle;
+}
+.content .name a:hover{
+  color: red;
+  font-weight: 700;
+}
+.content .flag{
+  float: right;
+  width: 80px;
+}
+.content .locator{
+  float: left;
+  width: 60px;
+  margin-right: 5px;
+}
+.content .capital{
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+.content .capital.span{
+  font-weight: 300;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">FactBook : Facts about All Countries</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

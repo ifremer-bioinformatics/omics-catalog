@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Download Times of the book D3 Tips and Tricks</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Book Downloads",
+    categoryTextWidth: 120,
+    barChartWidth: 200,
+    source: {
+      url: "http://bl.ocks.org/d3noob/a0cbcddc6bf0eb9569fe",
+      dirPath: "http://asset.keshif.me/data/",
+      fileType: "json",
+      tables: "bookdownloads"
+    },
+    onLoad: function(){
+      this.records.forEach(function(record){ record.data = moment(record.data, "YYYY-MM-DD HH:mm:ss"); });
+    },
+    summaries: [
+      { name: "Hour",  value: function(){ return this.hour();   }, panel: 'bottom', unitName: ":00" },
+      { name: "Time",  value: function(){ return new Date(this);}, panel: 'bottom' },
+      { name: "Day",   value: function(){ return this.day();    }, panel: 'right' , catSortBy: "id", catLabel: _demo.DayOfWeek },
+      { name: "Month", value: function(){ return this.month();  }, panel: 'middle', catSortBy: "id", catLabel: _demo.Month },
+      { name: "Year",  value: function(){ return this.year();   }, panel: 'right' , catSortBy: "id" }
+    ]
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  max-width:850px;
+  max-height:600px;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Download Times of the book D3 Tips and Tricks</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="http://www.d3noob.org/2015/04/exploring-event-data-by-combination.html" target='_blank'>Original Blogpost</a> <a href="https://gist.github.com/d3noob/a0cbcddc6bf0eb9569fe" target='_blank'>Raw source</a>.
+      <a href="http://bl.ocks.org/d3noob/raw/a0cbcddc6bf0eb9569fe/" target='_blank'>Original d3 visualization</a>.
+      </div>
+  </body>
+</html>

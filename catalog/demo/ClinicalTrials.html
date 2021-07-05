@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Clinical Data</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    recordName: "Clinical Trials",
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 200,
+    source: {
+      url: 'http://www.clinicaltrials.gov',
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "ClinicalTrials_Simplified"
+    },
+    summaries: [
+      { name: "Gender"},
+      { name: "Age Groups", catSplit: "|"},
+      { name: "Recruitment", collapsed: true },
+      { name: "Phases", catSplit: "|", collapsed: true},
+      { name: "Study Designs", catSplit: "|"},
+      { name: "Study Results"},
+      { name: "Study Types" },
+      { name: "Funded Bys", catSplit: "|", panel: 'right'},
+      { name: "Conditions", catSplit: "|", panel: 'right', minAggrValue: 200},
+      { name: "Interventions", catSplit: "|", panel: 'right', minAggrValue: 200},
+      { name: "Start Date", timeFormat: "%b-%y", panel: 'middle' },
+      { name: "Completion Date", timeFormat: "%b-%y", panel: 'middle' },
+      { name: "Enrollment ", value: function(){ if(this.Enrollment>=1) return this.Enrollment; }, 
+        panel: 'middle', unitName: "ppl" },
+      //{ name: "Sponsor/Collaborators", catSplit: "|", minAggrValue: 100},
+    ],
+    recordDisplay: {
+      sortBy: "Enrollment",
+      sortColWidth: 70,
+      recordView: "Title"
+    }
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Clinical Trials in the U.S.A.</div>
+      <div id="demo_Browser"></div>
+      </div>
+    <div id="demo_Infobox" align="center">
+      Data from <a href='http://www.clinicaltrials.gov' target='_blank'>clinicaltrials.gov</a>
+      </div>
+  </body>
+</html>

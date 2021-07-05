@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>NYC Street Trees</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+function loadData(browser){
+  $.ajax({
+    //url: "http://www.cloudred.com/labprojects/nyctrees/data/common.json",
+    url: "http://asset.keshif.me/data/nyc_trees.json",
+    success: function(data){
+      browser.primaryTableName = "TreeTypes";
+      kshf.dt.TreeTypes = [];
+      data.forEach(function(treeType){
+        treeType.Bronx = parseInt(treeType.Bronx);
+        treeType.Brooklyn = parseInt(treeType.Brooklyn);
+        treeType.Queens = parseInt(treeType.Queens);
+        treeType.Manhattan = parseInt(treeType.Manhattan);
+        treeType['Staten Island'] = parseInt(treeType['Staten Island']);
+        treeType.Total = treeType.Bronx + treeType.Brooklyn + treeType.Queens
+            + treeType.Manhattan + treeType['Staten Island'];
+
+        kshf.dt.TreeTypes.push(new kshf.Record(treeType, "Common"));
+      });
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Tree Types",
+    categoryTextWidth: 200,
+    barChartWidth: 300,
+    source: { 
+      url: "http://www.cloudred.com/labprojects/nyctrees/",
+      callback: loadData
+    },
+    summaries: [
+      { name: "Total Number of Trees", value: "Total", intervalScale: "log" },
+      { name: "Number of <span class='fa fa-tree'></span>s in Bronx", value: "Bronx", intervalScale: "log" },
+      { name: "Number of <span class='fa fa-tree'></span>s in Brooklyn", value: "Brooklyn", intervalScale: "log" },
+      { name: "Number of <span class='fa fa-tree'></span>s in Queens", value: "Queens", intervalScale: "log" },
+      { name: "Number of <span class='fa fa-tree'></span>s in Manhattan", value: "Manhattan", intervalScale: "log", collapsed: true },
+      { name: "Number of <span class='fa fa-tree'></span>s in Staten Island", value: "Staten Island", intervalScale: "log", collapsed: true }
+    ],
+    recordDisplay: {
+      sortBy: 'Total Number of Trees',
+      detailsToggle: "off",
+      displayType: 'grid',
+      textSearch: {title: 'Tree Name', value: "Common"},
+      recordView: function(){
+        return ""+
+            "<span class='thumbnail'><img style='background-color:#"+this.color+"' class='thumbImg' "+
+                "src='http://www.cloudred.com/labprojects/nyctrees/trees/"+this.file+"'>"+
+            "</span>"+
+            "<span class='authorName'>"+this.Latin+"</span>"+
+            "<span class='title'>"+this.Common+"</span>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{
+  width: 70px;
+  padding-top: 0px !important;
+  padding-bottom: 2px !important;
+}
+.thumbImg{
+  width: 100% !important;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">NYC Street Trees</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data provided by <a href="https://nycopendata.socrata.com/" target='_blank'>NYV Open Data</a> and curated by <a href="http://www.cloudred.com/labprojects/nyctrees/" target='_blank'>Cloudred Multimedia</a>. <a href="http://www.cloudred.com/labprojects/nyctrees/data/common.json" target='_blank'>Raw source</a>.
+      </div>
+  </body>
+</html>

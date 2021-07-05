@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Re-exploring "Who Rules InfoVis?"</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+/*
+
+Convert data to a person-based format.
+
+First Year
+Last Year
+Number of Years Served
+
+Per person
+ - Name
+ - Range of years
+ - List or roles, sorted by year (last year first)
+ -  
+
+Roles
+ - Multi-valued attribute
+ - Merge all
+
+Number of people per role across the years
+ - How large program committee gets, etc.
+
+*/
+function loadData(){
+  var browser=this;
+  $.ajax({
+    url: './data/infovis_people_all.csv',
+    async: false,
+    contentType: "text/csv",
+    success: function(data) {
+      browser.primaryTableName = "Commmittee Members";
+      var arr = [];
+      kshf.dt["Commmittee Members"] = arr;
+      kshf.dt_id["Commmittee Members"] = [];
+
+      var parsedData = Papa.parse(data, {
+        dynamicTyping: true,
+        header: true,
+      });
+
+      parsedData.data.forEach(function(row,i){
+        if(kshf.dt_id["Commmittee Members"][row.name]) {
+          var memberData = kshf.dt_id["Commmittee Members"][row.name].data;
+        } else {
+          var memberData = {
+            Name: row.name,
+            Affiliations: [],
+            Roles: [],
+            RoleNames: {}
+          };
+          var Member = new kshf.Record(memberData,"Name");
+          kshf.dt_id["Commmittee Members"][row.name] = Member;
+          kshf.dt["Commmittee Members"].push(Member);
+        }
+        for(var colName in row){
+          if(colName==="year") continue;
+          if(colName==="name") continue;
+          if(colName==="alt_name") continue;
+          if(colName==="deduped_name") continue;
+          if(colName==="affiliation") {
+            memberData.Affiliations.push(row.affiliation);
+            continue;
+          }
+          if(row[colName]!=="") {
+            memberData.Roles.push({
+              Year: row.year,
+              Role: colName
+            });
+            if(memberData.RoleNames[colName]){
+              memberData.RoleNames[colName].push(row.year);
+            } else {
+              memberData.RoleNames[colName] = [row.year];
+            }
+          }
+        }
+      });
+
+      browser.loadCharts();
+    }
+  });
+};
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 150,
+    recordName: "Commmittee Members in InfoVis, 1995 to 2015",
+    source: {
+      url: "http://innovis.cpsc.ucalgary.ca/Research/WhoRulesInfovis",
+      callback: loadData
+    },
+    summaries: [
+      { name: "Roles", 
+        value: function(){
+          var r=[];
+          this.Roles.forEach(function(role){ r.push(role.Role); });
+          return r;
+        } },
+      { name: "Number of Role Types", value: function(){ return Object.keys(this.RoleNames).length; } },
+      { name: "Number of Roles", value: function(){ return this.Roles.length; } },
+      { name: "Affiliations", collapsed: true },
+      { name: "Year of First Role", value: function(){ return this.Roles[0].Year; }, panel: "bottom" },
+      { name: "Year of Last Role", panel: "bottom", collapsed: true,
+        value: function(){ return this.Roles[this.Roles.length-1].Year; } },
+    ],
+    recordDisplay: {
+      sortColWidth: 35,
+      sortBy: "Number of Roles",
+      textSearch: "Name",
+      detailsToggle: "one",
+      recordView: function(){ 
+        var str="";
+        str+="<span style='font-weight: 700'>"+this.Name+"</span>";
+        str+="<div class='roleCount'>"+this.Roles.length+" <span style='font-weight: 300'>Roles</span>";
+        str+=" including <span style='font-size: 0.8em; font-weight: 100'>";
+        for(var roleName in this.RoleNames) {
+          str+=roleName;
+          str+="<span class='roleYears'> [";
+          var yearList = this.RoleNames[roleName];
+          var maxIndex = yearList.length;
+          var printNextYear = true;
+          yearList.forEach(function(year,i){
+            if(printNextYear) {
+              str += year+"-"; // first year
+              printNextYear = false;
+              return;
+            }
+            if(i===yearList.length-1){
+              str += year; // last year
+              return;
+            }
+            var nextYear = yearList[i+1];
+            if(nextYear===year+1){
+              return; // next year follows current one, return
+            }
+            str += year+", "; // next year does not follow current one, add year
+            printNextYear = true;
+          });
+          str+="]</span>, ";
+        }
+        str+="</span></div>";
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{ height: calc(100vh - 90px); }
+.roleCount{ font-size: 0.8em; }
+.roleYears{ display: none; }
+.kshfRecord[details="true"] .roleYears{ display: inline; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Who Rules InfoVis?</div>
+      <div id="demo_Browser"></div>
+      </div>
+    <div id="demo_Infobox" align="center">
+      Data by Charles Perin and Sheelagh Carpendale.
+      Info:
+      <a href="http://innovis.cpsc.ucalgary.ca/Research/WhoRulesInfovis" target="_blank">
+        http://innovis.cpsc.ucalgary.ca/Research/WhoRulesInfovis</a>
+      <br>
+      Originally published at <b>"Who Rules Infovis? unwrapping the Conference Organization"</b>, IEEE Conference on Visualization, Poster.
+      </div>
+  </body>
+</html>

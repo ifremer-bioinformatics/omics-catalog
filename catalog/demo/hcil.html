@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>HCIL Browser</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+// to access row data easily by column name instead of integer column id.
+
+function drawCharts(){
+    var i,p,t;
+    
+    // go over the list of tr_people, and add the conditions under trial table
+    for(t=0; t<kshf.dt.tr_people.length ; t++){
+        var tr_people = kshf.dt.tr_people[t];
+        var tr_id = tr_people.data.hcil_number;
+        var person_id = tr_people.data.person_id;
+        // if person id doesn't exist, skip
+        if(kshf.dt_id.people[person_id]===undefined){continue;}
+        var tr = kshf.dt_id.trs[tr_id];
+        if(!tr.data.Author) { tr.data.Author = []; }
+        tr.data.Author.push(person_id);
+    }
+    // go over the list of tr_topics, and add the conditions under trial table
+    for(t=0; t<kshf.dt.tr_topics.length ; t++){
+        var tr_topic = kshf.dt.tr_topics[t];
+        var tr_id_ = tr_topic.data.hcil_number;
+        var topic_id = tr_topic.data.topic_id;
+        if(topic_id===null) { continue; }
+        var tr_ = kshf.dt_id.trs[tr_id_];
+        if(!tr_.data.Topic) { tr_.data.Topic = []; }
+        tr_.data.Topic.push(topic_id);
+    }
+    // go over the list of tr_projects, and add the conditions under trial table
+    for(t=0; t<kshf.dt.tr_projects.length ; t++){
+        var tr_project = kshf.dt.tr_projects[t];
+        var tr_id__ = tr_project.data.hcil_number;
+        var project_id = tr_project.data.project_id;
+        if(project_id===null) { continue; }
+        // if project id doesn't exist, skip
+        if(kshf.dt_id.projects[project_id]===undefined){continue;}
+        var tr__ = kshf.dt_id.trs[tr_id__];
+        if(!tr__.data.Project) { tr__.data.Project = []; }
+        tr__.data.Project.push(project_id);
+    }
+}
+
+google.charts.setOnLoadCallback( function() {
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "publications",
+    categoryTextWidth: 180,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdE1ObU1wblVkUEdlTUtTMUhkNDZSeWc',
+      tables: [
+        {name:"trs",query:'select A,D,E,F,G,M,N,O,P'},
+        {name:"tr_people", query:"select A,B,D"}, //query:"select * where B = 84"},
+        {name:"tr_projects"},
+        {name:"tr_topics"},
+        {name:"people"},
+        {name:"member_types"},
+        {name:"departments"},
+        {name:"projects"},
+        {name:"topics"}
+      ]
+    },
+    onLoad: drawCharts,
+    summaries: [
+        {   name: "Topic",
+            catTableName: "topics", catLabel: "topic",
+            visibleRows: 9
+        },{ name: "Author",
+            catTableName: "people",
+            catLabel: function() {
+                var f_name = this.first_name;
+                var l_name = this.last_name;
+                var str="";
+                if(f_name) str+=f_name+". ";
+                if(f_name) str+=l_name;
+                return str;
+            }
+        },{ name: "Member Type",
+            value: function(){
+                var typeList = {};
+                var r = [];
+                var authors = this.Author;
+                if(authors===undefined) { return undefined; }
+                for(i=0; i<authors.length; i++){
+                    var autData=kshf.dt_id.people[authors[i]];
+                    var typeID = autData.data.member_type_id;
+                    if( kshf.dt_id.member_types[typeID]===undefined ) { continue; } 
+                    if(!typeList[typeID]){
+                        typeList[typeID] = true;
+                        r.push(typeID);
+                    }
+                }
+                return r;
+            },
+            catTableName: "member_types", catLabel: "type",
+        },{ name: "Project", catTableName: "projects", catLabel: "project",
+        },{ name: "Date", panel: "middle", timeFormat: "%Y-%m" }
+    ],
+    recordDisplay: {
+        sortColWidth: 60,
+        sortBy: "Date",
+        textSearch: "title",
+        recordView: function(){
+            var j;
+            var str="";
+            // paper name
+                str+="<div class=\"iteminfo iteminfo_0\">";
+                var url=this.reference_url;
+                if(url && url.trim()!==""){
+                    str+="<a target=\"_blank\" href=\""+this.reference_url+"\">"+this.title+"</a>";
+                } else {
+                    str+=this.title;
+                }
+                str+="</div>";
+
+            str+="<span class=\"item_details\">";
+
+            // author names
+            var authors = this.Author;
+            if(authors){
+                str+="<div class=\"iteminfo iteminfo_1\" style=\"padding-left: 2em;\">";
+                for(j=0; j<authors.length; j++){
+                    var authData=kshf.dt_id.people[authors[j]].data;
+                    str+=authData.first_name+" "+authData.last_name;
+                    if(j!==authors.length-1) { str+=', '; }
+                }
+                str+="</div>";
+            }
+            // venue
+                var ref=this.reference;
+                str+="<div class=\"iteminfo iteminfo_1\" style=\"padding-left: 2em;\">";
+                if(ref && ref.trim()!==""){
+                    str+="<b>["+this.Date+"]</b> "+this.reference+"</a>";
+                }
+                str+="</div>";
+            // keywords
+            var topics = this.Topic;
+            if(topics){
+                str+="<div class=\"iteminfo iteminfo_2\" style=\"padding-left: 2em;\"> About: ";
+                for(j=0; j<topics.length; j++){
+                    str+=kshf.dt_id.topics[topics[j]].data.topic;
+                    if(j!==topics.length-1) { str+=', '; }
+                }
+                str+="</div>";
+            }
+            // links
+            str+="<div class=\"iteminfo iteminfo_2\" style=\"padding-left: 2em;\">";
+            var pdf=this.pdf;
+            var video=this.video;
+            if(pdf && pdf.trim()!==""){
+                str+="<a target=\"_blank\" href=\""+this.pdf+"\"><img src=\"img/pdf-logo.gif\"></a>";
+            }
+            if(video && video.trim()!==""){
+                str+=" [<a target=\"_blank\" href=\""+this.video+"\">Video</a>]";
+            }
+            str+="</div>";
+
+            str+="</span>"; // item_details
+            
+            return str;
+        }
+    }
+  });
+});
+    </script>
+	</head>
+    <body>
+        <div class="contents"><div id="demo_Browser"></div></div>
+    </body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Cars</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 100,
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 150,
+    source: {
+      gdocId: '1UPaqtGuoeGXcxXKSVh1IJ-i40gbTgGfb_jZo494PlXk',
+      tables: "Cars"
+    },
+    summaries: [
+      { name: "Origin", catLabel: { 1: "American", 2: "European", 3: "Japanese" } },
+      { name: "Cylinders", catSortBy: "id" },
+      { name: "MPG", unitName: "mpg"},
+      { name: "Engine Displacement", unitName: "cu.\"", panel: 'right' },
+      { name: "Horsepower", unitName: "hp", panel: 'right' },
+      { name: "Weight", unitName: "lbs", panel: 'right' },
+      { name: "Acceleration", description: "0 to 60 mph", unitName: "sec" },
+      { name: "Year", panel: "bottom", timeFormat: "%Y" },
+      { name: "RecordView", panel: "none", 
+        // Adding the last ID part to make it unique per car
+        value: function(){ return this.Name+" ("+this.Year+")"+"<span style='display:none'>"+this.id+"</span>"; } }
+    ],
+    recordDisplay: {
+      sortBy: "MPG",
+      sortColWidth: 60,
+      textSearch: "Name",
+      recordView: "RecordView"
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+    
+    <div id="demo_Infobox">
+      <a href="http://lib.stat.cmu.edu/datasets/cars.data" target='_blank'>Data</a> from <a href="http://lib.stat.cmu.edu/datasets/" target='_blank'>StatLib @ CMU</a>
+      </div>
+
+    <script id="dsq-count-scr" src="//keshif.disqus.com/count.js" async></script>
+
+    <div id="disqus_thread"></div>
+    <div id="disqus_thread"></div>
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+         */
+        /*
+        var disqus_config = function () {
+            this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() {  // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            
+            s.src = '//keshif-dev.disqus.com/embed.js';
+            
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <script>
+        /**
+        var URL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+        var disqus_shortname = 'keshif.disqus.com'; // Required - Replace example with your forum shortname
+        var disqus_identifier = "ww.keshif.me";
+        var disqus_url = URL;
+        var disqus_developer = 1;
+
+        (function() {  // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = '//'+disqus_shortname+'/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+*/
+    </script>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head> 
+    <title>Wearable Technologies</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 80,
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 180,
+    recordName: "Wearable Technologies",
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: {name: "wearables-crowdflower", id:"newID"}
+    },
+    summaries: [
+      { name: "Price", value: function(){ return 1*this.Price.substr(1,10000); }, unitName: "$" },
+      { name: "Body Location", value: "Body.Location" },
+      { name: "Category" },
+      { name: "Company Name", value: "Company.Name", panel: "right", },
+      { name: "Company Country", value: "Company...Country", panel: "right" }
+    ],
+    recordDisplay: {
+      sortBy: "Price",
+      sortColWidth: 40,
+      displayType: 'grid',
+      textSearch: "Name",
+      recordView: function(){
+        return "<a target='_blank' href='"+this.Link+"'>"+
+          "<span class='thumbnail'><img class='thumbImg' src='"+this.Image+"'></span></a>"+
+          "<span class='title'>"+this.Name+"</span>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{ width: 150px; }
+.content{ padding: 3px; }
+.thumbnail{ height: 165px; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Wearable Technlogoy Database</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox" align="center">
+      Wearable technology database data by 
+      <a href="http://www.crowdflower.com/data-for-everyone" target='_blank'>CrowdFlower</a>
+      </div>
+  </body>
+</html>

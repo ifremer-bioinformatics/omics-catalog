@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Quebec Survey</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <!-- Demos - shared -->
+    <script type="text/javascript" src="../demo/js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../demo/css/demo.css"/ type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth:250,
+    leftPanelLabelWidth: 230,
+    rightPanelLabelWidth: 270,
+    barChartWidth: 120,
+    source: {
+      gdocId: '1XxWOlo_YwXV8kyMEF1cO4oSFIQI5mw9ldpksK2EVHWQ',
+      tables: "Participants"
+    },
+    summaries: [
+      { name: "Sexe",
+        panel: 'middle',
+        value: "q_01_sexe",
+        description: "Votre sexe" },
+      { name: "Âge",
+        panel: 'middle',
+        description: "Votre groupe d'âge",
+        value: function(){ 
+          var v=this.q_02_groupe_âge;
+          if(v===null || v===undefined) return;
+          // remove "_ans...."
+          v = v.substr(0,v.indexOf("_ans"));
+          // replace "_" with "-"
+          v = v.replace("_","-");
+          if(v==="85") v= "85+";
+          return v;
+        },
+        catSortBy: [ "17-24", "25-34", "35-44", "45-54", "55-64", "65-74", "75-84", "85+" ] },
+      { name: 'Région Géographique',
+        value: 'q_03_région_géographique',
+        description: "Votre région de résidence" },
+      { name: "Diplôme Plus Élevé",
+        value: 'q_04_diplôme_plus_élevé',
+        description: "Votre diplôme le plus élevé " },
+      { name: "Diplôme en Cours",
+        value: 'q_05_diplôme_en_cours',
+        description: "Si vous étudiez, quel est votre cycle d’études?" },
+      { name: "Domaine Formation",
+        value: 'q_06_domaine_formation',
+        description: "Votre principal domaine de formation ou d’études:" },
+      { name: "Domaine Emploi",
+        value: 'q_07_domaine_emploi',
+        description: "Le principal secteur dans lequel vous travaillez :" },
+      { name: "Principaux Problèmes Époque Mondiale",
+        value: 'q_08_principaux_problèmes_époque_mondiale+', catSplit: /\b\s+/,
+        description: "Selon vous, quels sont les principaux problèmes de notre époque, à l’échelle mondiale? (en choisir trois au maximum)" },
+/*      },{
+        name: 'L’accès à l’information scientifique',
+        panel: 'right',
+        facets: [*/
+      { name: "Principes Guider Scientifiques Travaux",
+        panel: 'middle',
+        value: 'q_19_principes_guider_scientifiques_travaux+', catSplit: /\b\s+/,
+        description: "Quels sont les principes essentiels qui devraient guider les scientifiques dans leurs travaux ? (choix de trois au maximum)" },
+      { name: "Respect des Principes",
+        panel: 'middle',
+        value: 'q_20_respect_des_principes',
+        description: "Croyez-vous que les principes que vous avez choisis sont respectés par la majorité des scientifiques?"} ,
+      { name: "Indiquer Énoncés Scientifiques",
+        panel: "right",
+        value: 'q_21_indiquer_énoncés_scientifiques',
+        description: "Quelle est, selon vous, la meilleure attitude possible des scientifiques sur la place publique?" },
+/*        ]
+      },{
+        name: 'L’accès à l’information scientifique',
+        panel: 'right',
+        facets: [*/
+      {
+        name: "Principaux Médias Sci. Québécois Consultés",
+        panel: "right",
+        value: 'q_29_principaux_médias_scientifiques_québécois_consultés+', catSplit: /\b\s+/,
+        description: "Quels sont les médias scientifiques québécois que vous consultez le plus souvent? (en choisir trois au maximum)" },
+      {
+        name: "Organismes Scientifiques Connus",
+        panel: "right",
+        value: 'q_30_organismes_scientifiques_connus+', catSplit: /\b\s+/,
+        description: "Quels sont les organismes québécois de communication scientifiques que vous connaissez le mieux? (en choisir trois au maximum)" },
+/*        ]
+      },{
+          name: 'La science, l’État et les citoyens',
+          panel: 'right',
+          facets: [*/
+      { name: "Finalités Prioritaires",
+        panel: "right",
+        value: 'q_35_finalités_prioritaires+', catSplit: /\b\s+/,
+        description: "La recherche scientifique peut avoir plusieurs finalités. Quelles sont les finalités qui vous paraissent prioritaires? (en choisir trois au maximum)" },
+      { name: "Domaines Prioritaires",
+        panel: "right",
+        value: 'q_36_domaines_prioritaires+', catSplit: /\b\s+/,
+        description: "Choisissez un maximum de cinq domaines de recherche qui devraient mobiliser les gouvernements et les scientifiques de manière prioritaire actuellement : la recherche sur..." },
+      { name: "Financement Privé ou Public",
+        panel: "right",
+        value: 'q_37_financement_privé_ou_public',
+        description: "Selon vous, la recherche scientifique québécoise doit être financée :" },
+      { name: "Vision Influence Politique",
+        panel: "right",
+        valeu: 'q_39_vision_influence_politique',
+        description: "Si le gouvernement décidait de mettre fin à la recherche scientifique sur un sujet qui vous tient à cœur, quelle serait votre position?" }
+    ],
+    recordDisplay: {
+      sortBy: { 
+        name: "Length of comment", 
+        value: function(){ 
+          var v=this['Question_ouverte q_41_commentaires_généraux_questionnaire'];
+          if(v) return v.length; 
+        }
+      },
+      sortColWidth: 45,
+      detailsToggle: "one",
+      textSearch: { name: 'content', value: 'Question_ouverte q_41_commentaires_généraux_questionnaire'},
+      recordView: function(){ 
+        var v=this['Question_ouverte q_41_commentaires_généraux_questionnaire'];
+        return (v===null) ? "-" : v;
+      },
+      onDOM: function(browser){
+        d3.select(d.DOM.record).select(".content").on("click",function(){
+          this.parentNode.__data__.setRecordDetails(true);
+        });
+      },
+    }
+  });
+});
+
+</script>
+<style id="kshfStyle">
+.content {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  quotes: "\201C""\201D""\2018""\2019";
+  margin: 0px;
+  font-style: italic;
+  font-weight: 300;
+  text-align: justify;
+}
+.content:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  margin-right: 0.1em;
+  margin-left: -0.1em;
+  vertical-align: -0.5em;
+  line-height: 0px;
+}
+.content:hover:before {
+    color: gray;
+}
+.content:hover:after {
+    color: gray;
+}
+.content:after {
+  color: #ccc;
+  content: close-quote;
+  font-size: 4em;
+  margin-right: 0.1em;
+  margin-left: -0.1em;
+  vertical-align: -0.5em;
+  line-height: 0px;
+}
+.kshfRecord[details=true] .content{
+  overflow: visible;
+  white-space: normal;
+}
+.kshfRecord .content{
+  cursor: pointer;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

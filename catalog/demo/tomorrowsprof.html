@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Tomorrow's Professor Mailing List</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+        <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+        <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 300,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdFoxeFJscUR6MEMtekpSRTh1aEk2aXc',
+      tables: "Posts"
+    },
+    summaries: [ 
+      { name: "Category", panel: "middle", catLabel: {
+          1: "Tomorrow's Academy",
+          2: "Tomorrow's Graduate Students and Postdocs",
+          3: "Tomorrow's Academic Careers",
+          4: "Tomorrow's Teaching and Learning",
+          5: "Tomorrow's Research",
+        } },
+      { name: "Date", panel:'middle',
+        value: function(){
+          var r =new Date(Date.now());
+          r.setDate(r.getDate()-this.id*4);
+          return r;
+        } 
+      }
+    ],
+    recordDisplay: {
+      sortBy: "Date",
+      sortColWidth: 65,
+      textSearch: "Title",
+      recordView: function(){
+        return "<a href=\"http://cgi.stanford.edu/~dept-ctl/cgi-bin/tomprof/posting.php?ID="+this.id+"\" target=\"_blank\">"+this.Title+"<a/>";
+      }
+    }
+  });
+});
+  </script>
+<style id="kshfStyle">
+#demo_Browser {
+  max-width: 700px;
+}
+.kshfRecord a{
+  color:#606060;
+  font-style:italic;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

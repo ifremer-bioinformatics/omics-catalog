@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Civil Rights March on Washington Photos</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Civil Rights March on Washington Photos",
+    categoryTextWidth: 200,
+    source: { 
+      url: "https://catalog.archives.gov/id/541992",
+      dirPath: "http://asset.keshif.me/data/",
+      fileType: 'json',
+      tables: {name:"civil_rights_march", id:"arcIdentifier"}
+    },
+    summaries: [
+      { name: "Tags",
+        value: function(){
+          var contribs = this.publicContributions;
+          if(contribs===undefined) return;
+          var tags = contribs.tags;
+          if(tags===undefined) return;
+          var r=[];
+          if(tags.tag.length===undefined){
+            r.push(tags.tag['$']);
+          } else {
+            tags.tag.forEach(function(tag){
+              r.push(tag['$']);
+            });
+          }
+          return r;
+        } },
+      { name: "Tag Contributors",
+        value: function(){
+          var contribs = this.publicContributions;
+          if(contribs===undefined) return;
+          var tags = contribs.tags;
+          if(tags===undefined) return;
+          var r=[];
+          if(tags.tag.length===undefined){
+            r.push(tags.tag['@user']);
+          } else {
+            tags.tag.forEach(function(tag){
+              r.push(tag['@user']);
+            });
+          }
+          return r;
+        } },
+      { name: "contributors", },
+      { name: "Types", value: "typesOfArchivalMaterials" },
+      { name: "levelOfDescription", collapsed: true },
+      { name: "Use Restrictions", value: "useRestrictions", collapsed: true, },
+      { name: "Access Restrictions", value: "accessRestrictions", collapsed: true }, 
+    ],
+    recordDisplay: {
+      displayType: 'grid',
+      textSearch: "title",
+      recordView: function(){
+        var url;
+        if(this.objects){
+          if(this.objects.object.length){
+            url = this.objects.object[0].thumbnail['@url'];
+          } else {
+            url = this.objects.object.thumbnail['@url'];
+          }
+          url = url.replace("govOpaAPI","gov/OpaAPI");
+        }
+        return "<a target='_blank' href='"+this.url.replace("govid","gov/id")+"' class='thumbnail'>"+
+            "<img class='thumbImg' src='"+url+"'></a><span class='title'>"+this.title+"</span>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{
+  width: 150px;
+  overflow: visible !important;
+}
+.kshfRecord > .itemRow{
+  overflow: visible !important;
+}
+.content{
+  padding: 3px;
+}
+.thumbnail{
+  overflow: visible !important;
+}
+.kshfRecord:hover{
+  z-index: 200 !important;
+}
+.kshfRecord .content img.thumbImg:hover{
+  transform: scale(1.5);
+}
+.content img.thumbImg{
+  border: solid;
+  border-color: black;
+  border-width: 1px;
+  border-radius: 0px;
+  width: 100%;
+  transition: all 150ms ease-in;
+  -webkit-transition: all 150ms ease-in;
+  -o-transition: all 150ms ease-in;
+  -moz-transition: all 150ms ease-in;
+}
+    </style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Civil Rights March on Washington 2 Photos - National Archives</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="https://catalog.archives.gov/search?q=*:*&rows=20&offset=0&tabType=all&facet=true&facet.fields=oldScope,level,materialsType,fileFormat,locationIds,dateRangeFacet&highlight=true&f.parentNaId=513498&sort=naIdSort%20asc" target='_blank'>Data</a> is provided by the <b>National Archives</b>.
+      </div>
+  </body>
+</html>

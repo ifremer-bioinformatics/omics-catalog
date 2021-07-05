@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Set Visualization Techniques</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./js/bibParser.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+function loadData(browser){
+  $.ajax( {
+    url: "http://asset.keshif.me/data/setviz.bib",
+    async: false,
+    success: function(bibdata){
+      browser.primaryTableName = "Visualizations";
+      kshf.dt.Visualizations = [];
+
+      BibtexParser(bibdata).entries.forEach(function(entry){
+        var entryData = {};
+        console.log(entry);
+
+        entryData.Key = entry.EntryKey;
+        entryData.Type = entry.EntryType;
+        entryData.Authors = entry.Fields.author;
+        entryData.Title = entry.Fields.title;
+        entryData.Year = entry.Fields.year;
+        if(typeof entryData.Year === 'string') entryData.Year = parseInt(entryData.Year);
+        entryData.Keywords = entry.Fields.keywords;
+        if(entryData.Keywords) entryData.Keywords = entryData.Keywords.replace(/category:/g,"");
+        if(entry.Fields.journal)
+          entryData.Journal = entry.Fields.journal;
+        else if(entry.Fields.booktitle)
+          entryData.Journal = entry.Fields.booktitle;
+
+        kshf.dt.Visualizations.push(new kshf.Record(entryData,'Key'));
+      });
+      // there will be some entries.errors, for incorrect entry types (like online)
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 250,
+    recordName: "Set Visualization Techniques",
+    source: {
+      url: "http://www.cvast.tuwien.ac.at/SetViz",
+      callback: loadData
+    },
+    summaries: [
+      { name: "Keywords", catSplit: ", "},
+      { name: "Type" },
+      { name: "Authors", catSplit: " and " },
+      { name: "Journal" },
+      { name: "Year", timeFormat: "%Y", panel: "middle" }
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      textSearch: "Title",
+      displayType: 'grid',
+      recordView: function(){
+          return "<a target='_blank' href='http://scholar.google.com/scholar?hl=en&q="+this.Title+"' class='thumbnail'>"+
+            "<img class='thumbImg' src='http://asset.keshif.me/img/setvis/"+this.Key+".png'></a>"+
+            "<span class='title'>"+this.Title+"</span>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{ width: 150px; }
+.content{ padding: 3px; }
+.thumbnail{ height: 165px; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Visual Techniques for Analysing Set-typed Data</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data provided by <a href="http://www.cvast.tuwien.ac.at/SetViz" target='_blank'>SetViz survey</a>. All rights for the technique images belong to their respective owners.
+      </div>
+  </body>
+</html>

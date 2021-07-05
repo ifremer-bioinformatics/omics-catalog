@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Jobs</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+function loadData(browser){
+  $.ajax({
+    url: "http://asset.keshif.me/data/lyra_jobs.json",
+    success: function(data){
+      browser.primaryTableName = "Jobs";
+      kshf.dt.Jobs = [];
+      data.forEach(function(job,i){
+        job.id = i;
+        kshf.dt.Jobs.push(new kshf.Record(job,"id"));
+      });
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    categoryTextWidth: 180,
+    rightPanelLabelWidth: 510,
+    source:{
+      url: "http://idl.cs.washington.edu/projects/lyra/app/data/jobs.json",
+      callback: loadData
+    },
+    metric: "count",
+    summaries: [
+      { name: "job", },
+      { name: "sex", panel: 'middle' },
+      { name: "year", timeFormat: "%Y", panel: 'middle' },
+      { name: "count", panel: 'middle', collapsed: true}
+    ]
+  });
+});
+    </script>
+<style>
+#demo_Browser {
+  width: 1000px;
+  height: 450px;
+}
+</style>
+  </head>
+  <body>
+    <div id="demo_PageTitle" align="center">Job Trends, 1850-2000</div>
+    <div class="contents"><div id="demo_Browser"></div></div>
+  </body>
+</html>

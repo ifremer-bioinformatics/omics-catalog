@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Pitchfork Reviews</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 80,
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 180,
+    recordName: "Reviews",
+    source: {
+      url: "http://www.pitchfork.com",
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "pitchfork_reviews"
+    },
+    summaries: [
+      { name: "Highlights", value: function(){ if(this.accolade!=="None") return this.accolade; } },
+      { name: "Artist", value: "artist", minAggrValue: 4 },
+      { name: "Label", value: "label", minAggrValue: 3 },
+      { name: "Release Year", value: "release_year", timeFormat: "%Y", panel: "bottom" },
+      { name: "Score", value:"score", panel:'right' },
+      { name: "Reviewer", value: "reviewer", panel: "right" }
+    ],
+    recordDisplay: {
+      sortColWidth: 70,
+      sortBy: "Release Year",
+      textSearch: 'artist',
+      recordView: function(){ 
+        return this.artist+" <span class='empTitle'><a href='"+this.url+"' target='_blank'>"+this.album+"</a>"+
+            " <span class='fa fa-external-link'></span></span>";
+      }
+    }
+  });
+});
+        </script>
+<style id="kshfStyle">
+span.empTitle{
+  display:inline-block;
+  font-size: 0.9em;
+  color: gray;
+  font-weight: 300;
+}
+span.empTitle > a{
+  color: black;
+}
+span.empTitle:before{
+  content: " - ";
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Album Reviews @ Pitchfork</div>
+      <div id="demo_Browser"></div></div>
+
+    <div id="demo_Infobox">
+      15+ years of album reviews from <a href='http://www.pitchfork.com' target='_blank'>Pitchfork.com</a>.
+      ReVis from <a href="https://mattbrehmer.shinyapps.io/ShinyFork/" target='_blank'>ShinyFork</a>,
+        by <a href="http://www.cs.ubc.ca/~brehmer/" target="_blank">Matt Brehmer</a>.
+      </div>
+  </body>
+</html>

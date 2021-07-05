@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Bike Trips in New York City</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+// http://uk.timesofnews.com/dont-hide-your-data-show-it-in-all-its-glory/
+// http://gravyanecdote.com/visual-analytics/how-many-data-points/
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 200,
+    middlePanelLabelWidth: 320,
+    rightPanelLabelWidth: 320,
+    source: {
+      dirPath: 'http://asset.keshif.me/data/nycbiketrips_',
+      fileType: 'csv',
+      tables: ["Trips", "Stations"]
+    },
+    onLoad: function(){
+      this.records.forEach(function(trip){
+        trip.data.TimeStart = moment(trip.data.Time_Start,"M/D/YY HH:mm"); // 2/28/14 21:07
+        delete trip.data.Time_Start; // Remove unused variable
+      });
+    },
+    summaries: [
+      { name: "UserType", panel: 'middle', catLabel: function(){ return (this.id==="S")?"Subscriber":"Customer";} },
+      { name: "Gender", panel: 'right',
+        catLabel: function(){
+          switch(this.id){
+            case 2: return "Female "+getIcon("f");
+            case 1: return "Male "+getIcon("m");
+            default: return "?";
+          }
+        } },
+      { name: "Station_Start", panel: 'middle', catLabel: function(){ return kshf.dt_id.Stations[this.id].data.Name; }, },
+      { name: "Station_End",   panel: 'middle', catLabel: function(){ return kshf.dt_id.Stations[this.id].data.Name; }, 
+        panel: 'right' },
+      { name: "Day of Week", panel: 'right', collapsed: true,
+        value: function(){ return this.TimeStart.day(); },
+        catSortBy: "id", catLabel: _demo.DayOfWeek },
+      { name: "Hour of Day", panel: 'bottom', optimumTickWidth: 40, unitName: ":00",
+        value: function(){ return this.TimeStart.hour(); } },
+      { name: "Duration", panel: 'bottom', intervalScale: "log", unitName: "min",
+        value: function(){ return Math.round(this.Duration/60); } },
+      { name: "Birth Year", value: "BirthYear", timeFormat: "%Y", panel: 'bottom', collapsed: true }
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle"><i class='fa fa-bicycle'></i> Bike Trips in New York City</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

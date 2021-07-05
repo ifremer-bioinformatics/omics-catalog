@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Lego Sets</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 200,
+    source: {
+      gdocId: '10oyawHEMwBfwDXPc9v0Il4OhRR-9OlDY6yg9gU6LJfU',
+      tables: "Lego Sets"
+    },
+    onReady: function(){
+      this.summaries_by_name.Image_URL.destroy_full();
+      this.summaries_by_name.CAD_MSRP.destroy_full();
+      this.summaries_by_name.EUR_MSRP.destroy_full();
+      this.summaries_by_name.GBP_MSRP.destroy_full();
+      this.summaries_by_name.id.destroy_full();
+      this.summaries_by_name.Item_Number.destroy_full();
+      this.summaries_by_name.Name.destroy_full();
+    },
+    summaries: [
+      { name: "Year", panel: 'bottom', timeFormat: "%Y" },
+      { name: "Theme"},
+      { name: "Sub-theme" },
+      { name: "# of Pieces", panel: 'right', skipZero: true },
+      { name: "# of Mini-Figures", panel: 'right', type: 'interval' },
+      { name: "Cost", value: 'USD_MSRP', panel: 'right', unitName: "$", skipZero: true },
+      { name: "Packaging", panel: "right" },
+      { name: "Availability", panel: "right", collapsed: true}
+    ],
+    recordDisplay: {
+      displayType: "grid",
+      sortBy: "Cost in USD$",
+      textSearch: "Name",
+      detailsToggle: "off",
+      recordView : function(){
+        return "<a target='_blank' href='http://brickset.com/sets/"+this.Item_Number+"'>"+
+          "<img class='thumbImg' id='img_"+this.id+"' src='"+this.Image_URL.replace(/sets\/images/g,"sets\/small")+"'></a>"+
+          "<span class='subTitle'>"+this.Name+"</span></a>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.kshfRecord{
+  width: 90px;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+.kshfRecord .thumbImg{
+  width: auto !important;
+  max-height: 55px;
+}
+.kshfRecord:hover{
+  z-index: 200 !important;
+  overflow: visible !important;
+}
+.kshfRecord .content img:hover{
+  transform: scale(1.5);
+}
+.subTitle{
+  font-size: 0.7em !important;
+}
+.thumbnail{
+  overflow: visible !important;
+}
+.content img.thumbImg{
+  transition: all 200ms linear;
+  -webkit-transition: all 200ms linear;
+  -o-transition: all 200ms linear;
+  -moz-transition: all 200ms linear;
+}
+    </style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from <a href="https://github.com/seankross/lego" target="_blank">https://github.com/seankross/lego</a>
+    </div>
+  </body>
+</html>

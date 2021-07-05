@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Publication Browser</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+var socialShare = false, demoHeader = false;
+var BEDERSON_ID = 3;
+
+google.charts.setOnLoadCallback(function() {
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth:165,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdEp1aHBzSTg0T0RJVURqWVNGOGNkNXc',
+      tables: [ "Publications", "Venues", "Authors", "Keywords", "VenueTypes", "AuthorTypes" ]
+    },
+    onLoad: function(){
+      kshf.Util.cellToArray(kshf.dt.Publications, ['Coauthors', 'Topics']);
+    },
+    onReady: function(){
+      $(".paperName").click(function(d){
+        d.currentTarget.parentNode.parentNode.parentNode.__data__.setRecordDetails();
+      });
+      this.records[0].setRecordDetails(true);
+    },
+    summaries: [
+      { name: "Topics", catTableName: "Keywords", catLabel: "keyword" },
+      { name: "Couthors",
+        value: function(){ return this.Coauthors.filter(function(coAuth){ return coAuth!=="3" && coAuth!==3; }); },
+        catTableName: "Authors",
+        catLabel: function(){ return this.first_names[0]+". "+this.last_name; },
+        catTooltip: function(){ return this.first_names+" "+this.last_name; },
+        panel: 'right',
+        },
+      { name: "Coauthor Types", panel: 'right',
+        value: function(){
+          var types = [];
+          this.Coauthors.filter(function(coAuth){ return coAuth!=="3" && coAuth!==3;})
+            .forEach(function(coAuth){
+              var a=kshf.dt_id.Authors[coAuth];
+              if(a) types.push(a.data.author_type);
+            });
+          return types;
+        },
+        catTableName: "AuthorTypes",
+        catLabel: "keyword" },
+      { name: "Publication Type", value: "type",
+        catLabel: function(){ return kshf.dt_id.VenueTypes[this.id].data.keyword; } },
+      { name: "Venue", catTableName: "Venues", catLabel: "venue" },
+      { name: "Date", panel: 'middle' }
+    ],
+    recordDisplay: {
+      sortBy: "Date",
+      sortColWidth: 65,
+      textSearch: 'title',
+      detailsToggle: "one",
+      recordView: function(){
+          var j;
+          var str="";
+
+          if(this.img!==""&&this.img!==null){
+              str+="<img class='pdfImage' src='"+this.img+"'>";
+          }
+
+          // paper name
+              str+="<div class=''> <span>";
+              str+="<span class='paperName'>"+this.title+"</span>";
+              if(this.pdf!==""&&this.pdf!==null){
+                  str+="<a class='pubLink pdflink fa fa-file-pdf-o' href='"+this.pdf+"' target='_blank'></a>";
+              }
+              if(this.doi!==""&&this.doi!==null){
+                  str+="<a class='pubLink doilink' href='http://dx.doi.org/"+this.doi+"' target='_blank'>[doi]</a>";
+              }
+              if(this.url.trim()!==""){
+                  str+=" <a class='pubLink fa fa-external-link externallink' target='_blank' href='"+this.url+"' "+
+                          ">external</a>";
+              }
+              str+="</div>";
+
+          str+="<span class='item_details'>";
+
+          // author names
+          var authors = this.Coauthors;
+              str+="<div class=\"authorNames\"><span class='header'></span> ";
+              for(j=0; j<authors.length; j++){
+                  var authData=kshf.dt_id.Authors[authors[j]].data;
+                  if(authData.id===BEDERSON_ID) { str+="<span class='benb'>"; }
+                  str+=authData.first_names+" "+authData.last_name;
+                  if(authData.id===BEDERSON_ID) { str+="</span>"; }
+                  if(j!==authors.length-1) { str+=', '; }
+              }
+              str+="</div>";
+          // Venue + details
+              str+="<div class='venueInfo'><span style='font-weight:bolder;'>"+this.Date.getFullYear()+"</span>";
+              if(this.Venue) {
+                  str+=" " + kshf.dt_id.Venues[this.Venue].data[2];
+              }
+              if(this.details.trim()!=="") {
+                  str+=" - " + this.details;
+              }
+              str+="</div>";
+          // keywords
+              var cats = this.Topics;
+              if(cats.length>0){
+                  str+="<div class=\"topics\"> <span class='header'>Topics</span>: ";
+                  for(j=0; j<cats.length; j++){
+                      str+=kshf.dt_id.Keywords[cats[j]].data.keyword;
+                      if(j!==cats.length-1) { str+=', '; }
+                  }
+                  str+="</div>";
+              }
+          // award
+              if(this.award!==""&this.award!==null){
+                  str+="<div class=\"iteminfo iteminfo_3\">&#9733; "+this.award+"</div>";
+              }
+
+          return str;
+      }
+    }
+  });
+});
+
+</script>
+<style>
+
+.header{
+  font-weight: 700;
+  font-variant: small-caps;
+}
+
+#demo_Browser {
+  background-color: white;
+  margin: 0px 15px 20px 15px;
+  height: calc(100vh - 85px);
+  width: calc(100vw - 50px);
+}
+
+#pagecell{
+  position: relative;
+  top: 10px;
+  left: 10px;
+  display:inline-block;
+  background-color: #ffffff;
+}
+
+body {
+  font-family: Arial,sans-serif;
+  color: #333333;
+  margin: 0px;
+  padding: 0px;
+  background: #cccccc url("http://cs.umd.edu/~bederson/images/bg-grad.jpg") fixed;
+}
+
+#pageName {
+  padding: 0px 0px 14px 10px;
+  margin: 0px;
+}
+
+#pageName h2 {
+  font: bold 175% Arial,sans-serif;
+  color: #000000;
+  margin: 0px;
+  padding: 0px;
+}
+
+#pageName img {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 0px;
+  margin: 0px;
+  z-index:2;
+}
+
+#pageName a.mainTitle:link, a.mainTitle:visited{
+  color: #005FA9;
+  text-decoration: none;
+}
+
+#pageName a.mainTitle:hover{
+  text-decoration: underline;
+}
+
+.KeshifCredit{
+  float:right;
+  margin: 15px;
+  font-size: 0.5em;
+  font-style: italic;
+  color: lightgray;
+  text-decoration: none;
+}
+.KeshifCredit:hover{
+  color: gray;
+}
+
+.paperName{
+  cursor:pointer;
+}
+.paperName:hover{
+  color: orangered;
+}
+.authorNames{
+  font-weight: 300;
+}
+.benb{
+  font-style: italic;
+}
+.doilink{
+  margin-left: 10px;
+  font-size: 0.7em;
+  vertical-align: top;
+}
+.externallink{
+  margin-left: 3px;
+  font-size: 0.7em;
+  vertical-align: top;
+}
+.pdflink{
+  margin-left: 10px;
+  vertical-align: top;
+}
+.item_details{
+  margin-left: 5px;
+}
+.venueInfo{
+  margin-left: 5px;
+  font-size: 0.9em;
+  font-weight: 300;
+}
+.topics{
+  font-size: 0.9em;
+  font-weight: 300;
+  margin-left: 5px;
+  font-variant: small-caps;
+}
+.pubLink{
+  color: #005FA9;
+  display: inline-block;
+  text-decoration: none;
+}
+.pubLink:hover {
+  color: orangered !important;
+  text-decoration: none;
+}
+
+.pdfImage{
+  position:absolute;
+  right: 0px;
+  height: 100%;
+}
+.content{
+  padding-bottom: 4px;
+  padding-right: 40px;
+}
+
+</style>
+	</head>
+
+<body>
+  <div id="pagecell">
+    <div id="pageName">
+      <h2>
+        <a href="http://cs.umd.edu/~bederson/" class='mainTitle'>Ben Bederson</a>
+        <a target="_blank" href="http://www.keshif.me" class="KeshifCredit">Created by Keshif. Click here to learn more</a>
+        </h2>
+      </div>
+  	<div id="demo_Browser"></div>
+  </div>
+</body>
+</html>

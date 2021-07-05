@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Ben Shneiderman's Publications</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./js/bibParser.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+function loadData(browser){
+  browser.primaryTableName = "Publications";
+  kshf.dt.Publications = [];
+
+  $.ajax( {
+//      url:"https://www.cs.umd.edu/users/ben/publications.html",
+    url:"./data/BenShneiderman.html",
+    async: false,
+    success: function(doc){
+      $$doc = $($.parseHTML(doc));
+
+      var lastItem;
+
+      var bibParser = new BibtexParser(function(entry) {
+        lastItem = entry;
+        entry.EntryKey = entry.EntryKey.replace( /(:|\.|\[|\])/g, "\\$1" );
+
+        // convert text form date to javascript date
+        if(entry.Fields.year){ entry.Year = new Date(entry.Fields.year,0); }
+
+        entry.Authors = entry.Fields.author;
+
+        if(entry.EntryKey.indexOf('/') === -1 && entry.EntryKey.indexOf('!') === -1){
+          // read pdf link
+          $$doc.find('#'+entry.EntryKey+ ' a:last-of-type').each(function(aTag){
+            if(this.innerText==="PDF") entry.PDF = this.attributes.href;
+          });                          
+          // read abstract
+          $$doc.find('#abs_'+entry.EntryKey).each(function(abs){
+            entry.Abstract = this.innerText;
+          });
+        }
+
+        kshf.dt.Publications.push(new kshf.Record(entry,"EntryKey"));
+      });
+
+      $$doc.find('#qs_table tr.bibtex pre').each(function(){
+        bibParser.parse(this.innerText);
+        lastItem.bibTex = this.innerText;
+      });
+
+      browser.loadCharts();
+    },
+    error: function(jqXHR, textStatus, errorThrown ){
+      console.log(errorThrown);
+    }
+  });
+}
+$(document).ready( function(){
+
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 200,
+    recordName: "Publications",
+    source: {
+      url: "https://www.cs.umd.edu/users/ben/publications.html",
+      callback: loadData
+    },
+    summaries: [
+      { name: "EntryType" },
+      { name: "Authors", catSplit: " and " },
+      { name: "Journal", value: function(){ return this.Fields.journal; } },
+      { name: "Year", panel: "bottom" }
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      textSearch: { name: "title", value: function(){ return this.Fields.title;} },
+      detailsToggle: "one",
+      recordView: function(){
+        var str="";
+        str+=this.Fields.title;
+
+        if(this.PDF){
+          str+="<a class='pubLink pdflink fa fa-file-pdf-o' href='"+this.PDF.value+"' target='_blank'></a>";
+        }
+        if(this.Fields.doi){
+          str+="<a class='pubLink doilink' href='http://dx.doi.org/"+this.Fields.doi+"' target='_blank'>[doi]</a>";
+        }
+
+        str+="<span class='item_details'>";
+
+        if(this.Authors){
+          str+="<div class='authorNames'>"+this.Authors.replace(" and "," & ")+"</div>";
+        }
+        // Venue + details
+        str+="<div class='venueInfo'><span style='font-weight:bolder;'>"+this.Year.getFullYear()+"</span> ";
+        if(this.Fields.journal) {
+          str+=this.Fields.journal+" ";
+        }
+        if(this.Fields.booktitle) {
+          str+=this.Fields.booktitle+" ";
+        }
+        if(this.Fields.publisher) {
+          str+="<b>Publisher:</b> "+this.Fields.publisher;
+        }
+        str+="</div>";
+
+        // Abstract
+        if(this.Abstract){
+          str+="<div class='venueInfo'><span style='font-weight:bolder;'>Abstract:</span> "+this.Abstract.substr(11); 
+        }
+
+        str+="</span>";
+
+        return str;
+      }
+    }
+  });
+});
+        </script>
+<style id="kshfStyle">
+.kshfRecord {
+  max-height: 230px !important;
+  vertical-align: top;
+}
+.content{
+  margin-bottom: 5px;
+}
+.content a{
+  vertical-align: top;
+  color: #496B86;
+}
+.content span.title{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2px;
+  text-align: left;
+  font-size: 0.8em;
+}
+
+.paperName{
+  cursor:pointer;
+}
+.paperName:hover{
+  color: orangered;
+}
+.authorNames{
+  font-weight: 300;
+}
+.benb{
+  font-style: italic;
+}
+.doilink{
+  margin-left: 10px;
+  font-size: 0.7em;
+  vertical-align: top;
+}
+.externallink{
+  margin-left: 3px;
+  font-size: 0.7em;
+  vertical-align: top;
+}
+.pdflink{
+  margin-left: 10px;
+  vertical-align: top;
+}
+.item_details{
+  margin-left: 5px;
+}
+.venueInfo{
+  margin-left: 5px;
+  font-size: 0.9em;
+  font-weight: 300;
+}
+.topics{
+  font-size: 0.9em;
+  font-weight: 300;
+  margin-left: 5px;
+  font-variant: small-caps;
+}
+.pubLink{
+  color: #005FA9;
+  display: inline-block;
+  text-decoration: none;
+}
+.pubLink:hover {
+  color: orangered !important;
+  text-decoration: none;
+}
+
+.pdfImage{
+  position:absolute;
+  right: 0px;
+  height: 100%;
+}
+.content{
+  padding-bottom: 4px;
+  padding-right: 40px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Publications of Ben Shneiderman</div>
+      <div id="demo_Browser"></div>
+      </div>
+    <div id="demo_Infobox">
+      This page uses data from
+      <a href="https://www.cs.umd.edu/users/ben/publications.html" target="_blank">Ben Shneiderman's publications page</a>.
+      All data is parsed from Bibtex.
+      </div>
+  </body>
+</html>

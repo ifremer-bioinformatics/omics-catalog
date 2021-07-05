@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Photos from the Great Depression, United States, California , 1936-1944</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 170,
+    barChartWidth: 110,
+    rightPanelLabelWidth: 100,
+    recordName: "Photograhs",
+    source: {
+      url: "http://photogrammar.yale.edu/labs/crossfilter/california/",
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "photogrammar_yale_california"
+    },
+    summaries: [
+      { name: "Photographer", value: "pname"},
+      { name: "Category", value: "van0" },
+      { name: "County", value: "county", panel: "right"},
+      { name: "Year", value: "year", panel: "right"},
+      { name: "Month", value: function(){ if(this.month) return this.month-1;}, 
+        panel: "right", catSortBy: "id", catLabel: _demo.Month },
+      { name: "Date", value: "date", timeFormat: "%Y-%m", panel: "bottom" },
+    ],
+    recordDisplay: {
+      displayType: 'grid',
+      detailsToggle: "off",
+      maxVisibleItems_Default: 40,
+      sortBy: 'Date',
+      //textSearch: "Title",
+      recordView: function(){ 
+        return ""+
+          "<a href='http://photogrammar.yale.edu/records/index.php?record="+this.cnumber+"' target='_blank'>"+
+          //"<img src='http://api.artsmia.org/images/"+this.id+"/small.jpg' class='thumb'></a>";
+          "<img src='http://maps.library.yale.edu/images/public/photogrammar/"+this.tn+"' class='thumb'></a>";
+      },
+      onDOM: function(d){
+        d3.select(d.DOM.record.childNodes[2].childNodes[0].childNodes[0])
+          .each(function(){ this.tipsy = new Tipsy(this, {gravity: 'n', title: d.data.title }); })
+          .on("mouseover",function(){ this.tipsy.show(); })
+          .on("mouseout" ,function(){ this.tipsy.hide(); })
+      }
+    }
+  });
+});
+    </script>
+  </head>
+<style id="kshfStyle">
+  .recordGroup{
+    background-color: black !important;
+  }
+  #demo_Browser{
+    height: calc(100vh - 90px);
+  }
+</style>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Photos from the Great Depression Era (1936-1945), California, United States</div>
+      <div id="demo_PageSubtitle">Curated by the United States Farm Security Administration and Office of War Information (FSA-OWI)</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Re-Vis, from <a href="http://photogrammar.yale.edu/labs/crossfilter/california/" target='_blank'>
+        Photogrammar</a> project at Yale University.
+      </div>
+  </body>
+</html>

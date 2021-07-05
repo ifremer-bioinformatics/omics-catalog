@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Women In Film</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth:140,
+    leftPanelLabelWidth: 250,
+    recordName: "Movies",
+    source: {
+      url: "http://women-in-film.silk.co/",
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "women_in_film"
+    },
+    summaries: [
+      { name: "Movie Passes Bechdel Test ?", value: "Passes Bechdel Test?" },
+      { name: "Bechdel Criterias",
+        value: function(){
+          var r=[];
+          if(this["Has at least two [named] women in it"]==="Pass")
+            r.push("Has at least two [named] women in it");
+          if(this["The women talk to each other"]==="Pass")
+            r.push("The women talk to each other");
+          if(this["The women talk about something besides a man"]==="Pass")
+            r.push("The women talk about something besides a man");
+          return r;
+        } },
+      { name: "Clarity of Pass", collapsed: true },
+      { name: "Plot Keywords (top 10)", catSplit: ", ", minAggrValue: 5 },
+      { name: "IMDb Popularity", value: "IMDb Popularity Score", panel: 'middle', skipZero: true },
+      { name: "Award Popularity", panel: 'left', collapsed: true },
+      { name: "Rating", catSplit: ", " },
+      { name: "Genre", catSplit: ", ", panel: 'right' },
+      { name: "Main Actors", catSplit: ", ", minAggrValue: 3, panel: 'right' },
+      { name: "Language", catSplit: ", ", panel: 'right' },
+      { name: "Runtime", value: "Runtime (min)", panel: 'right', collapsed: true, unitName: "min" },
+      { name: "Year", timeFormat: "%Y", panel: "middle", collapsed: true }
+    ],
+    recordDisplay: {
+      displayType: 'grid',
+      textSearch: "Movie Title",
+      sortBy: "IMDb Popularity",
+      recordView: function(){
+        return "<a target='_blank' href='"+this['IMDB Link']+"' class='thumbnail'>"+
+          "<img class='thumbImg' src='http://asset.keshif.me/img/imdbPosters/"+
+            this['IMDB Link'].substr(26,9)+".jpg'></a>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{ height: calc(100vh - 120px); }
+.kshfRecord{ width: 25%; }
+.recordGroup{ background-color: #1A1A1A !important; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Gender Bias In Movies - Do Women Only Talk About Men? </div>
+      <div id="demo_PageSubtitle"> To pass the <a href="http://bechdeltest.com/" target="_blank">Bechdel test</a>, a movie has to meet 3 criteria: (1) it has to have at least two women in it, (2) who talk to each other (3) about something besides a man.<br> Surprisingly, <b>533 of the 1453 movies (37%)</b> in this dataset <b>fail this gender test</b>! Explore the data below.</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data Re-Vis, from the data curated by 
+      <a href="https://github.com/ali-ce/datasets/tree/master/Women-in-Film" target="_blank">Alice Corona</a>
+      (CC SA 4.0 Int <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank"><img src="http://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-sa.svg" height="12"></a>),
+      and the story published at
+      <a href="http://women-in-film.silk.co/" target='_blank'>Silk</a>.
+      </div>
+  </body>
+</html>

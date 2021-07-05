@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>IEEE VGTC VPG International Data-Visualization Contest</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  var skill_order = {
+    Good     : 0,
+    Moderate : 1,
+    Poor     : 2,
+  };
+
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Records",
+    barChartWidth: 120,
+    leftPanelLabelWidth: 100,
+    rightPanelLabelWidth: 210,
+    middlePanelLabelWidth: 210,
+    source: {
+      url: "http://vacommunity.org/ieeevpg/2015/index.html",
+      //dirPath: './data/',
+      dirPath: 'https://74e0909a2f25a27a12abbd2b23496ff961e96b2b.googledrive.com/host/0B7dZK5YPaSGLfkgwQmVKOUctUXBmTXpFWHpUUjYweUl6VC1ZS0NHQlJMMnZzZHNEOVpQcFk/',
+      tables: "student_flow_aggregated_file",
+      fileType: 'csv',
+    },
+    metric: "Students",
+    summaries: [
+      { name: "Gender" },
+      { name: "Age Group", value: "actcat", catSortBy: ['16-19','20-23','24-27','28-32','33-36'] },
+      { name: "T1_Level2", panel: "middle" },
+      { name: "T2_Level2", panel: "middle" },
+      { name: "T3_Level2", panel: "middle" },
+      { name: "T1_IMFIT", panel: "right", catSortBy: skill_order },
+      { name: "T2_IMFIT", panel: "right", catSortBy: skill_order },
+      { name: "T3_IMFIT", panel: "right", catSortBy: skill_order },
+      { name: "YR1"},
+      { name: "YR2"},
+      { name: "Transfer", value: "transfer", catLabel: {1:"Yes", 0:"No"} },
+      { name: "Highest Level", value: "HighestLevel2", panel: "right" },
+      { name: "Students", value: "count"}
+    ]
+  });
+});
+    </script>
+    </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Un-submission for <a href="http://vacommunity.org/ieeevpg/2015/index.html" target="_blank">
+        IEEE VGTC VPG International Data-Visualization contest</a>.
+      </div>
+  </body>
+</html>

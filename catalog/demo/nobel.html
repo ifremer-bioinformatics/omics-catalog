@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Nobel Prize Winners</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+	browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Laureates",
+    categoryTextWidth: 190,
+    leftPanelLabelWidth: 120,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdDNVcXlscjl4RzRZNl9ZSkNJLU1DWVE',
+      tables: ["Prizes", "Laureates"]
+    },
+    summaries: [
+      { name: "Category", catLabel: function(){ return this.id+" "+getIcon(this.id); } },
+      { name: "Born Country",
+        value: function(){ return kshf.dt_id.Laureates[this.laureate_id].data.bornCountry; }, },
+      { name: "Affiliation", panel: 'right',
+        value: function(){ return kshf.dt_id.Laureates[this.laureate_id].data.name; },
+        // summaries: [{ name: "# of Winners", value: function(d){ return d.records.length; } }] 
+        },
+      { name: "Joint Awards", catLabel: function() { return this.id+" awardee"+(this.id===1?"":"s"); } },
+      { name: "Gender",
+        value: function(){ return kshf.dt_id.Laureates[this.laureate_id].data.gender; },
+        catLabel: {
+          1: "Male <i class='fa fa-male'></i>",
+          2: "Female <i class='fa fa-female'></i>",
+          3: "Organization <i class='fa fa-university'></i>"
+        } },
+      { name: "Year", panel: 'bottom', timeFormat: "%Y" }
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      textSearch: { name: "name", value: function () {
+        var laureate = kshf.dt_id.Laureates[this.laureate_id];
+        return laureate.data.firstname + " " + (laureate.data.surname || "");
+      } },
+      displayType: 'grid',
+      recordView: function(){
+        var laureate = kshf.dt_id.Laureates[this.laureate_id];
+        var surname_short = (laureate.data.surname||"").toLowerCase().replace(/ /g,"_");
+        surname_short = surname_short.replace("von_","").replace("la_","");
+        var fullname = laureate.data.firstname + " " + (laureate.data.surname||"");
+        var imgUrl="";
+        if(laureate.data.gender!==3){
+          imgUrl = "http://asset.keshif.me/img/nobel_photo/"+surname_short+".jpg";
+        }
+        return "<span class='thumbnail'><img class='thumbImg' src='"+imgUrl+"'></span>"+
+            "<b>"+fullname+"</b>"+
+            "<div style='text-align: center;'>"+
+            "<span styke='font-size: 0.8em;'>"+getIcon(this.Category)+" "+this.Category+"</span> "+
+            //getIcon(getGender(laureate.data.gender))+
+            "</div>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+.theLabel > .fa{
+  width: 15px;
+  text-align: center;
+}
+.kshfRecord{ width: 130px; }
+.content{
+  padding: 3px;
+  text-align: center;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Nobel Prize Winners</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

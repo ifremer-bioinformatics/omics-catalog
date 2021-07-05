@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>NYPL Public Digital Collection</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+var _lookup = {
+  collections: [],
+  genres: [],
+  geos: [],
+  languages: [],
+  topics: [],
+  types: [],
+};
+
+$(document).ready( function() {
+  var dirPath = 'http://asset.keshif.me/data/NYPL/';
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 80,
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 150,
+    recordName: "Items",
+    source: {
+      url: "https://github.com/NYPL-publicdomain/data-and-utilities",
+      dirPath: dirPath,
+      fileType: 'json',
+      tables: "all",
+      callback: function(){
+        ["collections", "genres", "geos", "languages", "topics", "types"].forEach(function(d){
+          $.ajax({
+            url: dirPath+d+".json",
+            async: false,
+            success: function(data){ 
+              _lookup[d] = data;
+            }
+          });
+        });
+        browser.loadCharts();
+      }
+    },
+    summaries: [
+      { name: "Type", value: "types", 
+        catLabel: function(){ return _lookup.types[this.id];} },
+      { name: "Language", value: "lang", 
+        catLabel: function(){ return _lookup.languages[this.id];} },
+      { name: "Genres", value: "genres", 
+        catLabel: function(){ return _lookup.genres[this.id];}, panel: "right" },
+      { name: "Topics", value: "topics", minAggrValue: 50,
+        catLabel: function(){ return _lookup.topics[this.id];}, panel: "right" },
+      { name: "Collection", value: "collection", minAggrValue: 10,
+        catLabel: function(){ return _lookup.collections[this.id];}, panel: "left" },
+      { name: "Date", value: function(){ if(this.date && this.date<=2016) return new Date(this.date, 0); }, panel: 'middle' }
+    ],
+    recordDisplay: {
+      displayType: 'grid',
+      detailsToggle: "off",
+      maxVisibleItems_Default: 100,
+      sortBy: {name: 'Date', inverse: true},
+      //textSearch: "Title",
+      recordView: function(){ 
+        return ""+
+          "<a href='http://digitalcollections.nypl.org/items/"+this.URL+"' target='_blank'>"+
+          //"<img src='http://api.artsmia.org/images/"+this.id+"/small.jpg' class='thumb'></a>";
+          "<img src='http://images.nypl.org/index.php?id="+this.imgURL+"&t=t' class='thumb'></a>";
+      },
+      /*
+      onDOM: function(d){
+        d3.select(d.DOM.record.childNodes[2].childNodes[0].childNodes[0])
+          .each(function(){ this.tipsy = new Tipsy(this, {gravity: 'n', title: d.data.Title}); })
+          .on("mouseover",function(){ this.tipsy.show(); })
+          .on("mouseout" ,function(){ this.tipsy.hide(); })
+      }*/
+    }
+  });
+});
+
+    </script>
+<style id="kshfStyle">
+.thumb:hover{ box-shadow: 0px 0px 3px #8D6F30, 0px 0px 3px #8D6F30, 0px 0px 3px #8D6F30; }
+.recordGroup{ background-color: #F0EFEF !important; }
+.kshfRecord{ overflow: visible !important; }
+.thumb{
+  box-shadow: 1px 1px 3px gray;
+  max-height: 100px;
+}
+#demo_PageSubtitle > a{
+  color: #706B62;
+  font-weight: 600;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">NYPL Public Digital Collection</div>
+      <div id="demo_PageSubtitle">
+        Explore the <a href='https://github.com/NYPL-publicdomain/data-and-utilities' target='_blank'>public</a> digital collection of the New York Public Libraries.
+        Designed by <a href='http://www.adilyalcin.me' target='_blank'>Adil Yalçın</a>, 
+        built using <a href='http://www.keshif.me'>Keshif</a>.
+        </div>
+      <div id="demo_Browser"></div>
+      </div>
+
+<!--    <div id="demo_Infobox">
+      Another browser is available at:
+      <a href='http://publicdomain.nypl.org/pd-visualization/' target='_blank'>publicdomain.nypl.org/pd-visualization/</a>. 
+      </div> -->
+  </body>
+</html>

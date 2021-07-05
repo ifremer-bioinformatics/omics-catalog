@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Ben Bederson's Book Library</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+var loadData = function(){
+  var browser = this;
+    browser.primaryTableName = "Books";
+    kshf.dt.Books = [];
+    
+    var book_metadata = {}
+    $.ajaxSetup({
+        async: false
+    });
+    $.getJSON("https://spreadsheets.google.com/feeds/list/1Qfgq9AM_Af54pkPKxMWSbiPj5xY8k-JybaJBE8Yt5pw/1/public/values?alt=json", function(data) {
+        for (x in data.feed.entry) {
+            entry = data.feed.entry[x];
+            var title = entry['gsx$title']['$t'];
+            // title = title.substring(1, title.length-1);
+            var pubyear = entry['gsx$pubyear']['$t'];
+            var genre = entry['gsx$genre']['$t'];
+            book_metadata[title] = [pubyear, genre];
+        }
+    });
+
+    $.ajax( {
+        url: "http://asset.keshif.me/data/bederson_book_library.xml",
+        async: false,
+        success: function(doc){
+            $(doc).find("GoodreadsResponse > reviews > review").each(function(i) {
+                var $this = $(this);
+                var d={};
+                d.id = $this.find("id")[0].textContent.trim();
+                d['Genres'] = [];
+                d['Author'] = [];
+                d.Title = $this.find("title")[0].textContent.trim();
+                num_pages = $this.find("num_pages")[0].textContent.trim();
+                if (num_pages != "") {
+                    d.NumPages = parseInt($this.find("num_pages")[0].textContent.trim());
+                }
+                if ((typeof book_metadata[d.Title] === "undefined") || (book_metadata[d.Title][0] == "")) {
+                    pub_year = parseInt($this.find("publication_year")[0].textContent.trim());
+                } else {
+                    pub_year = parseInt(book_metadata[d.Title][0]);
+                }
+                if (pub_year > 1990) {
+                    d.PubYear = pub_year;
+                }
+                read_date = $this.find("read_at")[0].textContent.trim();
+                if (read_date != "") {
+                    read_comps = read_date.split(" ");
+                    read_year = read_comps[read_comps.length - 1];
+                    d.ReadYear = parseInt(read_year);
+                    read_month = read_comps[1];
+                    if (read_month == "Jan") { d.ReadMonth = 1;
+                    } else if (read_month == "Feb") { d.ReadMonth = 2;
+                    } else if (read_month == "Mar") { d.ReadMonth = 3;
+                    } else if (read_month == "Apr") { d.ReadMonth = 4;
+                    } else if (read_month == "May") { d.ReadMonth = 5;
+                    } else if (read_month == "Jun") { d.ReadMonth = 6;
+                    } else if (read_month == "Jul") { d.ReadMonth = 7;
+                    } else if (read_month == "Aug") { d.ReadMonth = 8;
+                    } else if (read_month == "Sep") { d.ReadMonth = 9;
+                    } else if (read_month == "Oct") { d.ReadMonth = 10;
+                    } else if (read_month == "Nov") { d.ReadMonth = 11;
+                    } else if (read_month == "Dec") { d.ReadMonth = 12;
+                    }
+                }
+                d.Thumb = $this.find("image_url")[0].textContent.trim();
+                d.Description = $this.find("description")[0].textContent.trim();
+                d.Review = $this.find("body")[0].textContent.trim();
+                $this.find("authors > author > name").each(function(i) {
+                    var author = $(this)[0].textContent.trim();
+                    d['Author'].push(author);
+                });
+                d.URL = $this.find("link")[0].textContent.trim();
+                if ((typeof book_metadata[d.Title] === "undefined") || (book_metadata[d.Title][1] == "")) {
+                } else {
+                    genres = book_metadata[d.Title][1].split(",")
+                    // console.log(genres);
+                    for (x in genres) {
+                        genre = genres[x].trim()
+                        d['Genres'].push(genre);
+                    }
+                }
+                rating = parseInt($this.find("rating")[0].textContent.trim());
+                if (rating > 0) {
+                    d.Rating = rating;
+                }
+                kshf.dt.Books.push(new kshf.Record(d,'id'));
+            });
+            browser.loadCharts();
+        }
+    });
+};
+
+var getStars = function(n){
+  var str="";
+  if(n>0){
+    str+="<span class='ratings'>";
+    for(var s=0; s<5; s++){
+      str+="<span class='fa ratingStar fa-star"+(n<=s?"-o":"")+"'></span>";
+    }
+    str+="</span>";
+  }
+  return str;
+};
+
+// Google metadata at
+// https://docs.google.com/spreadsheets/d/1Qfgq9AM_Af54pkPKxMWSbiPj5xY8k-JybaJBE8Yt5pw/edit#gid=566794414
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 150,
+    recordName: "Books",
+    source: {
+      url: "https://www.goodreads.com/review/list/14553051.xml?key=KAt49yfYt3zkkSmtCW0cLg&v=2&shelf=read&per_page=200",
+      callback: loadData
+    },
+    summaries: [
+      { name: "Genres" },
+      { name: "Bederson's Rating", value: "Rating", catLabel: function(){ return getStars(this.id); } },
+      { name: "Author" },
+      { name: "Reviewed", description: "Mouse-over the book image to see my review",
+        value: function(){ return (this.Review!=="")?"Yes":"No"; } },
+      { name: "# of Pages", value: "NumPages", collapsed: true },
+      { name: "Year Read", value: "ReadYear", panel: "middle", collapsed: true, timeFormat: "%Y" },
+      { name: "Year Publication", value: "PubYear", panel: "middle", 
+        description: "(Excl. Books Pre-1990)", timeFormat: "%Y" }
+    ],
+    recordDisplay: {
+      sortBy: "Year Read",
+      textSearch: "Title",
+      displayType: "grid",
+      recordView: function(){
+        return "<a target='_blank' href="+this.URL+" class='thumbnail'>"+
+            "<img class='thumbImg' src='"+this.Thumb+"' title='"+
+/*              //encodeURI(this.Review) 
+              this.Review.replace(/\"/g,"'").replace(/<br>/g,"")+ */
+              "'></a>"+
+            "<span class='subTitle'>"+this.Author+"</span>"+
+            "<span class='title'>"+this.Title+"</span>"+getStars(this.Rating);
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{ height: calc(100vh - 90px); }
+.kshfRecord{ width: 150px; }
+.content{ padding: 3px; }
+.thumbnail{ overflow: visible !important; }
+.kshfRecord .subTitle{ text-align: center !important; }
+.kshfRecord .title{ text-align: center !important; }
+.kshfRecord .ratings{
+  margin-top: 2px;
+  display: block;
+  text-align: center;
+}
+.attrib .fa-star-o{ display: none; }
+.ratingStar.fa-star{ text-shadow: 0px 0px 1px black; }
+.ratingStar.fa-star-o{ color: rgb(228, 228, 228); }
+.ratingStar.fa-star{ color: rgb(234, 234, 124); }
+</style>
+  </head>
+
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Books Read by Ben Bederson</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Books that <a href="http://www.cs.umd.edu/~bederson/">Ben Bederson</a> has read since Oct 1991 (data from <a href="https://www.goodreads.com/review/list/14553051?shelf=read">GoodReads)</a>.<br>Book list is incomplete and includes primarily non-work-related books. Blog post relating to this browser is at
+      <a href="http://hci-user-advocate.blogspot.com/2015/01/books-ive-read-visualization.html"
+          target="_blank">HCI user advocate blog</a>.
+      </div>
+  </body>
+</html>

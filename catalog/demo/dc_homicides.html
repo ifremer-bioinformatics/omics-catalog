@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Homicides in the District</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+
+var neighborhoodRegions = {};
+function dataLoad(){
+  var browser = this;
+  $.ajax({
+    //url: "http://apps.washingtonpost.com/investigative/homicides/api/v1/victim/?limit=0&offset=0&format=json",
+    url: "http://asset.keshif.me/data/dc_homicides.json",
+    success: function(data){
+      browser.primaryTableName = "Victims";
+      kshf.dt.Victims = [];
+      data.objects.forEach(function(vic){
+        vic.id = 1*vic.id;
+        vic.incident_date = moment(vic.incident_date).toDate();
+        kshf.dt.Victims.push(new kshf.Record(vic,"id"));
+      });
+
+      $.ajax({
+        // Load state geometries
+        url: 'data/dc.geojson',
+        dataType: 'json',
+        async: false,
+        success: function(topojsonData){
+          topojsonData.features.forEach(function(feature){
+            neighborhoodRegions[feature.properties.subhood] = feature.geometry;
+          });
+        }
+      });
+
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 150,
+    source: {
+      url: "http://apps.washingtonpost.com/investigative/homicides/",
+      callback: dataLoad
+    },
+    summaries: [
+      { name: "Age", value: "age" },
+      { name: "Race", value: "race" },
+      { name: "Sex", value: "sex",
+        catLabel: function(){ return (this.id==="m"?"Male ":"Female ")+getIcon(this.id); } },
+      { name: "<span class='fa fa-th-large'></span> Quadrant", panel: 'right', value: "quadrant",
+        catLabel: { SE: "South-East", SW: "South-West", NE: "North-East", NW: "North-West" } },
+      { name: "Neighborhood", panel: 'middle', viewAs: "map",
+        value: function(){ if(this.nbhd) return this.nbhd.subhood; },
+        catMap: function(){ return neighborhoodRegions[this.id]; } },
+      { name: "Manner", value: function(){ return this.manner.name; }, panel: 'right' },
+      { name: "Status", panel: 'right',
+        value: function(){
+          var r=[];
+          r.push("Police Status: "+this.police_status.name);
+          if(this.jury_trial) r.push("Had jury trial");
+          return r;
+        } },
+      { name: "Cases with +2 victims", panel: 'right', value: "ccn", minAggrValue:2, collapsed: true },
+      { name: "Motive", value: function(){ return this.motive.name; } },
+      { name: "Incident Date", value: "incident_date", panel: "bottom", },
+      { name: "Full Name", value: function(){ return this.last_name +", "+this.first_name; }, panel: "none" }
+    ],
+    recordDisplay: {
+      sortBy: "Incident Date",
+      sortColWidth: 70,
+      textSearch: "Full Name",
+      recordView: "Full Name"
+    }
+  });
+});
+</script>
+<style id="kshfStyle">
+#demo_Browser{ max-width: 950px;  }
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Homicides in Washington D.C. (2000-2011)</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="http://apps.washingtonpost.com/investigative/homicides/" target='_blank'>Data</a> was curated by the 
+        <b>Washington Post</b>.
+        Geographical data from <a href='http://opendatadc.org/dataset/neighborhood-boundaries-217-neighborhoods-washpost-justgrimes' target='_blank'>opendatadc.gov</a>
+      </div>
+  </body>
+</html>

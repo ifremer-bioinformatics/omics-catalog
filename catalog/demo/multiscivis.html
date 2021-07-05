@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Multi-faceted Scientific Data Visualization Techniques</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+var loadData = function(browser){
+  browser.primaryTableName = "Visualizations";
+
+  kshf.dt.Visualizations = [];
+
+  $.ajax( {
+    url: "http://asset.keshif.me/data/multivis.xml",
+    async: false,
+    success: function(doc){
+      $(doc).find("list > item").each(function(i){
+        var $this = $(this);
+        var d={};
+        d.id = this.getAttribute("id");
+        d['Data Facets'] = [];
+        d['Main Goals'] = [];
+        d['Techniques'] = [];
+        this.getAttribute("fac").split("").forEach(function(t){
+          switch(t){
+            case "1": d['Data Facets'].push("Spatio-Temporal"); break;
+            case "2": d['Data Facets'].push("Multivariate Data"); break;
+            case "3": d['Data Facets'].push("Multi-Model"); break;
+            case "4": d['Data Facets'].push("Multi-Run / Ensemble Data"); break;
+            case "5": d['Data Facets'].push("Multi-Model Data"); break;
+          }
+        });
+        this.getAttribute("gol").split("").forEach(function(t){
+          switch(t){
+            case "R": d['Main Goals'].push("Representation"); break;
+            case "I": d['Main Goals'].push("Interaction"); break;
+            case "A": d['Main Goals'].push("Analysis"); break;
+          }
+        });
+        this.getAttribute("tec").split("").forEach(function(t){
+          switch(t){
+            case "A": d['Techniques'].push("Data Abstraction & Aggregation"); break;
+            case "B": d['Techniques'].push("Interactive Feature Specification"); break;
+            case "C": d['Techniques'].push("Visual Comparison"); break;
+            case "D": d['Techniques'].push("Focus+Context & Overview+Detail"); break;
+            case "F": d['Techniques'].push("Visual Data Fusion"); break;
+            case "N": d['Techniques'].push("Navigation"); break;
+          }
+        });
+        d.Name = $this.find("name")[0].textContent.trim();
+        d.Year = parseInt($this.find("year")[0].textContent.trim());
+        d.Authors = $this.find("authors")[0].textContent.trim().replace(" and ",", ");
+        d.URL = $this.find("url")[0].textContent.trim();
+        d.Title = $this.find("title")[0].textContent.trim();
+        d.Venue = $this.find("publication")[0].textContent.trim();
+        var kshfItem = new kshf.Record(d,'id');
+        kshf.dt.Visualizations.push(kshfItem);
+      });
+
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 210,
+    recordName: "Techniques",
+    source: {
+      url: "http://multivis.net/",
+      callback: loadData
+    },
+    summaries: [
+      "Data Facets",
+      "Main Goals",
+      "Techniques",
+      { name: "Authors", catSplit: ", " },
+      { name: "Year", timeFormat: "%Y", panel: "bottom" }
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      displayType: 'grid',
+      textSearch: "Title",
+      recordView: function(){
+        return "<a target='_blank' href='http://scholar.google.com/scholar?hl=en&q="+this.Title+"' class='thumbnail'>"+
+          "<img class='thumbImg' src='http://multivis.net/t200/"+this.id+".png'></a><span class='subTitle'>"+this.Title+"</span>";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{ height: calc(100vh - 90px); }
+.kshfRecord{ width: 150px; }
+.content{ padding: 3px; }
+.thumbnail{ height: 105px; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Visualization Techniques for Multifaceted Scientific Data</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data: <a href="http://multivis.net/"
+        target='_blank'>multivis.net</a> - Visualization and Visual Analysis of Multifaceted Scientific Data,
+        by
+        <a href="http://wwwcg.in.tum.de/group/persons/kehrer.html" target='_blank'>Johannes Kehrer</a>
+        and 
+        <a href="http://www.ii.uib.no/vis/team/hauser/index.html" target='_blank'>Helwig Hauser</a>.<br>
+      All rights for the technique images belong to their respective owners.
+      </div>
+  </body>
+</html>

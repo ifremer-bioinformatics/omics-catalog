@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>FDA Inspections</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    leftPanelLabelWidth: 150,
+    middlePanelLabelWidth: 350,
+    barChartWidth: 120,
+    source: {
+      gdocId: '1DH4wZHpYeZuk_f-EEJMq-8ne1_k_kcOQf1x4TFtGF3M',
+      tables: "FDA Inspections"
+    },
+    summaries: [
+      { name: "Country/Area", catLabel: function(){ return getCountryName(this.id);}, collapsed: true },
+      { name: "State", catLabel: function(){ return getStateName(this.id); } },
+      { name: "District" },
+      { name: "City", minAggrValue: 25 },
+      { name: "District Decision", panel: 'right' },
+      { name: "Center", panel: 'right' },
+      { name: "Project Area", panel: 'middle' },
+      { name: "Inspection End Date", panel: 'bottom' }
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

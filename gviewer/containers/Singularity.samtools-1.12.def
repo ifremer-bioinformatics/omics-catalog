@@ -1,0 +1,25 @@
+Bootstrap : docker
+From: ubuntu:16.04
+
+%post
+        apt-get -y update
+        apt-get -y install wget
+	apt-get -y install bzip2
+	apt-get -y install build-essential
+	apt-get -y install autoconf automake make gcc perl zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libssl-dev
+	
+        #Installation of SAMTOOLS
+        cd /opt
+	wget https://github.com/samtools/samtools/releases/download/1.12/samtools-1.12.tar.bz2
+	bunzip2 samtools-1.12.tar.bz2
+	tar xvf samtools-1.12.tar
+	rm -f /opt/*.bz2 /opt/*.tar
+	
+	cd samtools-1.12
+	./configure --without-curses
+	make
+	make install 
+
+%environment
+	export PATH="/opt:$PATH"
+

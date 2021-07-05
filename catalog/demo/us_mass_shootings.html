@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Mass Shootings in the U.S.</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 220,
+    rightPanelLabelWidth: 120,
+    source: {
+      gdocId: '1yvkEwRmxHH_1fjIMGQQd2Tq2ygA0CaTmAKi3muToXBw',
+      tables: "Mass Shootings in 12 Months",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    summaries: [
+      { name: "State", viewAs: "map",
+        catMap: function(){ 
+          var x=US_States.index_name[this.id];
+          if(x) return x.geo;
+        }},
+      { name: "# Killed", value: function(){ if(this["# Killed"]!==0) return this["# Killed"]; }, panel: "middle", unitName: "ppl" },
+      //{ name: "# Injured", panel: "left" },
+      { name: "Date", panel: "bottom" }
+    ],
+    recordDisplay: {
+      sortBy: "# Killed",
+      sortColWidth: 65,
+      recordView: function(){ 
+        // Date State   City Or County  Address # Killed    # Injured
+      return "<b>"+this.State + ", " + this['City Or County'] +", "+this.Address+"</b>"+
+        "<div class='time'>"+this.Date.getUTCMonth()+"-"+this.Date.getUTCDay()+"-"+this.Date.getUTCFullYear()+"</div>"+
+        "<div class='killed'><span class='fwidth'>Killed</span>: "+printPeopleIcons.call({id:this['# Killed']})+"</div>"+
+        "<div class='injured'><span class='fwidth'>Injured</span>: "+printPeopleIcons.call({id:this['# Injured']})+"</div>"
+        ;
+      }
+    }
+  });
+});
+        </script>
+<style id="kshfStyle">
+#demo_Browser { max-width: 900px; }
+.kshfSummary[summary_id="9"] .theLabel .fa{
+  font-size: 1.4em;
+  color: red;
+  margin: 0px 2px;
+}
+.kshfSummary[summary_id="10"] .theLabel .fa{ margin: 0px 2px; }
+.fwidth{
+  font-weight: 300;
+  display: inline-block;
+  width: 62px;
+  text-align: right;
+}
+.killed .fa{
+  color: red;
+  margin: 0px 2px;
+}
+.injured .fa{
+  margin: 0px 2px;
+}
+.time{ font-weight: 300; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Mass shootings reported by 
+      <a href="http://www.gunviolencearchive.org/mass-shooting" target="_blank">
+          Gun Violance Archive</a>
+      </div>
+  </body>
+</html>

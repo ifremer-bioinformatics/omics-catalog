@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Bird Strikes</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.0/dist/leaflet.js"></script>
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 130,
+    recordName: "Bird strikes",
+    leftPanelLabelWidth: 150,
+    rightPanelLabelWidth: 200,
+    middlePanelLabelWidth: 200,
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'json', 
+      tables: "voyager_birdstrikes",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    onLoad: function(){
+      var timeParse = d3.timeParse("%-m/%-d/%y");
+      this.records.forEach(function(record){
+        record.data.Flight_Date = timeParse(record.data.Flight_Date.split(" ")[0]);
+      });
+    },
+    summaries: [
+      { name: "Wildlife Size", value: "Wildlife__Size"},
+      { name: "Wildlife Species", value: "Wildlife__Species"},
+
+      { name: "Time of Day", value: "When__Time_of_day"},
+      { name: "Phase of Flight", value: "When__Phase_of_flight"},
+
+      { name: "State", value: "Origin_State", panel: "middle", collapsed: true,
+        catMap: function(){ 
+          var x=this.id;
+          if(x==="DC") x = "District of Columbia";
+          return US_States.index_name[x].geo;
+        } },
+      { name: "Airport", value: "Airport__Name", panel: "middle"},
+
+      { name: "Airline", value: "Aircraft__Airline_Operator", panel: "middle"},
+      { name: "Aircarft Make & Model", value: "Aircraft__Make_Model", collapsed: true, panel: "middle"},
+      { name: "Speed of Aircraft", value: "Speed_IAS_in_knots", unitName: "kn", panel: "right"},
+
+      { name: "Amount of Damage", value: "Effect__Amount_of_damage", panel: "right"},
+      { name: "Cost (Total)", value: "Cost__Total_$", unitName: "$", panel: "right", skipZero: true},
+      { name: "Cost (Other)", value: "Cost__Other", unitName: "$", panel: "right", collapsed: true, skipZero: true},
+      { name: "Cost (Repair)", value: "Cost__Repair", unitName: "$", panel: "right", collapsed: true, skipZero: true},
+      { name: "Date", value: "Flight_Date", panel: "bottom"}
+    ],
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Bird strikes near airports in the U.S.</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

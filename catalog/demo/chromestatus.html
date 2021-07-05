@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Chrome Feature Status</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+function mileSort(v){
+  switch(v){
+    case "In development": return 99;
+    case "Proposed": return 98;
+    case "No active development": return 97;
+    default: return v;
+  }
+};
+
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 180,
+    barChartWidth: 80,
+    recordName: "Chromium Features",
+    source: {
+      url: "http://www.chromestatus.com/features",
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'json',
+      tables: "chromefeatures"
+    },
+    onLoad: function(){
+      this.records.forEach(function(record){
+        record.data.name = record.data.name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      });
+    },
+    summaries: [
+      { name: "Milestone", 
+        value: function(){ return this.meta["milestone_str"]; },
+        catSortBy: { value: function(){ return mileSort(this.id); }, inverse: true} },
+      { name: "Category", value: "category"},
+      { name: "Implementation Status", value: "impl_status_chrome"},
+      { name: "Standardization", value: function(){ return this.standardization.text; } },
+      { name: "Visibility", value: "visibility", panel: 'right' },
+      { name: "Prefixed", value: "prefixed", panel: 'right', collapsed: true, },
+      { name: "Owner", value: "owner", panel: 'right', collapsed: true, },
+      { name: "Updated By", value: "updated_by", panel: 'right', collapsed: true, },
+      { name: "Firefox Status", value: function(){ return this.ff_views.text;     }, panel: 'right' },
+      { name: "IE Status"     , value: function(){ return this.ie_views.text;     }, panel: 'right' },
+      { name: "Safari Status" , value: function(){ return this.safari_views.text; }, panel: 'right' },
+      { name: "Update Date", panel: 'bottom', collapsed: true,
+        value: function(){ return new Date(moment(this.updated)); }, },
+    ],
+    recordDisplay: {
+      sortColWidth: 90,
+      sortBy: 
+        { name:'Milestone-', 
+          value: function(){ return mileSort(this.meta["milestone_str"]); },
+          label: function(){ return this.meta["milestone_str"]; } },
+      textSearch: 'name',
+      recordView: function(){
+        return "<span class='title'>"+this.name+"</span>"+
+        " <a target='_blank' href='http://www.chromestatus.com/feature/"+this.id+"' class='fa fa-external-link-square'></a>"+
+        "<span class='summary'>"+this.summary+"</span>";
+      }
+    }
+  });
+});
+        </script>
+<style id="kshfStyle">
+.content a{
+  color: #496B86;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+.content a:hover{
+  color: orangered;
+}
+.content .title{
+  display: inline;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2px;
+  text-align: left;
+  font-size: 1em;
+  font-weight: 700;
+}
+.kshfRecord canvas{
+  display: none;
+}
+.kshfRecord iframe{
+  display: none;
+}
+.summary{
+  display: block;
+  font-size: 0.8em;
+  color: gray;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.summary:hover{
+  white-space: initial;
+}
+    </style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Chrome Platform Status</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      This page uses data from
+      <a href="http://www.chromestatus.com" target="_blank">ChromeStatus</a>, data licensed under a Creative Commons Attribution 2.5 license 
+      </div>
+  </body>
+</html>

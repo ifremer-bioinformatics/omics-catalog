@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Knight Foundation Grants</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 200,
+    categoryTextWidth: 230,
+    recordName: "Grants",
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'json',
+      tables: "KnightGrants"
+    },
+    onLoad: function(){
+      this.records.forEach(function(d){
+        if(d.data.Meta){
+          var amount = d.data.Meta.Amount;
+          if(amount)
+            d.data.Amount = parseInt(amount.replace(",","").replace("$",""));
+          if(d.data.Meta["Date Awarded"])
+            d.data["Award Date"] = d3.timeParse("%m/%d/%y")(d.data.Meta["Date Awarded"]);
+          d.data.Community = d.data.Meta.Community;
+          if(d.data.Meta["Focus Area"]) {
+            d.data["Focus Areas"] = d.data.Meta["Focus Area"];
+          } else if(d.data.Meta["Focus Areas"]) {
+            d.data["Focus Areas"] = d.data.Meta["Focus Areas"].split(", ");
+          }
+        }
+      });
+    },
+    summaries: [
+      { name: "Organization" },
+      { name: "Focus Areas" },
+      { name: "Amount", unitName: "$" },
+      { name: "Award Date", panel: "middle"},
+      { name: "Community"}
+    ],
+    recordDisplay: {
+      sortBy: "Award Date",
+      sortColWidth: 70,
+      textSearch: "Title",
+      recordView: function(){
+        var str="";
+        var aOpen = "<a target='_blank' href='http://www.knightfoundation.org/grants/"+this.id+"'>";
+        if(this.Img)
+          str+= aOpen+"<img class='grantPhoto' src='http://www.knightfoundation.org/"+this.Img+"'></a>";
+        str+=aOpen+"<span class='grantTitle'>"+this.Title+"</span></a>";
+        str+="<div class='grantOrg'>"+this.Organization+"</div>";
+        str+="<div>";
+          str+="<span class='grantDate'> <span class='fa fa-calendar'></span> "+
+            d3.timeFormat("%m/%d/%y")(this["Award Date"])+"</span>";
+          if(this.Community) str+="<span class='grantCommunity'> <span class='fa fa-map-marker'></span> "+this.Community+"</span>";
+          str+="</div>";
+        str+="<div class='grantPurpose'>"+this.Purpose+"</div>";
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style>
+.thumbImg{
+  height: 80px;
+  width: auto !important;
+}
+.grantPhoto{
+  margin: 2px;
+  float: right;
+  height: 55px;
+  border-radius: 6px;
+}
+.grantTitle{
+  display: inline-block;
+  font-weight: 600;
+}
+.grantOrg{
+  font-size: 0.9em;
+  display: inline-block;
+}
+.grantOrg:before{
+  content: " to ";
+  margin-left: 5px;
+  margin-right: 3px;
+  display: inline-block;
+}
+.grantDate{
+  font-size: 0.8em;
+}
+.grantPurpose{
+  width: 600px;
+  font-size: 0.9em;
+  font-weight: 100;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.grantPurpose:hover{
+  overflow: visible;
+  white-space: normal;
+}
+.grantCommunity{
+  font-size: 0.8em;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">
+        <img src='http://www.knightfoundation.org/media/uploads/media_images/knight-logo-gray-300.jpg' 
+          style='height: 1.2em; vertical-align: top'> Grants</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from <a href="http://www.knightfoundation.org/grants/" target="_blank">
+          Knight Foundation Grants</a> listing
+      </div>
+  </body>
+</html>

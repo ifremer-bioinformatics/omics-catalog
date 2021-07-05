@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Selfiecity Portraits</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 150,
+    recordName: "Selfies",
+    source: {
+      url: 'http://selfiecity.net/selfiexploratory/',
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "selfiecity"
+      // http://s3.amazonaws.com/selfiecity/data/selfies_rekognized_full.csv
+    },
+    summaries: [
+      { name: "City", value: "city",
+        catLabel: {
+          'ny': "New York",
+          'bangkok': "Bangkok",
+          'sao_paulo': "Sao Paulo",
+          'moscow': "Moscow",
+          'berlin': "Berlin",
+        } },
+      { name: "Sex", value: "sex" },
+      { name: "Age", value: "age", showPercentile: true },
+      { name: "Eyes Closed", value: "eye_closed" },
+      { name: "Mouth Open", value: "mouth_open_wide", collapsed: true },
+      { name: "Has Glasses", value: "glasses" },
+       
+      { name: "Happyness", value: "emotion_happy", panel: 'right', showPercentile: true },
+      { name: "Calmness", value: "emotion_calm", panel: 'right', type: 'interval'}, // Original data source has some problems...
+      { name: "Confusion", value: "emotion_confused", panel: 'right', type: 'interval'}, // Original data source has some problems...
+      { name: "Sadness", value: "emotion_sad", panel: 'right', },
+      { name: "Anger", value: "emotion_angry", collapsed: true, panel: 'right', },
+      { name: "Disgust", value: "emotion_disgust", collapsed: true, panel: 'right', type: 'interval' }
+    ],
+    recordDisplay: {
+      sortBy: "Happyness",
+      displayType: "grid",
+      detailsToggle: "off",
+      maxVisibleItems_Default: 104,
+      recordView: function(){ 
+        return "<img src='http://d25rsf93iwlmgu.cloudfront.net/selfies/150/"+this.city+'/'+this.id+"'>";
+      }
+    }
+  });
+});
+      </script>
+<style id="kshfStyle">
+#demo_Browser{
+  height: calc(100vh - 90px);
+}
+.recordGroup{
+  background-color: black !important;
+}
+.kshfRecord{
+  width: 70px;
+  padding-top: 0px !important;
+  background-color: black !important;
+  overflow: visible !important;
+}
+.kshfRecord[highlight=true]{
+  background-color: orangered !important;
+}
+.kshfRecord[highlight=true] .content img{
+  border-color: orangered;
+  border-width: 3px;
+}
+.kshfRecord:hover{
+  z-index: 200 !important;
+}
+.kshfRecord:hover .content img{
+  transform: scale(2);
+}
+.kshfRecord > .itemRow{
+  display: block !important;
+  overflow: visible !important;
+}
+.content img{
+  display: block;
+  border: solid;
+  border-color: black;
+  border-width: 1px;
+  border-radius: 0px;
+  background-color: white;
+  width: 100%;
+  transition: all 200ms linear;
+  -webkit-transition: all 200ms linear;
+  -o-transition: all 200ms linear;
+  -moz-transition: all 200ms linear;
+}
+.kshfRecord[highlight=true] .content img{
+  background-color: orangered;
+}
+.content span.title{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 0.8em;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Selfiecity</div>
+      <div id="demo_PageSubtitle">Self-portraits (selfies) in five cities across the world</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+  <div id="demo_Infobox">
+    ReVis from <a href="http://selfiecity.net/selfiexploratory" target='_blank'>Selfiecity</a>, a project by Dr. Lev Manovich, Moritz Stefaner, Mehrdad Yazdani, Dr. Dominikus Baur, Daniel Goddmeyer, Alise Tifentale, Nadov Hochman, Jay Chow.
+    </div>
+  </body>
+</html>

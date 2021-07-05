@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"> <head>
+    <title>Milestones in the History of Thematic Cartography, Statistical Graphics, and Data Visualization</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <link rel="image_src" href="./demo_img/visualization_milestones.jpeg" />
+    <meta property="og:image" content="http://keshif.me/demo/demo_img/visualization_milestones.jpeg" />
+    <meta property="og:url" content="http://keshif.me/demo/visualization_milestones.html" />
+    <meta property="og:title" content="Milestones in the History of Thematic Cartography, Stat. Graphics, and Data Visualization" />
+
+    <script type="text/javascript">
+
+function loadData(browser){
+    browser.primaryTableName = "Milestones";
+
+    kshf.dt.Milestones = [];
+    kshf.dt_id.Milestones = {};
+    kshf.dt.References = [];
+    kshf.dt_id.Milestones_2 = {};
+
+    var highlightIDs= [
+        1,2,9,12,13,
+        23,38,46,49,
+        71,75,77,78,80,
+        89,90,95,94,114,112,118,120,
+        126,135,129,141,130,155,174,
+        181,195,198,209,
+        219,222,227,
+        250,274,254,275
+        ];
+
+    $.ajax({
+        url:"http://asset.keshif.me/data/visualization_milestones.xml",
+        dataType:"xml",
+        async: false,
+        success: function(collection){
+            var $collection = $(collection);
+            var arr = kshf.dt.Milestones;
+            var el = document.createElement( 'div' );
+            var id=0;
+
+            $collection.find("event").each(function(){
+                var $this = $(this);
+                var cData = {};
+                cData.id = id; id++;
+
+                cData.Images = [];
+                cData.InfoLinks = [];
+                cData.References = [];
+                cData.Keywords = [];
+
+                cData.Year = parseInt($this.attr("start"));
+                cData.IsDuration = $this.attr("isDuration");
+                cData.Title = $this.attr("title");
+                el.innerHTML = $this.text();
+                var $el = $(el);
+                cData.Category = $el.find("span.tl_bubble_category > a")[0].text.trim();
+                cData.Date_Location = $el.find("span.tl_bubble_date_location").text().trim();
+                cData.Author = $el.find("span.tl_bubble_author").text().trim().replace(/\(.*\)/,"");
+                cData.Author = cData.Author.split(/\s+\&\s+/);
+
+                cData.Description = $el.find("span.tl_bubble_description").text().trim();
+                cData.URL = $el.find("span.tl_bubble_link > a").attr("href").trim();
+                cData.id = parseInt(cData.URL.substr(cData.URL.indexOf("mid=ms")+6));
+                var milestoneItem = new kshf.Record(cData,"id");
+                arr.push(milestoneItem);
+
+                highlightIDs.forEach(function(id){
+                    if(id===cData.id) cData.Highlights="Highlighted";
+                })
+
+                kshf.dt_id.Milestones[milestoneItem.id()] = milestoneItem;
+            });
+        }
+    });
+
+    $.ajax({
+      url:"http://asset.keshif.me/data/visualization_milestones_references.html",
+      dataType:"xml",
+      async: false,
+      success: function(collection){
+        var $collection = $(collection);
+        var arr = kshf.dt.References;
+
+        $collection.find("> ol > li").each(function(){
+          var $this = $(this);
+          var cData = {};
+          cData.id = $this.attr("id");
+          cData.Author = $this.find("strong").text();
+          cData.FullText = $this.text();
+          arr.push(new kshf.Record(cData,"id"));
+        });
+      }
+    });
+
+    // add more data! - images, links, references, etc
+    $.ajax({
+        url:"http://asset.keshif.me/data/visualization_milestones.html",
+        dataType:"xml",
+        async: false,
+        success: function(collection){
+            var $collection = $(collection);
+
+            $collection.find("> div > div.milestoneContainer").each(function(){
+                var $this = $(this);
+                var mid = parseInt($this.attr("id").substr(2));
+                var milestoneItem = kshf.dt_id.Milestones[mid];
+                if(milestoneItem===undefined){
+                    console.log("noo! "+ mid);
+                    return;
+                }
+                var msData = milestoneItem.data;
+
+                msData.Name = $this.find("> a").attr("name");
+
+                kshf.dt_id.Milestones_2[msData.Name] = milestoneItem;
+
+                msData.Date = $this.find("> div.milestoneHeaderContainer > .milestoneDates").text();
+
+//                            msData.Author = $this.find("> div.milestoneHeaderContainer > .milestoneAuthor").text();
+//                            msData.Author = msData.Author.replace(/\(.*\)/,"");
+
+                msData.Tag = $this.find("> div.milestoneHeaderContainer > .milestoneTag").text();
+
+                $this.find("> div.milestoneDetail >.mediaItemLinkImage").each(function(){
+                    msData.Images.push({
+                        text: "",
+                        URL: $(this).find("a").attr("href")
+                    });
+                });
+
+                $this.find("> div.mediaItemImageContainer >.mediaItemImage").each(function(){
+                    msData.Images.push({
+                        text: $(this).text().trim(),
+                        thumb: $(this).find("a > img").attr("src"),
+                        URL: $(this).find("a").attr("href")
+                    });
+                });
+
+                $this.find("> div.milestoneDetail >.mediaItemLinkNonImage").each(function(){
+                    msData.InfoLinks.push({
+                        text: $(this).find("a").text().trim(),
+                        URL: $(this).find("a").attr("href")
+                    });
+                });
+
+                $this.find("> div.milestoneDetail >.milestoneRefs > a").each(function(){
+                    msData.References.push(this.textContent);
+                })
+            });
+        }
+    });
+
+    // add categories
+    $.ajax({
+        url:"http://asset.keshif.me/data/visualization_milestones_categories.txt",
+        dataType:"text",
+        async: false,
+        success: function(collection){
+            var lines = collection.split("\n");
+            lines.forEach(function(line,lineNo){
+                var s=line.split(" * ");
+                if(s.length!==2){
+                    console.log(s+" lineNo: "+lineNo);
+                    return;
+                }
+                var cats=s[0].split(">");
+                var milestones=s[1].split(",");
+                milestones.forEach(function(msName){
+                    var msItem = kshf.dt_id.Milestones_2[msName];
+                    if(msItem===undefined){
+                        console.log("Item not found: "+msName+" - "+milestones);
+                        return;
+                    }
+                    cats.forEach(function(cat){
+                        msItem.data.Keywords.push(cat);
+                    });
+                });
+            })
+        }
+    });
+
+    browser.loadCharts();
+};
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 240,
+    rightPanelLabelWidth: 160,
+    recordName: "Milestones in Visualization",
+    source: {
+      url: 'http://www.datavis.ca/milestones/index.php',
+      callback: loadData
+    },
+    summaries: [
+      { name: "Era",
+        value: function(){
+          var year=this.Year;
+          if(year<1600) return 0;
+          if(year<1700) return 1;
+          if(year<1800) return 2;
+          if(year<1850) return 3;
+          if(year<1900) return 4;
+          if(year<1950) return 5;
+          if(year<1975) return 6;
+          return 7;
+        },
+        catSortBy: "id",
+        catLabel: {
+          0: "Maps and diagrams <b>Pre-1600</b>",
+          1: "Measurements &amp; theories <b>1600s</b>",
+          2: "New graphic forms <b>1700s</b>",
+          3: "Beginning of modern infographics <b>1800+</b>",
+          4: "Golden Age of data graphics <b>1850+</b>",
+          5: "Modern Dark Ages <b>1900+</b>",
+          6: "Re-birth of visualization <b>1950+</b>",
+          7: "Computer as a new frontier <b>1975+</b>"
+        } },
+      { name: "Year", timeFormat: "%Y", panel: "middle", collapsed: true },
+      { name: "Highlights",
+        // http://www.math.yorku.ca/SCS/Gallery/milestone/Visualization_Milestones.pdf
+        description: "Highlights are selected from the www.Infografe.com.br Milestones report" },
+          
+      { name: "Main Category", value: "Category" },
+      { name: "Keywords", panel: "right" },
+      { name: "Author" }
+    ],
+    recordDisplay: {
+      sortBy: { name: 'Year', inverse: true},
+      maxVisibleItems_Default: 25,
+      displayType: 'grid',
+      textSearch: "Title",
+      recordView: function(){
+        var imgIndex = -1;
+        if(this.Images) {
+          if(this.Images.length>0){
+            imgIndex = 0;
+            // find first non-person image
+            for(var i=0; i<this.Images.length; i++){
+              var img=this.Images[i];
+              if(img.URL.indexOf("people")===-1 && img.URL.indexOf("portraits")===-1){
+                imgIndex = i;
+                break;
+              }
+            }
+          }
+        }
+        var str="";
+        str+="<a target='_blank' href='http://datavis.ca/milestones/"+this.URL+"' class='thumbnail'>"+
+          "<img class='thumbImg' src='"+((imgIndex>-1)?this.Images[imgIndex].URL:"")+
+              "' title='"+((imgIndex>-1)?this.Images[imgIndex].text:"")+"'></a>";
+        str+="<span class='title'>"+this.Title+"</span>";
+        str+="<span class='subTitle'>By: "+this.Author+" - "+this.Year+"</span>";
+        str+="<div class='references'>";
+        if(this.InfoLinks.length>0)
+          str+="Links: ";
+        this.InfoLinks.forEach(function(ref){
+          str+="<a href='"+ref.URL+"' target='_blank'><span class='fa fa-external-link'></span></a>";
+        })
+        str+="</div>";
+        return str;
+      }
+    }
+  });
+});
+        </script>
+<style id="kshfStyle">
+#demo_Browser{
+  height: calc(100vh - 120px);
+}
+.thumbnail{ overflow: visible !important; }
+.references{
+  text-align: center;
+  font-size: 0.8em;
+  color: lightgray;
+}
+.fa-external-link{
+  color: lightgray;
+  margin: 0px 2px;
+}
+.fa-external-link:hover{ color: gray; }
+
+.kshfRecord{ overflow: visible !important; }
+.kshfRecord:hover{ z-index: 200 !important; }
+.kshfRecord:hover .thumbnail{ z-index: 200 !important; }
+
+.kshfRecord .content img:hover{ transform: scale(1.5); }
+.content{ position: relative; }
+.content img.thumbImg{
+  height: 100px;
+  width: auto !important;
+  z-index: 20;
+  transition: all 200ms linear;
+  -webkit-transition: all 200ms linear;
+  -o-transition: all 200ms linear;
+  -moz-transition: all 200ms linear;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents" style='padding-top: 75px;'>
+      <div id="demo_PageTitle" align="center">
+        Milestones in the History of Thematic Cartography,<br>
+        <span style="color: #706B62">Statistical Graphics, and Data Visualization</span> </div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox" align="center">
+      The dataset is curated by Michael Friendly and Daniel J. Denis, and presented at their
+      <a href="http://www.datavis.ca/milestones/index.php" target='_blank'>webpage</a> and various reports, 2001.
+
+      <b>Data sources</b>: Keywords are from the
+      <a href="http://www.math.yorku.ca/SCS/Gallery/milestone/milestone.pdf" target="_blank">original</a> report.
+      Highlights from
+      <a href="http://www.math.yorku.ca/SCS/Gallery/milestone/Visualization_Milestones.pdf" target="_blank">www.Infografe.com.br</a> report.
+      Main milestone data from <a href="http://datavis.ca/milestones/index.php?page=home" target="_blank">the index page</a> and enriched by additional data from
+      <a href="http://datavis.ca/milestones/index.php?group=pre-1600" target="_blank">era listings</a>.
+      The data used to create this webpage includes minor modifications to the original data sources.
+      </div>
+  </body>
+</html>

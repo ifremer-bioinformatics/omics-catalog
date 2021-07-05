@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>San Francisco Museum of Modern Art Collection</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+function loadData(browser){
+  $.ajax( {
+    url: 'http://asset.keshif.me/data/sfmoma.xml',
+    dataType: "xml",
+    success: function(collection){
+      browser.primaryTableName = "Artworks";
+      kshf.dt.Artworks = [];
+
+      $(collection).find("> collection > artwork").each(function(){
+        var $this = $(this);
+        var cData = {};
+        cData.id = 1*$this.attr("id");
+        cData.Title = $this.find("title").text();
+        cData.Year  = 1*$this.find("date-created").attr("year");
+        cData.Type  = $this.find("type").text();
+        cData.Dimensions = $this.find("dimensions").text();
+        cData.Materials = $this.find("materials").text().toLowerCase();
+        cData.Terms = $this.find("terms").text().toLowerCase().split("; ");
+
+        cData.Artist = $this.find("creator").text().trim();
+
+        cData.Artist_Gender = $this.find("creator").attr("gender").toLowerCase();
+
+        kshf.dt.Artworks.push(new kshf.Record(cData,"id"));
+      });
+
+      browser.loadCharts();   
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Artworks in SFMOMA",
+    categoryTextWidth: 180,
+    rightPanelLabelWidth: 280,
+    barChartWidth: 70,
+    source: {
+      url: 'https://www.sfmoma.org/artists-artworks/',
+      callback: loadData
+    },
+    summaries: [
+      { name: "Artist", minAggrValue: 5, panel: 'right' },
+      { name: "Year", panel: 'middle', timeFormat: "%Y" },
+      { name: "Type", },
+      { name: "Materials", minAggrValue: 5 },
+      { name: "Terms", minAggrValue: 20 },
+      { name: "Artist_Gender", panel: 'right' }
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      textSearch: "Title",
+      recordView: function(){
+        return "<span class='artTitle'>"+this.Title +"</span> by <span class='artist'>"+this.Artist+"</span> "+
+          " - <a href='https://www.sfmoma.org/artwork/"+this.id+"' target='_blank' class='outLink'>"+
+            "<i class='fa fa-external-link'></i>view</a>";
+      },
+      /*
+      onDetail: function(){
+        // not allowed
+        return "<iframe src='https://www.sfmoma.org/artwork/"+this.id+"' style='height: 70vh; width: 70vw;'>";
+      }
+      */
+    }
+  });
+});
+    </script>
+<style type="text/css" media="screen">
+  .artTitle{
+    font-family: 'Roboto Slab', serif;
+    font-weight: bolder;
+  }
+  .artist{
+    font-weight: lighter;
+    /* font-style: italic; */
+  }
+  .outLink{
+    color: gray;
+    font-size: 0.8em;
+  }
+  .outLink:hover{
+    color: orangered;
+  }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">San Francisco Museum of Modern Art Collection</div>
+      <div id="demo_Browser"></div>
+      </div>
+    
+    <div id="demo_Infobox">
+      Data from
+      <a href='https://www.sfmoma.org/experience/artscope/' target='_blank'>SFMOMA Artscope</a> project.
+      </div>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Stack Overflow Developer Survey - 2015</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 190,
+    rightPanelLabelWidth: 180,
+    middlePanelLabelWidth: 270,
+    source: {
+      gdocId: '1ZVabBN65bCtUDURAjiZBeFddXzJT2gjN3HQNZa2adLk',
+      tables: "Responses"
+    },
+    onReady: function(){ this.setPercentMode(true); },
+    summaries: [
+      { name: "Country" },
+      { name: "Age",
+        catSortBy: [ '< 20', '20-24', '25-29', '30-34', '35-39', '40-50', '51-60', '> 60', 'Prefer not to disclose' ] },
+      { name: "Gender", },
+      { name: "Occupation" },
+      { name: "Years IT / Programming Experience", 
+        catSortBy: [ 'Less than 1 year', '1 - 2 years', '2 - 5 years', '6 - 10 years', '11+ years' ] },
+//    { name: "Desktop Operating System" },
+      { name: "Training & Education", catSplit: "|" },
+      { name: "Current Language", catSplit: "|", panel:'middle', minAggrValue: 2 },
+      { name: "Future Language", catSplit: "|", panel:'middle' },
+      { name: "Desktop Operating System", panel:'right' },
+      { name: "Preferred text editor", panel:'middle', collapsed: true },
+      { name: "Prefered IDE theme", panel:'middle', collapsed: true },
+      { name: "Source control used", catSplit: "|", panel:'middle', collapsed: true, },
+      { name: "Prefered Source Control", panel:'middle', collapsed: true },
+      { name: "Why use Stack Overflow", catSplit: "|", panel:'middle', collapsed: true },
+      { name: "How often are Stack Overflow's answers helpful", panel:'middle', collapsed: true, 
+        catSortBy: [ 'Always', 'Usually', 'Sometimes', 'Rarely', 'Never' ] },
+      { name: "Why answer?", catSplit: "|", panel:'middle' },
+      { name: "Employment Status", panel:'right' },
+      { name: "Compensation", panel:'right', 
+        catSortBy: [
+          'Less than $20,000',
+          '$20,000 - $40,000',
+          '$40,000 - $60,000',
+          '$60,000 - $80,000',
+          '$80,000 - $100,000',
+          '$100,000 - $120,000',
+          '$120,000 - $140,000',
+          '$140,000 - $160,000',
+          'More than $160,000',
+          'Rather not say',
+          "Unemployed"
+        ] },
+      { name: "Industry", panel:'right' },
+      { name: "Job Satisfaction", panel:'right' },
+      { name: "Remote Status", panel:'right', collapsed: true,
+        catSortBy: [ 'Full-time Remote', 'Part-time Remote', 'I rarely work remote', 'Never' ] },
+//    { name: "Open to new job opportunities" },
+//    { name: "Most important aspect of new job opportunity" },
+      { name: "How many caffeinated beverages per day?", panel:'middle' },
+      { name: "How many hours programming as hobby per week?", panel:'middle' }
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Stack Overflow Developer Survey - 2015</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data made available by StackOverflow.
+      <a href="http://stackoverflow.com/research/developer-survey-2015/" target='_blank'>For details...</a>.
+      </div>
+  </body>
+</html>

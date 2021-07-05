@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Cultural Visionaries - Mapping Historical Cultural Production - Pantheon</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Globally Known People",
+    categoryTextWidth: 150,
+    barChartWidth: 100,
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'json',
+      tables: { name: "people_1-6-2015", id:"un_curid" }
+    },
+    summaries: [
+      { name: "Continent Name", value: "continentName"},
+      { name: "Birth Country Name", value: "countryName"},
+      { name: "Gender", value: "gender"},
+      { name: "Domain", value: function(){ return kshf.Util.toProperCase(this.domain);}, panel: "right"},
+      { name: "Industry", value: function(){ return kshf.Util.toProperCase(this.industry);}, panel: "right"},
+      { name: "Occupation", value: function(){ return kshf.Util.toProperCase(this.occupation);}, panel: "right"},
+      { name: "Dataset", value: "dataset", panel: "right", collapsed: true},
+      { name: "HPI Score", value: "HPI", collapsed: true},
+      { name: "Wikipedia Views", value: "TotalPageViews", panel: "middle", collapsed: true},
+      { name: "Birth Year", value: "birthyear", panel: "middle", timeFormat: "%Y"},
+    ],
+    recordDisplay: {
+      sortBy: 'HPI Score',
+      textSearch: "name",
+      displayType: 'grid',
+      recordView: function(){
+        var img = "<img class='thumbImg' src='http://pantheon.media.mit.edu/people/"+this.en_curid+".jpg'>";
+        var link = "<a href='http://pantheon.media.mit.edu/people/"+this.name+"' target='_blank'>";
+        return link+"<span class='thumbnail'>"+img+"</span><span class='name'>"+this.name+"</span></a>";
+      }
+    }
+  });
+});
+</script>
+<style id="kshfStyle">
+#demo_Browser{
+  height: calc(100vh - 100px);
+}
+.kshfRecord{ width: 100px; font-size: 0.9em; }
+.name{
+  display: block;
+  text-align: center;
+  color: black;
+  font-weight: 600;
+}
+img.thumbImg{ 
+  border-radius: 8px;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Cultural Visionaries</div>
+      <div id="demo_PageSubtitle" align="center">Mapping Historical Cultural Production</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data is curated and released by the Pantheon Project - 
+      <a href="http://pantheon.media.mit.edu/" target='_blank'>http://pantheon.media.mit.edu/</a>.
+      <a href='http://creativecommons.org/licenses/by-sa/4.0/' target='_blank'><img src='https://i.creativecommons.org/l/by-sa/4.0/80x15.png'></a>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>2200 faculty in 50 top US Computer Science Programs</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    recordName: "CS Faculty",
+    leftPanelLabelWidth: 230,
+    rightPanelLabelWidth: 260,
+    source: {
+      url: "http://cs.brown.edu/people/alexpap/faculty_dataset.html",
+      //gdocId: '0AubxN1_iO2c-dElJVWFqaTFDeHBkRVFyUzJUWk9oRlE',
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "cs_faculty"
+    },
+    summaries: [
+      { name: "<i class='fa fa-university'></i> University", value: "University",
+        description: "The name of the university they teach" },
+      { name: "<i class='fa fa-sitemap'></i> Subfield", value: "Subfield",
+        description: "Main field of research. One of the 20 fields reported by Microsoft Academic", },
+      { name: "<i class='fa fa-th-large'></i> Rank", value: "Rank" },
+      { name: "<i class='fa fa-graduation-cap'></i> Received Bachelors from", value: "Bachelors", 
+        description: "University they acquired their BSc degree from", panel: 'right' },
+      { name: "<i class='fa fa-graduation-cap'></i> Received Masters from", panel: 'right',
+        description: "University they acquired their Masters degree from", value: "Masters" },
+      { name: "<i class='fa fa-graduation-cap'></i> Received Doctorate from", panel: 'right',
+        description: "University they acquired their Doctorate degree from", value: "Doctorate" },
+      { name: "<i class='fa fa-suitcase'></i> Worked Post-Doc at", panel: 'right', collapsed: true,
+        description: "University or Company they did their post-doctoral training", value: "PostDoc" },
+      { name: "<i class='fa fa-globe'></i> Former Countries", panel: 'right',  
+        description: "For each CS faculty, lists the countries that s/he received her degrees from",
+        value: function(){
+          var r=[];
+          a = this.Bachelors.split(" - ");
+          r.push(a[a.length-1].trim());
+          a = this.Masters.split(" - ");
+          r.push(a[a.length-1].trim());
+          a = this.Doctorate.split(" - ");
+          r.push(a[a.length-1].trim());
+          a = this.PostDoc.split(" - ");
+          r.push(a[a.length-1].trim());
+          return r;
+        } },
+      { name: "Joined Year", value: "JoinYear", timeFormat: "%Y", panel: "bottom",
+        description: "When they joined that department of Computer Science as faculty" }
+    ],
+    recordDisplay: {
+      sortColWidth: 60,
+      sortBy: "Joined Year",
+      textSearch: "Name",
+      detailsToggle: "one",
+      recordView: function(){
+        var str="";
+        str+=this.Name;
+        str+="<span style='float: right' class='infoList'>";
+          if(this.Sources1) str+="<a href='"+
+              this.Sources1+"' class='fa fa-info-circle' target='_blank'></a>";
+          if(this.Sources2) str+="<a href='"+
+              this.Sources2+"' class='fa fa-info-circle' target='_blank'></a>";
+          if(this.Sources3) str+="<a href='"+
+              this.Sources3+"' class='fa fa-info-circle' target='_blank'></a>";
+        str+="</span>";
+
+        str+="<span class='item_details'>";
+          str+="<i class='fa fa-university'></i> University: "+this.University+"<br>";
+          str+="<i class='fa fa-sitemap'></i> Subfield: "+this.Subfield+"<br>";
+          str+="<i class='fa fa-th-large'></i> Rank: "+this.Rank+"<br>";
+          if(this.Bachelors)
+              str+="<i class='fa fa-graduation-cap'></i> Bachelors: "+this.Bachelors+"<br>";
+          if(this.Masters)
+              str+="<i class='fa fa-graduation-cap'></i> Masters: "+this.Masters+"<br>";
+          str+="<i class='fa fa-graduation-cap'></i> Doctorate: "+this.Doctorate+"<br>";
+          if(this.PostDoc)
+              str+="<i class='fa fa-suitcase'></i> Post-Doc   : "+this.PostDoc;
+        str+="</span>";
+        return str;
+      }
+    }
+  });
+});
+</script>
+<style id="kshfStyle">
+.infoList .fa-info-circle{
+  color:lightgray;
+  text-decoration: none;
+  margin-right: 4px;
+}
+.infoList .fa-info-circle:hover{
+  color:gray;
+}
+.item_details{
+  font-size: 0.8em;
+  font-weight: 300;
+}
+.item_details .fa{
+  font-size: 0.8em;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">Faculty in top 50 US Computer Science Programs</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      <a href="http://cs.brown.edu/people/alexpap/faculty_dataset.html" target='_blank'>Data</a> from A. Papoutsaki*, Hua Guo, D. Metaxa-Kakavouli, C. Gramazio, J. Rasley, W. Xie, G. Wang, J. Huang - Brown University.
+      </div>
+  </body>
+</html>

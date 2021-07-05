@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Sewer overflows in Maryland, USA</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+function loadData(browser){
+  $.ajax( {
+//      To use dynamic data loaded from maryland.gov, use the following link instead
+//        url: "https://data.maryland.gov/api/views/3rgd-zjxx/rows.json?accessType=DOWNLOAD",
+    url: "http://asset.keshif.me/data/seweroverflows.json",
+    dataType: "json",
+    success: function(data){
+      browser.primaryTableName = "Overflow";
+      kshf.dt.Overflow = [];
+      // Note: data.meta includes meta information (column names, types, etc)
+      data.data.forEach(function(overflow){
+        kshf.dt.Overflow.push(new kshf.Record(overflow,0)); // 0 is the column that stores uniqu item ID
+      });
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Sewer Overflows",
+    categoryTextWidth: 200,
+    source: { 
+      url: 'https://data.maryland.gov/Energy-and-Environment/Reported-Sewer-Overflows/3rgd-zjxx',
+      callback: loadData,
+    },
+    summaries: [
+      { name: "Overflow Type", value: function(){ return this[8]; } },
+      { name: "Cause", value: function(){ return this[21]; } },
+      { name: "Date",  value: function(){ return new Date(moment(this[11])); }, panel: 'bottom' },
+      { name: "Duration", value: getDuration_TotalMinutes, unitName: "min" },
+      { name: "Zip Code", value: function(){ return this[17]; }, panel: 'right' },
+      { name: "County", value: function(){ return this[23]; }, panel: 'right' },
+      { name: "Municipality/Facility", value: function(){ return this[9]; }, panel: 'right' }
+    ],
+    recordDisplay: {
+      sortBy: { name: 'Duration ', value: getDuration_TotalMinutes, label: getDuration_Human },
+      sortColWidth: 110,
+      recordView: function(){ return this[16]+" -- "+getDuration_TotalMinutes.call(this)+" minutes"; }
+    }
+  });
+});
+
+var getDuration_TotalMinutes = function(){ 
+  var days = parseInt(this[13]);
+  var hours = parseInt(this[14]);
+  var minutes = parseInt(this[15]);
+  if(isNaN(days)) days=0;
+  if(isNaN(minutes)) minutes=0;
+  if(isNaN(hours)) hours=0;
+  var total_minutes = minutes + 60*hours + 60*24*days;
+  return total_minutes; 
+};
+
+var getDuration_Human = function(){
+  var days = parseInt(this[13]);
+  var hours = parseInt(this[14]);
+  var minutes = parseInt(this[15]);
+  if(isNaN(days)) days=0;
+  if(isNaN(minutes)) minutes=0;
+  if(isNaN(hours)) hours=0;
+  var total_hours = hours + 24*days;
+  var total_minutes = minutes + 60*hours + 60*24*days;
+  if(total_minutes===0) return "N/A";
+  if(total_minutes>=60*24) return "1 or more days";
+  if(total_minutes>=60*5 ) return "5-24 hours";
+  if(total_minutes> 60 ) return "1-5 hours";
+  if(minutes>30) return "30-60 minutes";
+  if(minutes>15) return "15-30 minutes";
+  return "< 15 minutes";
+};
+    </script>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Sewer Overflows in Maryland, 2004-2014</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

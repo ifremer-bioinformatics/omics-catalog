@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Supplements - Scientific evidence for popular health supplements</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+    <link rel="stylesheet" href="./css/supplements.css"/ type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    recordName: "Supplements",
+    leftPanelLabelWidth: 120,
+    rightPanelLabelWidth: 160,
+    source: {
+      url: "http://www.informationisbeautiful.net/play/snake-oil-supplements/",
+      gdocId: '0Ai6LdDWgaqgNdE5OaTFVTFh2Z2NtTmVwWGEwNjJwMlE',
+      tables: {name:"apr_2011", headers:1}
+    },
+    summaries: [
+      { name: "Evidence", value: "evidence",
+        description: "Is there scientific evidence for its benefits on a specific health condition?" },
+      { name: "Promising Results",
+        description: "Few studies but promising results", value: "onetowatch",
+        catLabel: function(){ if(this.id==="OTW") return "Promising"; } },
+      { name: "Popularity",
+        description: "Popularity based on Google search results",
+        value: "popularity", intervalScale: "log", },
+      { name: "Type", value: "type",
+        description: "What type of substance is this?" },
+      { name: "Health Categories", value: "category", catSplit: /\b,\s+/,
+        description: "The type of condition", panel: 'right' },
+      { name: "Health Conditions", value: "condition", catSplit: /\b,\s+/,
+        description: "What condition does the supplement purport to affect?", panel: 'right' },
+      { name: "Source", value: "source", collapsed: true,
+        description: "The key study for grading the evidence", panel: 'right' }
+    ],
+    recordDisplay: {
+      sortBy: "evidence",
+      sortColWidth: 35,
+      textSearch: "name",
+      recordView: function(){
+        var str="";
+        if(this.onetowatch==="OTW"){
+          // one to watch
+          str+="<i class='fa fa-eye item_watch' title='One to Watch'></i>";
+        }
+        str+="<span class='item_title'>"+this.name+"</span><br>";
+        // add heartbeat with delay
+            var delay = Math.round(Math.random()*1000);
+            var delay_str = "animation-delay:"+delay+"ms;"+
+                "-webkit-animation-delay:"+delay+"ms;"+
+                "-moz-animation-delay:"+delay+"ms;"+
+                "-o-animation-delay:"+delay+"ms;";
+            var str_heart = "<i class='fa fa-heart' style='"+delay_str+"'></i>";
+        str+="<span class='item_condition'>";
+        for(var i=0; i<this.evidence;i++){ str+=str_heart; }
+        str+="<span style='margin-left: 5px'>"+this.condition+"</span></span>";
+
+        if(this.url){
+          str+="<span class='item_source'> Study:";
+          if(this.url){
+            str+=" <a href='"+this.url+"' target='_blank' class='fa fa-external-link'></a>";
+          }
+          if(this['url of 2nd key study']){
+            str+=" <a href='"+this['url of 2nd key study']+
+                "' target='_blank' class='fa fa-external-link'></a>";
+          }
+          str+="</span>";
+        }
+        return str;
+      }
+    }
+  });
+});
+      </script>
+<style id="kshfStyle">
+#demo_Browser{
+  width: 900px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Supplements: What works? What's popular?</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Re-Vis, from <a href="http://www.informationisbeautiful.net/play/snake-oil-supplements/" target="_blank">Snake Oil Supplements?</a> by <a href="http://www.informationisbeautiful.net" target='_blank'>Information is Beautiful</a>.
+      Research: <b>Miriam Quick</b>
+      Data source: <a href="http://bit.ly/snakeoilsupps" target='_blank'>Google Docs</a>
+      </div>
+  </body>
+</html>

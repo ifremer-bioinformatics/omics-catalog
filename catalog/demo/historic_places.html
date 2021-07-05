@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>National Registry of Historic Places</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 120,
+    middlePanelLabelWidth: 120,
+    leftPanelLabelWidth: 120,
+    rightPanelLabelWidth: 190,
+    recordName: "Historic Places",
+    source: {
+      gdocId: '15kyD2xJxY_BFwd6T8MUI4WA8FC3o-DovjO704AGnbbQ',
+      tables: "Places",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    summaries: [
+      { name: "State", panel: "middle",
+        catLabel: function(){ return getStateName(this.id); },
+        catMap: function(){ 
+          var state = US_States.index_code[this.id];
+          if(state) return state.geo;
+        } },
+      { name: "County", panel: 'right', minAggrValue: 50,
+        value: function(){ return this.County+", "+this.State; } },
+      { name: "Listed Time", panel: 'bottom',
+        value: function(){ return moment(this.Listed,"YYYYMMDD")._d; } },
+      { name: "City", panel: 'left', minAggrValue: 50,
+        value: function(){ return this.City+", "+this.State; } }
+    ],
+    recordDisplay: {
+      sortBy: "Listed Time",
+      textSearch: "Resource",
+      recordView: function(){ return this.Resource; }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  width: 1100px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">National Historic Landmarks on the National Register, U.S.</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

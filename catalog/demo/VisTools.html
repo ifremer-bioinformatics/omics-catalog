@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Visualization Tools</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+function getImageName(url){
+  var x=url.split("/");
+  return x[x.length-1];
+};
+
+// Use original ImageURL (from visualizaingdata)
+var imageDownloadScript = function(){
+  var src="";
+  kshf.dt["Visualization Tools"].forEach(function(r){
+  	if(r.data.ImageURL)
+    	src+= "curl -o "+getImageName(r.data.ImageURL)+" "+r.data.ImageURL+"\n";
+  });
+  return src;
+};
+function isOpenSource(d){
+	switch(d.OpenSource){
+		case null: return;
+		case undefined: return;
+		case "": return;
+		case "-": return;
+		case "N": return;
+		default: return "Yes";
+	}
+};
+
+var book_browser=null;
+
+google.charts.setOnLoadCallback( function(){
+	tool_browser = new kshf.Browser({
+    domID: "#vistools_div",
+    recordName: "Data-Visualization Tools",
+    categoryTextWidth: 170,
+    source: {
+      gdocId: '13H77ewqswroMtshWjDZkmcAEvFeRmEjrr-w9E2WHU-E',
+      tables: 'Visualization Tools'
+    },
+    onLoad: function(){
+			kshf.Util.cellToArray(kshf.dt["Visualization Tools"], 
+				['Author','Cost','Programming','Tags','Data-Procs.'], /\s*\+\s*/,false);
+      kshf.dt["Visualization Tools"].forEach(function(d){
+        // Set features array
+        d.data.Features = [];
+        if(d.data.Charting==="Y") d.data.Features.push("Charting");
+        switch(d.data["Color"]){
+          case "-":
+          case "?":
+          case "N":
+          case null:
+          case undefined: break;
+          default: d.data.Features.push("Color"); break;
+        }
+        if(d.data.Spreadsheet==="Y") 
+          d.data.Features.push("<span class='catg_label'>Spreadsheet</span> <span class='fa fa-table'></span>");
+        if(d.data.Statistical==="Y") 
+            d.data.Features.push("Statistical");
+        if(d.data.Scientific==="Y") 
+          d.data.Features.push("<span class='catg_label'>Scientific</span> <span class='fa fa-flask'></span>");
+        if(d.data.Infographics==="Y") d.data.Features.push("Infographics");
+        if(d.data.Design==="Y") 
+            d.data.Features.push("<span class='catg_label'>Design focused</span> <span class='fa fa-paint-brush'></span>");
+        switch(d.data["Web-based"]){
+          case "-":
+          case "?":
+          case "N":
+          case null:
+          case undefined: break;
+          case "Y": d.data.Features.push("Web-based"); break;
+          default: d.data.Features.push("Web: "+d.data["Web-based"]); break;
+        }
+
+        d.data["Data Types"] = [];
+        if(d.data["Data-\nGeo"]==="Y") 
+          d.data["Data Types"].push("<span class='catg_label'>Geographical</span> <span class='fa fa-globe chart-icon'></span>");
+        if(d.data["Data-\nMultivar."]==="Y") 
+          d.data["Data Types"].push("<span class='catg_label'>Multivariate</span> <span class='fa fa-bar-chart chart-icon'></span>");
+        switch(d.data["Data-\nTime"]){
+          case "-":
+          case "?":
+          case "N":
+          case null:
+          case undefined: break;
+          default:
+            d.data["Data Types"].push("<span class='catg_label'>Time</span> <span class='fa fa-clock-o chart-icon'></span>");
+        }
+        switch(d.data["Data-\nNetwork"]){
+          case "-":
+          case "?":
+          case "N":
+          case null:
+          case undefined: break;
+          default:
+            d.data["Data Types"].push("<span class='catg_label'>Network</span> <span class='fa fa-share-alt chart-icon'></span>");
+        }
+        switch(d.data["Data-\nText"]){
+          case "-":
+          case "?":
+          case "N":
+          case null:
+          case undefined: break;
+          default:
+            d.data["Data Types"].push("<span class='catg_label'>Text </span><span class='fa fa-file-text chart-icon'></span>");
+        }
+
+        d.data.Programming = d.data.Programming || [];
+        d.data.Programming = d.data.Programming.filter(function(v){
+          return v!=="N" && v!=="-" && v!=="?";
+        });
+
+      });
+		},
+    summaries: [
+    	{ name: "Highlights", 
+        description: "Hand-picked best & popular tools",
+        catHeight: 30,
+    		value: function(){
+    			switch(this['★']){
+    				case "N": return;
+    				case "-": return;
+//    				case "Y": return "★★";
+//    				case "M": return "★";
+    				default: return this['★'];
+    			}
+    		},
+    		catSortBy: function(){ return 2-this.id.length; }
+    	},
+    	{	name: "Features" },
+    	{ name: "Data Types" },
+    	{ name: "Data Processing", 
+        description: "What kind of data-transformations can the tool perform?",
+    		value: function(){
+    			if(this["Data-Procs."]) 
+    				return this["Data-Procs."].filter(function(v){
+	    				return v!=="N" && v!=="-" && v!=="?";
+	    			});
+    		}
+    	},
+    	{ name: "Cost",
+    		description: "Free tools may be available only for non-commercial, educational or limited use.<br><br>"+
+          "Some tools may offer both free and paid versions.<br><br>"+
+          "Check each tool for details.",
+    		value: function(){
+    			var r=[];
+    			if(this.Cost) {
+            // Remove N, - and ?
+    				var v=this.Cost.filter(function(v){
+	    				return v!=="N" && v!=="-" && v!=="?";
+	    			});
+            for(var i=0; i<v.length ; i++){
+              if(v[i]==="Free Trial") v[i] = "Paid";
+            }
+            r = r.concat(v);
+    			}
+          // If "Free trial", or "Paid Hosting", also add "Paid"
+    			return r;
+    		}
+    	},
+    	{ name: "Main", panel: "right",
+    		value: function(){
+          var r=[];
+    			if(this["Active?"]==="Y") r.push("Active");
+          if(this["★"]!==null && this["★"]!==undefined ) r.push("Categorized");
+          switch(this.OpenSource){
+            case null: break;
+            case undefined: break;
+            case "": break;
+            case "-": break;
+            case "N": break;
+            default: r.push("Open-Source"); break;
+          }
+          return r;
+    		}
+    	},
+    	//{ name: "Design", collapsed: true, panel: "right" },
+    	{ name: "Tags", panel: "right" },
+    	{ name: "Programming", panel: "right",
+        description: "To create visualizations / process data, what programming language(s) does the tool support, if any?",
+    	},
+      { name: "Author", panel: "right", collapsed: true },
+    ],
+    recordDisplay: {
+      sortBy: {
+      	title:'★s', 
+      	value: function(){
+      		if(this['★']===null) return (1500-this.id);
+      		if(this['★']===undefined) return (1500-this.id);
+      		if(this['★']==="N") return (1500-this.id);
+          if(this['★']==='★★★') return (1500-this.id)+60000;
+      		if(this['★']==='★★') return (1500-this.id)+40000;
+      		if(this['★']==='★') return (1500-this.id)+20000;
+      		return this.id;
+      	}
+      },
+      textSearch: "Title",
+      displayType: 'grid',
+      detailsToggle: 'off',
+      maxVisibleItems_Default: 50,
+      recordView: function(){
+        var _this = this;
+        var url="";
+        var str="";
+        if(this.ImageURL) url = "http://asset.keshif.me/img/VisTools/"+this.ImageURL;
+
+        if(url!=="") str+="<a target='_blank' href='"+this.URL+"' class='thumbnail'><img class='thumbImg' src='"+url+"'></a>";
+        if(this.Description)
+        	str+="<span><span class='fa fa-info toolIcon toolInfo'></span></span>"
+        str+="<a target='_blank' href='"+this.URL+"' class='tool_title'>"+this.Title+"</a>";
+        str+="<span class='item_details toolDescription'>";
+        	str+=this.Description
+        	str+="</span>"; // item_details
+        str+="<div class='toolIconList'>"
+	        str+="<a href='"+this.URL+"' target='_blank' title='Source Code'><span class='fa fa-home toolIcon'></span></a>"
+          if(this.Twitter){
+            str+="<a href='http://www.twitter.com/"+this.Twitter+"' target='_blank' title='Video'><span class='fa fa-twitter toolIcon'></span></a>"
+          }
+		      if(this.VideoURL){
+	        	str+="<a href='"+this.VideoURL+"' target='_blank' title='Video'><span class='fa fa-video-camera toolIcon'></span></a>"
+	        }
+		      if(this.DocURL){
+	        	str+="<a href='"+this.DocURL+"' target='_blank' title='Documentation'><span class='fa fa-book toolIcon'></span></a>"
+	        }
+  	      if(isOpenSource(this)){
+          	str+="<a href='"+this.OpenSource+"' target='_blank' title='Source Code'><span class='fa fa-code toolIcon'></span></a>"
+          }
+	        str+="</div>";
+          switch(this['★']){
+            case "N": 
+            case null:
+            case undefined:
+            case "-": break;
+            default: str+="<span class='tool_highlight'>"+this['★']+"</span>";
+          }
+          if(this.Features.length>0)
+            str+="<span class='tool_features'>"+this.Features.join(" + ")+" + </span>";
+          if(this["Data Types"].length>0)
+            str+="<span class='tool_features'>"+this["Data Types"].join(" + ")+" + </span>";
+          if(this.Programming.length>0)
+            str+="<span class='tool_features'>"+this.Programming.join(" + ")+" </span>";
+        return str;
+      },
+      onDOM: function(d){
+        d3.select(d.DOM.record).select(".toolInfo").on("click",function(){
+          if(d.showDetails===undefined) d.showDetails = false;
+        	d.setRecordDetails(!d.showDetails);
+        });
+      }
+    }
+  });
+
+  createBookBrowser = function(){
+    if(book_browser!==null) return;
+    book_browser = new kshf.Browser({
+      domID: "#visbooks_div",
+      categoryTextWidth: 170,
+      source: {
+        gdocId: '13H77ewqswroMtshWjDZkmcAEvFeRmEjrr-w9E2WHU-E',
+        tables: 'Visualization Books'
+      },
+      onLoad: function(){
+        kshf.Util.cellToArray(kshf.dt["Visualization Books"], ['Authors','Tags'], /\s*\+\s*/,false);
+      },
+      summaries: [
+        { name: "Highlights", value:"★", catSortBy: function(){ return 2-this.id.length; } },
+        { name: "Authors"},
+        { name: "Publisher", collapsed: true},
+        { name: "Year", timeFormat: "%Y" },
+      ],
+      recordDisplay: {
+        sortBy: { 
+          name: "★s, then Year", 
+          value: function(){ 
+            if(this['★']===null) return this.Year;
+            return this.Year+ this['★'].length*3000;
+          },
+          label: function(){
+            if(this['★']===null) return ""+this.Year;
+            return "<span class='book_stars'>"+this['★'] + "</span>" + this.Year;
+          } },
+        sortColWidth: 100,
+        displayType: 'grid',
+        textSearch: "Title",
+        recordView: function(){
+          var str="";
+          str+="<a target='_blank' href='"+this.URL+"' class='thumbnail'>"+
+            "<img class='thumbImg' src='"+this.ImageURL+"'></a>";
+          return str;
+          return "<img src='"+this.ImageURL+"'>";
+          var str="";
+          str+="<span class='book_title'>"+this.Title;
+          if(this.URL) str+="<a href='"+this.URL+"' target='_blank' class='book_url fa fa-external-link'></a>";
+          str+="</span>"; // book_title
+          // if(this["★"]) str+="<span class='book_stars'>"+this["★"]+"</span>";
+          str+="<br>";
+          str+="<span class='book_year'> ["+this.Year+"] </span>";
+          str+="<span class='book_authors'>"+this.Authors.join(" <span style='color:gray; font-size:0.9em'>&amp;</span> ")+"</span>";
+          if(this.Publisher) str+="<span class='book_publisher'> - © "+this.Publisher+"</span>";
+          if(this.GoodReads!=="N/A") str+=" - <a class='book_goodreads' target='_blank' href='"+this.GoodReads+"'> "+
+              "goodreads <span class='fa fa-caret-right'></span></a>";
+          return str;
+        }
+      }
+    });
+  }
+
+  function showBrowser(name){
+    $("body").attr("show",name);
+    if(name==="books"){
+      createBookBrowser();
+    }
+    tool_browser.updateLayout();
+    book_browser.updateLayout();
+  };
+
+  $(".browser_select").click(function(){
+    showBrowser(this.getAttribute("show"));
+  });
+
+  d3.select(".attributions")
+    .each(function(summary){
+        this.tipsy = new Tipsy(this, { gravity: 's', title: function(){
+          return "Part of this data is based on:<br></br>"+
+            "VisualisingData.com resources, by Andy Kirk (The seed list of tools)<br><br>"+
+            "DavaVisualization.ch Selections<br><br>"+
+            "CMSC734 Book Resources, by B. Shneiderman<br><br>"+
+            "GoodReads Books on Data Visualization<br><br>"+
+            "FellInLoveWithData Data-Vis Beginners Toolkit 1 & 2"
+            ;
+        }})
+    })
+    .on("mouseenter",function(){ this.tipsy.show(); })
+    .on("mouseleave",function(){ this.tipsy.hide(); })
+
+    if(location.search==="?Show=Books" || location.search==="?Books"){
+      showBrowser("books");
+    }
+});
+</script>
+<style id="kshfStyle">
+  #vistools_div .kshfRecord{
+    width: 150px;
+  }
+  #vistools_div .content{
+    padding: 3px;
+  }
+
+  #vistools_div .thumbnail{
+    box-shadow: 5px 5px 8px lightgray;
+  }
+
+  #visbooks_div .kshfRecord{
+    width: 150px;
+  }
+  #visbooks_div .content{
+    padding: 10px;
+  }
+
+  .theLabel > .chart-icon{
+  	width: 14px;
+  }
+  .content .tool_highlight{
+		position: absolute;
+		top: 2px;
+		right: 2px;
+		border-radius: 13px;
+		padding: 2px;
+		font-size: 0.75em;
+		font-weight: 700;
+		display: block;
+		text-align: center;
+		opacity: 1;
+		color: orangered;
+		text-shadow: 0px 0px 5px white;
+		background-color: rgba(205, 205, 205, 0.6);
+  }
+  .toolIcon.toolInfo{
+  	float: right;
+  }
+  .toolIconList > a > .toolIcon{
+  	color: gray;
+  	margin: 0px 2px;
+  }
+  .toolIconList > a:hover > .toolIcon{
+  	color: black;
+  	margin: 0px 2px;
+  }
+  .toolInfo{
+  	cursor: pointer;
+    font-size: 0.6em;
+    background-color: lightgray;
+    border-radius: 10px;
+    width: 12px;
+    text-align: center;
+    margin-top: 2px;
+    height: 12px;
+    padding-top: 2px;
+  }
+  .toolInfo:hover{
+  	color: orangered;
+  }
+  .toolDescription{
+  	font-size: 0.7em;
+  	font-weight: 300;
+  }
+  .toolIconList{
+  	margin-top: 1px;
+  	font-size: 0.9em;
+    padding-left: 5px;
+  }
+  #vistools_div .listSortOptionSelect{
+  	display: none;
+  }
+  #vistools_div .content .catg_label{
+    display: none;
+  }
+  .tool_title{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2px;
+    text-align: left;
+    font-size: 1.0em;
+    font-family: 'Helvetica Neue Custom', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    color: black;
+  }
+  .tool_features{
+    display: inline;
+    font-size: 0.7em;
+  }
+
+  .book_title{
+    font-weight: 600;
+  }
+  .book_year{
+    font-weight: 300;
+    font-size: 0.9em;
+  }
+  .book_stars{
+    color: orangered;
+    margin: 0px 5px;
+  }
+  .book_publisher {
+    font-size: 0.8em;
+    font-weight: 100;
+  }
+  .book_goodreads{
+    font-size: 0.8em;
+    font-weight: 300;
+    text-decoration: none;
+    color: #B0A79D;
+  }
+  .book_goodreads:hover{
+    text-decoration: underline;
+  }
+  .book_url{
+    font-size: 0.8em;
+    text-decoration: none;
+    margin-left: 5px;
+    color: orangered;
+    vertical-align: top;
+  }
+
+  .browser_select{
+    border: solid 1px lightgray;
+    border-radius: 10px;
+    padding: 0px 4px;
+    color: white;
+    cursor: pointer;
+    pointer-events: all;
+  }
+  .browser_select:hover{
+    color: orangered;
+  }
+  body[show="tools"] .browser_select[show="tools"]{
+    background-color: #EEEEEE;
+    color: #706B62;
+    cursor: default;
+    pointer-events: none;
+  }
+  body[show="books"] .browser_select[show="books"]{
+    background-color: #EEEEEE;
+    color: #706B62;
+    cursor: default;
+    pointer-events: none;
+  }
+  #vistools_div{ display: none; margin: 0 auto; }
+  #visbooks_div{ display: none; margin: 0 auto; }
+  body[show="tools"] #vistools_div{
+    display: block;
+  }
+  body[show="books"] #visbooks_div{
+    display: block;
+  }
+
+  .attributions{
+    border: solid 1px lightgray;
+    background-color: white;
+    border-radius: 5px;
+    padding: 0px 3px;
+    cursor: pointer;
+  }
+
+  .authorButton{
+    display: none !important;
+  }
+  .browser_style{
+    margin: 0 auto;
+    width: calc(100% - 20px);
+    height: calc(100vh - 85px);
+  }
+  #vistools_div .kshfRecord{
+    overflow: visible !important;
+  }
+
+
+  #visbooks_div .kshfRecord{
+    overflow: visible !important;
+  }
+  #visbooks_div .kshfRecord:hover{
+    z-index: 200 !important;
+  }
+  #visbooks_div .kshfRecord:hover .content img{
+    transform: scale(1.5);
+    overflow: visible;
+  }
+  #visbooks_div .kshfRecord > .itemRow{
+    display: block !important;
+    overflow: visible !important;
+  }
+  #visbooks_div .content img{
+    display: block;
+    width: 100%;
+    transition: all 200ms linear;
+    -webkit-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+  }
+  #visbooks_div .thumbnail{
+    overflow: visible;
+  }
+
+</style>
+	</head>
+  <body show="tools">
+    <div id="demo_PageTitle" align="center">Data-Visualization 
+      <span class="browser_select" show="tools">Tools</span> &amp; 
+      <span class="browser_select" show="books">Books</span>
+      </div>
+    <div class="contents">
+      <div id="vistools_div" class='browser_style'></div>
+      <div id="visbooks_div" class='browser_style'></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data is public at <a href="https://docs.google.com/spreadsheets/d/13H77ewqswroMtshWjDZkmcAEvFeRmEjrr-w9E2WHU-E/edit#gid=1230665440" target="_blank">Google Sheets</a>.
+      <span style="color: orangered; font-weight: 700">Contribute to this open resource!</span> For info, contact 
+      	<a href="http://www.twitter.com/adilyalcin" target="_blank">@adilyalcin</a><br>
+      All rights for the images belong to their respective owners.
+      <span class="attributions">Resources used</span>
+      </div>
+  </body>
+</html>

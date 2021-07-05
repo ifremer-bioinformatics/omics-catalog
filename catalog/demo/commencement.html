@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>The Best Commencement Speeches, Ever (Compiled by NPR)</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./helpin/helpin_material.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./helpin/helpin.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./helpin/helpin.css" type="text/css">
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 100,
+    leftPanelLabelWidth: 220,
+    rightPanelLabelWidth: 110,
+    recordName: "Speeches",
+    source: {
+      url: "http://apps.npr.org/commencement/",
+      dirPath: "http://asset.keshif.me/data/",
+      fileType: 'json',
+      tables: "commencement-speeches"
+    },
+    summaries: [
+      { name: "Featured", 
+        value: function(){ return this.featured!==""?"Featured <span class='fa fa-star'></span>":null}, panel: "right"},
+      { name: "University", value: "school"},
+      { name: "Field", value: "field", panel: "right"},
+      { name: "Tags", value: "tags", panel: "right"},
+      { name: "Year", value: "year", timeFormat: "%Y", panel: "bottom", collapsed: true },
+    ],
+    recordDisplay: {
+      sortBy: "Year",
+      sortColWidth: 40,
+      detailsToggle: "off",
+      textSearch: "name",
+      recordView: function(d){
+        return ""+
+          "<span class='speaker_name'>"+this.name+"</span>"+
+          "<span class='speaker_school'>"+this.school+"</span>"+
+          ((this.video_url!=="")?
+              "<a class='video_url fa fa-youtube-play' target='_blank' href='"+this.video_url+"''></a>":"")+
+          ((this.audio_url!=="")?
+              "<a class='audio_url fa fa-volume-up' target='_blank' href='"+this.audio_url+"''></a>": "")+
+          (this.featured!==""?"<span class='fa fa-star'></span>":"")+
+          "<div><span class='money_quote'>"+this.money_quote+"</span>"+ 
+            (this.full_text?("<a class='full_text fa fa-file-text' target='_blank' href='"+this.full_text+"''></a>"):"")+
+            "</div";
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser{ height: calc(100vh - 85px); }
+.speaker_name{
+  font-size: 1.2em;
+  font-weight: 700;
+}
+.speaker_school{
+  display: inline-block;
+  margin: 0px 5px;
+}
+.speaker_school:before{
+  content: "at";
+  margin-right: 5px;
+  font-weight: 300;
+  font-style: 0.9em;
+}
+.full_text{
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 1em;
+  color: gray;
+}
+.money_quote{
+  font-weight: 300;
+  font-size: 0.9em;
+  font-style: italic;
+}
+.content a:hover{ text-decoration: underline; }
+.money_quote:before{
+  content: "\"";
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.money_quote:after{
+  content: "\"";
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.video_url{
+  display: inline-block;
+  margin: 0px 3px;
+  font-size: 1.1em;
+  color: orangered;
+  text-decoration: none;
+}
+.audio_url{
+  display: inline-block;
+  margin: 0px 3px;
+  font-size: 1.1em;
+  color: orangered;
+  text-decoration: none;   
+}
+.content{ margin-bottom: 3px; }
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle" align="center">The Best Commencement Speeches, Ever</div>
+      <div id="demo_PageSubtitle">Compiled by <a href="http://apps.npr.org/commencement/" target='_blank'>
+        <img src="http://www.npr.org/about/images/press/Logos/npr_logo_rgb.JPG" style='height: 15px'>
+      </a></div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

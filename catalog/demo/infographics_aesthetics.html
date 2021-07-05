@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Infographic Aesthetics: Designing for the First Impression</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+function genderLabel(){
+  switch(this.id){
+    case 0: return "Unknown";
+    case 1: return "Female";
+    case 2: return "Male";
+  }
+};
+
+google.charts.setOnLoadCallback(function(){
+  // Stimulus browser
+  browser = new kshf.Browser({
+    domID: "#browser_stimulus",
+    barChartWidth: 130,
+    leftPanelLabelWidth: 100,
+    source: {
+      gdocId: '1TkomROX3z9p-na5-SGXbE08iU1KbwlkldBJ5ls93XSk',
+      tables: ["Stimulus", "Participants", "Responses"]
+    },
+    onLoad: function(){
+      kshf.dt.Stimulus.forEach(function(stimulus){
+        stimulus.data.responses = [];
+      });
+      kshf.dt.Participants.forEach(function(participant){
+        participant.data.responses = [];
+      });
+
+      kshf.dt.Responses.forEach(function(response){
+        var stimulusID = response.data['Stimulus ID'];
+        var stimulus   = kshf.dt_id.Stimulus[stimulusID];
+        var participantID = response.data['Participant ID'];
+        var participant   = kshf.dt_id.Participants[participantID];
+        
+        response.data.stimulus = stimulus;
+        response.data.participant = participant;
+
+        stimulus.data.responses.push(response);
+        participant.data.responses.push(response);
+      });
+
+      kshf.dt.Stimulus.forEach(function(stimulus){
+        stimulus.data.phase_1_data = stimulus.data.responses.map(function(v){ return v.data.Phase_1; });
+        stimulus.data.phase_2_data = stimulus.data.responses.map(function(v){ return v.data.Phase_2; });
+        stimulus.data.all_avg = d3.mean(stimulus.data.phase_1_data.concat(stimulus.data.phase_2_data));
+        stimulus.data.phase_1_avg = d3.mean(stimulus.data.phase_1_data);
+        stimulus.data.phase_2_avg = d3.mean(stimulus.data.phase_2_data);
+      });
+    },
+    onReady: function(){
+      // Participant browser
+      browser2 = new kshf.Browser({
+        domID: "#browser_participants",
+        barChartWidth: 90,
+        recordName: "Pacticipants",
+        source: {
+          callback: function(browser){ 
+            browser.primaryTableName = "Participants",
+            browser.loadCharts();
+          }
+        },
+        summaries: [
+          {name: "Gender", panel: "middle", catLabel: genderLabel},
+          {name: "Education Level", panel: "middle"},
+          {name: "Age", panel: "middle", showPercentile: true},
+          {name: "Web Usage", panel: "middle", collapsed: true},
+          {name: "Profession", panel: "middle"},
+          {name: "Country of Residence", panel: "middle", collapsed: true},
+        ]
+      });
+    },
+    summaries: [
+      { name: "Average Response", value: "all_avg" },
+      { name: "Avg. Response, Phase-1", value: "phase_1_avg", collapsed: true },
+      { name: "Avg. Response, Phase-2", value: "phase_2_avg", collapsed: true },
+      { name: "Complexity" },
+      { name: "Colorfulness1" },
+      { name: "Colorfulness2" },
+      { name: "Saturation" },
+      { name: "# of Responses", attripMap: function(){ return this.responses.length; } },
+      { name: "QuadTree", collapsed: true },
+      { name: "TextArea", collapsed: true },
+      { name: "NonTextArea", collapsed: true },
+      { name: "TextGroup", collapsed: true },
+      { name: "ImageArea", collapsed: true }
+    ],
+    recordDisplay: {
+      sortBy: "Average Response",
+      displayType: 'grid',
+      detailsToggle: 'off',
+      maxVisibleItems_Default: 50,
+      recordView: function(){ 
+        return "<a href='"+this['Image Link']+"' target='_blank'><img src='"+this['Image Link']+"'></a>";
+      }
+    }
+  });
+});
+
+var browser3=null;
+function showBrowsers(v){
+  d3.select('body').attr('show',v);
+  if(v==='responses' && browser3===null){
+    // Response browser
+    browser3 = new kshf.Browser({
+      domID: "#browser_responses",
+      barChartWidth: 100,
+      leftPanelLabelWidth: 200,
+      recordName: "Responses",
+      source: {
+        callback: function(browser){ 
+          browser.primaryTableName = "Responses",
+          browser.loadCharts();
+        }
+      },
+      summaries: [
+        { name: "Phase-1 Responses", value: 'Phase_1', panel: "middle"},
+        { name: "Phase-2 Responses", value: 'Phase_2', panel: "middle"},
+        { name: "Participant - Gender", panel: "middle", catLabel: genderLabel,
+          value: function(){ return this.participant.data.Gender; } },
+        { name: "Participant - Education Level", panel: "middle",
+          value: function(){ return this.participant.data['Education Level']; } },
+        { name: "Participant - Age", panel: "middle",
+          value: function(){ return this.participant.data['Age']; } },
+
+        { name: "Stimulus", value: 'Stimulus ID', panel: "left", catSortBy: "id", collapsed: true },
+
+        { name: "Complexity", 
+          value: function(){ return this.stimulus.data.Complexity; } },
+        { name: "Colorfulness1", 
+          value: function(){ return this.stimulus.data.Colorfulness1; } },
+        { name: "Colorfulness2", 
+          value: function(){ return this.stimulus.data.Colorfulness2; } },
+        { name: "TextArea", 
+          value: function(){ return this.stimulus.data.TextArea; } },
+        { name: "Saturation", 
+          value: function(){ return this.stimulus.data.Saturation; } }
+      ]
+    });
+  }
+};
+        </script>
+<style id="kshfStyle">
+#browser_stimulus {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100vw - 400px);
+  height: calc(100vh - 120px);
+}
+#browser_participants{
+  display: inline-block;
+  vertical-align: top;
+  width: 300px;
+  height: calc(100vh - 120px);
+  margin-left: 20px;
+}
+#browser_responses{
+  display: none;
+  width: 1100px;
+  height: calc(100vh - 120px);
+  margin: 0 auto;
+}
+
+body[show="responses"] #browser_stimulus{ display: none;}
+body[show="responses"] #browser_participants{ display: none;}
+body[show="responses"] #browser_responses{ display: block;}
+body[show="responses"] .opt_responses{ background-color: rgb(234, 227, 217); color: black; font-weight: 700; }
+body[show="stim_part"] .opt_stim_part{ background-color: rgb(234, 227, 217); color: black; font-weight: 700; }
+
+.kshfRecord{
+  width: 120px;
+  padding-top: 0px !important;
+  margin: 2px !important;
+  background-color: black !important;
+  overflow: visible !important;
+}
+.kshfRecord[highlight=true] .content img{
+  border-color: orangered;
+  border-width: 2px;
+}
+/*.kshfRecord:hover{
+  z-index: 200 !important;
+}
+.kshfRecord:hover .content img{
+  transform: scale(2);
+}*/
+.kshfRecord > .itemRow{
+  display: block !important;
+  overflow: visible !important;
+}
+.content img{
+  display: block;
+  border: solid;
+  border-color: black;
+  border-width: 2px;
+  border-radius: 0px;
+  background-color: white;
+  width: 100%;
+  transition: all 200ms linear;
+  -webkit-transition: all 200ms linear;
+  -o-transition: all 200ms linear;
+  -moz-transition: all 200ms linear;
+}
+.kshfRecord[highlight=true] .content img{
+  background-color: orangered;
+}
+.chooseBrowser{
+  margin: 0 auto;
+  width: 1200px;
+  text-align: center;
+}
+.chooseBrowser .browserOption{
+  width: 45%;
+  display: inline-block;
+  border: solid 2px gray;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  margin-top: -5px;
+  cursor: pointer;
+  color: gray;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  padding: 2px;
+  font-size: 0.9em;
+}
+.chooseBrowser .browserOption:hover{
+  border-color: orangered;
+}
+</style>
+  </head>
+  <body show="stim_part">
+    <div id="demo_PageTitle">Infographic Aesthetics</div>
+
+    <div style="padding-top: 50px;">
+    <div class='chooseBrowser'>
+        <span class="browserOption opt_stim_part" onClick="showBrowsers('stim_part')">Show Stimulus &amp; Participants</span>
+        <span class="browserOption opt_responses" onClick="showBrowsers('responses')">Show Responses</span>
+        </div>
+
+    <div style='margin: 0 auto; text-align: center;' id="browserGroup1">
+        <span id="browser_stimulus"></span>
+        <span id="browser_participants"></span>
+        </div>
+
+    <div id="browser_responses" id="browserGroup2"></div>
+    </div>
+
+  <div id="demo_Infobox">
+    Data from the paper
+    <a href="http://valt.cs.tufts.edu/papers/infographic-aesthetics/" target="_blank">
+        "Infographic Aesthetics: Designing for the First Impression"</a>,
+    by Lane Harrison, Katharina Reinecke, Remco Chang, published at CHI-2015. 
+    Originally hosted at <a href="https://github.com/TuftsVALT/infographic-aesthetics" target="_blank"
+        class='fa fa-github'> Github</a>.
+    </div>
+
+  </body>
+</html>

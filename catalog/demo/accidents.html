@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Accidents - Road Safety 2012 - UK (reports by Police Force 4 only)</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth:170,
+    barChartWidth: 120,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdFJlc0NzcHZFclMzakFkOUpiQVFXb1E',
+      tables: "Accidents"
+    },
+    summaries: [
+      { name: "Road Type",
+        catLabel: {
+          1: "Roundabout",
+          2: "One way Street",
+          3: "Dual Carriageway",
+          6: "Single Carriageway",
+          7: "Slip Road",
+          9: "Unknown",
+        } },
+      { name: "Severity", catLabel: { 1: "Fatal", 2: "Serious", 3: "Slight" } },
+      { name: "Area", catLabel: {1: "Urban", 2: "Rural"} },
+      { name: "Time of Day", panel: "middle", unitName: ":00", value: function(){return this['Time of Day'].getHours();} },
+      { name: "# of Vehicles", panel: 'middle', unitName: "veh" },
+      { name: "Speed Limit", panel: 'middle', catSortBy: "id", catLabel: function(){return this.id+"mph";} },
+      { name: "Road Surface Condition", panel: 'right', 
+        catLabel: {
+          1: "Dry",
+          2: "Wet / Damp",
+          3: "Snow",
+          4: "Frost / Ice",
+          5: "Flood",
+          "-1": "Unknown",
+        } },
+      { name: "Light Condition", 
+        catLabel: {
+          1: "Daylight",
+          4: "Dark, street lights lit",
+          5: "Dark, street lights unlit",
+          6: "Dark, no street lights",
+          7: "Dark, ? street lights"
+        } },
+      { name: "Weather Condition", 
+        catLabel: {
+          1: "Fine",
+          2: "Raining",
+          3: "Snowing",
+          4: "Fine, high winds",
+          5: "Raining, high winds",
+          6: "Snowing, high winds",
+          7: "Fog or mist",
+          8: "Other",
+          9: "Unknown"
+        } },
+      { name: "Special Condition", panel: 'right', 
+        catLabel: {
+          0: "None",
+          1: "Traffic signal out",
+          2: "Traffic signal defective",
+          3: "Signing/marking defective",
+          4: "Roadworks",
+          5: "Road surface defective",
+          6: "Oil or diesel",
+          7: "Mud Mud",
+        } },
+      { name: "Junction Detail", panel: 'right',
+        catLabel: {
+          1: "Roundabout",
+          2: "Mini roundabout",
+          3: "T/staggered junction",
+          5: "Slip road",
+          6: "Crossroads",
+          7: "More than four arms (not RAB)",
+          8: "Private drive or entrance",
+          9: "Other",
+        } },
+      { name: "Junction Control",  panel: 'right',
+        catLabel: {
+          1: "Authorized Person",
+          2: "Traffic signal",
+          3: "Stop sign",
+          4: "Give way or uncontrolled",
+        } },
+      { name: "Date", panel: 'bottom' },
+      { name: "Casualties", panel: 'middle'}
+    ]
+  });
+});
+</script>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Traffic Accidents in the U.K. - Police Force 4, 2012</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+      <div id="demo_Infobox">
+        Data from <a href="https://data.gov.uk/dataset/road-accidents-safety-data" target='_blank'>data.gov.uk</a>, published with 
+        <a href='http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/' target='_blank'>Open Government License</a>.
+        </div>
+  </body>
+</html>

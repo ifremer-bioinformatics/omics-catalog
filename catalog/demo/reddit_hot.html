@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Hot posts on reddit</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+function loadData(browser){
+  var subreddit = "";
+  if(window.location.hash!==""){
+    subreddit = "r/"+window.location.hash.substring(1);
+  }
+  $.ajax( {
+    url: "http://api.reddit.com/"+subreddit+"/hot",
+    dataType: "json",
+    success: function(data){
+      browser.primaryTableName = "Posts";
+      kshf.dt.Posts = [];
+      data.data.children.forEach(function(p){
+        kshf.dt.Posts.push(new kshf.Record(p.data,'id'));
+      });
+      browser.loadCharts();
+    }
+  });
+};
+
+$(document).ready( function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Reddit Hot Posts",
+    categoryTextWidth: 150,
+    source: { callback: loadData },
+    summaries: [
+      "subreddit",
+      "num_comments",
+      "score",
+      { name: "gilded", catSortBy: "id" }
+    ],
+    recordDisplay: {
+      sortColWidth: 60,
+      sortBy: 'score',
+      textSearch: "title",
+      recordView: function(){
+        var str="";
+        if(this.thumbnail!=="") { 
+          str+="<div style='float:right'><img src='"+this.thumbnail+"'/></div>";
+        }
+        str+=this.title+" <a class='fa fa-external-link' target='_blank' href='"+this.url+"'></a>";
+        return str;
+      }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  width:800px;
+  height:700px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

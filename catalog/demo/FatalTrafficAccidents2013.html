@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Fatal Traffic Accidents, USA, 2013</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/papaparse.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./helpin/helpin_material.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./helpin/helpin.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./helpin/helpin.css" type="text/css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+    <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 120,
+    recordName: "Accidents",
+    leftPanelLabelWidth: 200,
+    rightPanelLabelWidth: 200,
+    middlePanelLabelWidth: 200,
+    source: {
+      dirPath: 'http://asset.keshif.me/data/',
+      fileType: 'csv',
+      tables: "TrafficAccidents2013",
+      callback: function(){ US_States.loadGeo(this); }
+    },
+    onLoad: function(){
+      this.records.forEach(function(a){
+        delete a.data.YEAR;
+        delete a.data.RAIL;
+        delete a.data.MILEPT;
+        delete a.data.TWAY_ID;
+        delete a.data.TWAY_ID2;
+        delete a.data.ST_CASE;
+        delete a.data.LATITUDE;
+        delete a.data.LONGITUD;
+        delete a.data.CITY;
+        delete a.data.COUNTY;
+        delete a.data.PERNOTMVIT;
+        delete a.data.PERSONS;
+        delete a.data.VE_FORMS;
+        a.data["Weather Conditions"] = [a.data.WEATHER, a.data.WEATHER1, a.data.WEATHER2];
+        delete a.data.WEATHER;
+        delete a.data.WEATHER1;
+        delete a.data.WEATHER2;
+
+        // This data element records the hour that emergency medical service was notified.
+        delete a.data.NOT_HOUR;
+        delete a.data.NOT_MIN;
+
+        delete a.data.HOSP_HR;
+        delete a.data.HOSP_MN;
+
+        delete a.data.CF1;
+        delete a.data.CF2;
+        delete a.data.CF3;
+
+        if(a.data.MINUTE>60) delete a.data.MINUTE;
+        if(a.data.ARR_HOUR>25) delete a.data.ARR_HOUR;
+        if(a.data.ARR_MIN>60) delete a.data.ARR_MIN;
+        if(a.data.HOUR>25) delete a.data.HOUR;
+      })
+    },
+    summaries: [
+      { name: "State", value: "STATE", viewAs: "map", panel: "middle",
+        catLabel: function(){ return US_States.index_id[this.id].name; },
+        catMap: function(){ return US_States.index_id[this.id].geo; } },
+      { name: "Route", value: "ROUTE", panel: "left", 
+        catLabel: {
+          1: "Interstate",
+          2: "U.S. Highway",
+          3: "State Highway",
+          4: "County Road",
+          5: "Local Street – Township",
+          6: "Local Street – Municipality",
+          7: "Local Street – Frontage Road",
+          8: "Other",
+          9: "Unknown",
+        }},
+      { name: "Relation to Trafficway", value: "REL_ROAD", panel: "left",
+        catLabel: {
+          1: "On Roadway",
+          2: "On Shoulder",
+          3: "On Median",
+          4: "On Roadside",
+          5: "Outside Trafficway",
+          6: "Off Roadway – Location Unknown",
+          7: "In Parking Lane/Zone",
+          8: "Gore",
+          9: "Separator",
+          10: "Continuous Left-Turn Lane",
+          98: "Not Reported",
+          99: "Unknown",
+        },
+        description: "The location of the crash as it relates to its position within or outside the trafficway."},
+      { name: "Type of Intersection", value: "TYP_INT", panel: "left",
+        catLabel: {
+          1: "Not an Intersection",
+          2: "Four-Way Intersection",
+          3: "T-Intersection",
+          4: "Y-Intersection",
+          5: "Traffic Circle",
+          6: "Roundabout",
+          7: "Five-Point, or More",
+          8: "Not Reported",
+          9: "Unknown",
+        },
+        description: "The functional classification of the trafficway on which the crash occurred."},
+      { name: "On National Highway System", value: "NHS",
+        catLabel: {
+          0: "No",
+          1: "Yes",
+          9: "Unknown",
+        },
+        description: "This data element identifies whether this crash occurred on a trafficway that is part of the National Highway System.", panel: "left"},
+      { name: "Work Zone", value: "WRK_ZONE", panel: "left",
+        catLabel: {
+          0: "None",
+          1: "Construction",
+          2: "Maintenance",
+          3: "Utility",
+          4: "Work Zone, Type Unknown",
+        }},
+      
+
+
+      { name: "Manner of Collision", value: "MAN_COLL", layout: "middle", collapsed: true,
+        catLabel: {
+          0: "Not Collision with Motor Vehicle in Transport",
+          1: "Front-to-Rear",
+          2: "Front-to-Front",
+          6: "Angle",
+          7: "Sideswipe – Same Direction",
+          8: "Sideswipe – Opposite Direction",
+          9: "Rear-to-Side",
+          10: "Rear-to-Rear",
+          11: "Other (End-Swipes and Others)",
+          98: "Not Reported",
+          99: "Unknown",
+        },
+      description: "The functional classification of the trafficway on which the crash occurred."},
+      { name: "First Harmful Event", value: "HARM_EV", layout: "middle", collapsed: true,
+        catLabel: {
+          1 : "Rollover/Overturn",
+          2 : "Fire/Explosion",
+          3 : "Immersion",
+          4 : "Gas Inhalation",
+          5 : "Fell/Jumped from Vehicle",
+          6 : "Injured in Vehicle (Non-Collision)",
+          7 : "Other Non-Collision",
+          8 : "Pedestrian",
+          9 : "Pedalcyclist",
+          10: "Railway Vehicle",
+          11: "Live Animal",
+          12: "Motor Vehicle in Transport",
+          14: "Parked Motor Vehicle",
+          15: "Non-Motorist on Personal Conveyance",
+          16: "Thrown or Falling Object",
+          17: "Boulder",
+          18: "Other Object (Not Fixed)",
+          19: "Building",
+          20: "Impact Attenuator/Crash Cushion",
+          21: "Bridge Pier or Support",
+          23: "Bridge Rail (Includes Parapet)",
+          24: "Guardrail Face",
+          25: "Concrete Traffic Barrier ",
+          26: "Other Traffic Barrier",
+          30: "Utility Pole/Light Support",
+          31: "Other Post, Other Pole, or Other Support",
+          32: "Culvert",
+          33: "Curb",
+          34: "Ditch",
+          35: "Embankment",
+          38: "Fence",
+          39: "Wall",
+          40: "Fire Hydrant",
+          41: "Shrubbery",
+          42: "Tree (Standing Only)",
+          43: "Other Fixed Object",
+          44: "Pavement Surface Irregularity (Ruts, Potholes, Grates, etc.",
+          45: "Working Motor Vehicle",
+          46: "Traffic Signal Support",
+          48: "Snow Bank",
+          49: "Ridden Animal or Animal-Drawn Conveyance (Since 1998)",
+          50: "Bridge Overhead Structure",
+          51: "Jackknife (Harmful to This Vehicle)",
+          52: "Guardrail End",
+          53: "Mail Box",
+          54: "Motor Vehicle Struck by Falling/Shifting Cargo or Anything Set in Motion by Another Motor Vehicle in Transport",
+          55: "Motor Vehicle in Motion Outside the Trafficway",
+          57: "Cable Barrier",
+          58: "Ground",
+          59: "Traffic Sign Support ",
+          72: "Cargo/Equipment Loss or Shift ",
+          98: "Not Reported",
+          99: "Unknown ",
+        },
+        description: "The first injury or damage producing event of the crash"},
+      { name: "Light Condition", value: "LGT_COND", layout: "middle", collapsed: true,
+        catLabel: {
+          1: "Daylight",
+          2: "Dark – Not Lighted",
+          3: "Dark – Lighted",
+          4: "Dawn",
+          5: "Dusk",
+          6: "Dark – Unknown Lighting",
+          7: "Other",
+          8: "Not Reported",
+          9: "Unknown",
+        },
+        description: "The type/level of light that existed at the time of the crash"},
+      { name: "Weather Conditions", layout: "middle", collapsed: true,
+        catLabel: {
+          1: "Clear",
+          0: "No Additional Atmospheric Conditions",
+          2: "Rain",
+          3: "Sleet, Hail (Freezing Rain or Drizzle)",
+          4: "Snow",
+          5: "Fog, Smog, Smoke",
+          6: "Severe Crosswinds",
+          7: "Blowing Sand, Soil, Dirt",
+          8: "Other",
+          10: "Cloudy",
+          11: "Blowing Snow",
+          98: "Not Reported",
+          99: "Unknown",
+        },
+        description: "The prevailing atmospheric conditions that existed at the time of the crash"},
+      { name: "School Bus Related", value: "SCH_BUS", panel: "left",
+        catLabel: {
+          0: "No",
+          1: "Yes",
+          8: "Not Reported",
+        },
+        description: "If a school bus, or motor vehicle functioning as a school bus, is related to the crash."},
+        
+
+
+      { name: "Number of Fatalities that Occurred in the Crash", value: "FATALS", panel: "right"},
+      { name: "Number of Persons in Motor Vehicles in Transport (MVIT)", value: "PERMVIT", panel: "right",
+        description: "The number of motorists in the crash. A motorist is a driver, passenger or unknown occupant type of a motor vehicle in-transport."},
+      { name: "Number of Vehicles in Crash", value: "VE_TOTAL", panel: "right"},
+      { name: "Number of Drunk Drivers", value: "DRUNK_DR", panel: "right", collapsed: true,
+        description: "The number of drunk drivers involved in the fatal crash"},
+      { name: "Month", value: "MONTH", panel: "right", catSortBy: "id", catLabel: _demo.Month,
+        description: "The functional classification of the trafficway on which the crash occurred."},
+      { name: "Day of Week", value: "DAY_WEEK", panel: "right", catSortBy: "id",
+        catLabel: {
+          1: "Sunday",
+          2: "Monday",
+          3: "Tuesday",
+          4: "Wednesday",
+          5: "Thursday",
+          6: "Friday",
+          7: "Saturday",
+          8: "?",
+          9: "?",
+        },
+        description: "The functional classification of the trafficway on which the crash occurred."},
+      { name: "Hour of the Day", value: "HOUR", panel: "right", unitName: ":00" },
+      
+
+
+
+      { name: "Number of Parked/Working Vehicles in the Crash", value: "PVH_INVL", panel: "none"},
+      { name: "Number of Forms Submitted for Persons Not in Motor Vehicles", value: "PEDS", panel: "none",
+        description: "This data element counts the number of Person Forms (Not a Motor Vehicle Occupant) that are applicable to this case (i.e., non-occupants)"},
+      { name: "Roadway Function Class", value: "ROAD_FNC", panel: "none",
+        catLabel: {
+          1: "Rural - Principal Arterial – Interstate",
+          2: "Rural - Principal Arterial – Other",
+          3: "Rural - Minor Arterial",
+          4: "Rural - Major Collector",
+          5: "Rural - Minor Collector",
+          6: "Rural - Local Road or Street",
+          9: "Rural - Unknown",
+          11: "Urban - Principal Arterial – Interstate",
+          12: "Urban - Principal Arterial – Other Freeways or Expressways",
+          13: "Urban - Other Principal Arterial",
+          14: "Urban - Minor Arterial",
+          15: "Urban - Collector",
+          16: "Urban - Local Road or Street",
+          19: "Urban - Unknown",
+          99: "Unknown",
+        },
+        description: "The functional classification of the trafficway on which the crash occurred."},
+      { name: "Special Jurisdiction", value: "SP_JUR", panel: "none",
+        catLabel: {
+          0: "No Special Jurisdiction",
+          1: "National Park Service",
+          2: "Military",
+          3: "Indian Reservation",
+          4: "College/University Campus",
+          5: "Other Federal Properties",
+          8: "Other",
+          9: "Unknown",
+        }},
+      
+      { name: "Day of Month", value: "DAY", panel: "none"},
+      { name: "Minute of the Hour", value: "MINUTE", panel: "none"},
+      { name: "Relation to Junction- Specific Location", value: "RELJCT2", panel: "none",
+        catLabel: {
+          1: "Non-Junction",
+          2: "Intersection",
+          3: "Intersection Related",
+          4: "Driveway Access",
+          5: "Entrance/Exit Ramp Related",
+          6: "Railway Grade Crossing",
+          7: "Crossover Related",
+          8: "Driveway Access Related",
+          16: "Shared-Use Path or Trail",
+          17: "Acceleration/Deceleration Lane",
+          18: "Through Roadway",
+          19: "Other Location Within Interchange Area",
+          98: "Not Reported",
+          99: "Unknown",
+        },
+        description: "The crash's location with respect to presence in an interchange area"},
+      { name: "Relation to Junction- Within Interchange Area", value: "RELJCT1", panel: "none",
+        catLabel: {
+          0: "No",
+          1: "Yes",
+          8: "Not Reported",
+          9: "Unknown",
+        },
+        description: "The crash's location with respect to presence in or proximity to components typically in junction or interchange areas"},
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Fatal Traffic Accidents in the U.S., 2013</div>
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

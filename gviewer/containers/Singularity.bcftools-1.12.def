@@ -1,0 +1,24 @@
+Bootstrap : docker
+From: ubuntu:16.04
+
+%post
+        apt-get -y update
+        apt-get -y install wget
+	apt-get -y install bzip2
+	apt-get -y install autoconf automake make gcc perl zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libssl-dev libperl-dev libgsl0-dev
+	apt-get -y install tabix
+
+        #Installation of BCFTOOLS
+        cd /opt
+	wget https://github.com/samtools/bcftools/releases/download/1.12/bcftools-1.12.tar.bz2
+	bunzip2 bcftools-1.12.tar.bz2
+	tar -xvf bcftools-1.12.tar
+	rm -f /opt/*.bz2 /opt/*.tar
+	cd bcftools-1.12
+	./configure
+	make
+	make install
+
+%environment
+	export PATH="/opt/:$PATH"
+

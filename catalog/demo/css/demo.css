@@ -1,0 +1,303 @@
+html,
+body {
+  min-height: 100%;
+  min-height: 100vh;
+  margin: 0px;
+  padding: 0px;
+  background-color: #FBFAF7;
+}
+.contents {
+  padding-top: 45px;
+}
+#demo_Browser {
+  margin: 0 auto;
+  width: calc(100% - 20px);
+  height: calc(100vh - 73px);
+}
+.demoHeader {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  display: block;
+  background-color: #706B62;
+  height: 38px;
+  box-shadow: 0px 0px 3px #706B62;
+  font-family: sans-serif;
+  z-index: 800;
+}
+.demoHeader > .addthis_sharing_toolbox {
+  position: absolute;
+  right: 100px;
+  top: 7px;
+}
+.demoHeader > .openSource {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 0.9em;
+  padding: 1px 5px;
+  border: solid 1px rgba(0, 0, 0, 0);
+}
+.demoHeader > .openSource > .openSourceLabel {
+  color: white;
+  font-weight: 100;
+  display: inline-block;
+  position: relative;
+  top: 0px;
+  text-decoration: none;
+  margin-left: 5px;
+}
+.demoHeader > .openSource > .openSourceLabel:hover {
+  background-color: orangered;
+  border-color: white;
+  border-radius: 5px;
+}
+.demoHeader > .openSource > .openSourceLabel > .sdsdsds {
+  font-size: 0.7em;
+  text-align: right;
+  display: inline-block;
+  margin-left: 2px;
+  line-height: 0.9em;
+  position: relative;
+  top: 2px;
+}
+.demoHeader > .openSource > .openSourceLabel > .fa-code {
+  float: right;
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.demoHeader .at-share-btn {
+  margin-left: 3px;
+}
+.demoHeader:hover .keshif_logo {
+  width: 180px;
+}
+.demoHeader:hover .keshif_logo:hover {
+  border-color: orangered;
+}
+.demoHeader:hover .keshif_logo > .keshif_logo_content > .subContent_2 {
+  opacity: 0;
+}
+.demoHeader:hover .keshif_logo > .keshif_logo_content > .subContent {
+  opacity: 1;
+}
+.demoHeader:hover .keshif_logo > .keshif_logo_content > .subTitle {
+  top: 0px;
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  transform: scale(1.2);
+}
+.demoHeader:hover .at-share-btn {
+  box-shadow: 0px 0px 1px white;
+}
+.demoHeader:hover .at-share-btn:hover {
+  box-shadow: 0px 0px 5px white;
+}
+.keshif_logo {
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 110px;
+  height: 30px;
+  font-size: 12px;
+  background-color: #EEEEEE;
+  border: solid 1px rgba(0, 0, 0, 0);
+  overflow: hidden;
+  cursor: auto;
+  -webkit-transition: width 500ms ease-in-out, background-color 500ms ease-in-out;
+  -moz-transition: width 500ms ease-in-out, background-color 500ms ease-in-out;
+  -o-transition: width 500ms ease-in-out, background-color 500ms ease-in-out;
+  transition: width 500ms ease-in-out, background-color 500ms ease-in-out;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.keshif_logo:hover {
+  background-color: #EEEEEE;
+  width: 200px;
+}
+.keshif_logo > .keshif_logo_img {
+  height: 30px;
+  float: left;
+}
+.keshif_logo > .keshif_logo_content {
+  display: block;
+  width: 300px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  letter-spacing: .12em;
+  color: #727365;
+  vertical-align: center;
+}
+.keshif_logo > .keshif_logo_content > .subTitle {
+  position: relative;
+  font-weight: 700;
+  display: inline-block;
+  font-size: 1.1em;
+  -webkit-transform: scale(1.4) translateY(7px);
+  -moz-transform: scale(1.4) translateY(7px);
+  -ms-transform: scale(1.4) translateY(7px);
+  -o-transform: scale(1.4) translateY(7px);
+  transform: scale(1.4) translateY(7px);
+  -webkit-transform-origin: left top;
+  -moz-transform-origin: left top;
+  -ms-transform-origin: left top;
+  -o-transform-origin: left top;
+  transform-origin: left top;
+  -webkit-transition: all 500ms;
+  -moz-transition: all 500ms;
+  -o-transition: all 500ms;
+  transition: all 500ms;
+}
+.keshif_logo > .keshif_logo_content > .subContent_2 {
+  opacity: 1;
+  position: absolute;
+  left: 30px;
+  width: 200px;
+  letter-spacing: 0px;
+  font-size: 0.8em;
+  -webkit-transition: all 500ms;
+  -moz-transition: all 500ms;
+  -o-transition: all 500ms;
+  transition: all 500ms;
+}
+.keshif_logo > .keshif_logo_content > .subContent {
+  opacity: 0;
+  letter-spacing: 0.1em;
+  font-size: 0.9em;
+  position: relative;
+  top: 1px;
+  -webkit-transition: all 500ms;
+  -moz-transition: all 500ms;
+  -o-transition: all 500ms;
+  transition: all 500ms;
+}
+.recordDisplay[displaytype="grid"] .kshfRecord > .content .thumbnail {
+  display: block;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-transition: background-color 300ms linear;
+  -moz-transition: background-color 300ms linear;
+  -o-transition: background-color 300ms linear;
+  transition: background-color 300ms linear;
+}
+.recordDisplay[displaytype="grid"] .kshfRecord > .content .thumbnail > .thumbImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  width: 100%;
+}
+.recordDisplay[displaytype="grid"] .kshfRecord > .content .subTitle {
+  display: block;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: gray;
+  font-size: 0.8em;
+  text-align: left;
+}
+.recordDisplay[displaytype="grid"] .kshfRecord > .content .title {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2px;
+  text-align: left;
+  font-size: 0.9em;
+  font-family: 'Helvetica Neue Custom', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+.recordDisplay[displaytype="grid"] .kshfRecord:hover .thumbImg {
+  box-shadow: 0px 0px 4px black;
+}
+.recordDisplay[displaytype="grid"] .kshfRecord[highlight=true] > .content .thumbnail {
+  background-color: orangered;
+}
+#demo_PageTitle {
+  text-align: center;
+  padding-top: 3px;
+  letter-spacing: -1px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.7em;
+  position: fixed;
+  top: 0px;
+  z-index: 801;
+  color: white;
+  width: 100%;
+  pointer-events: none;
+}
+#demo_PageTitle > a {
+  color: white;
+  pointer-events: all;
+}
+#demo_PageSubtitle {
+  text-align: center;
+  font-family: sans-serif;
+  padding-bottom: 5px;
+  font-size: 0.9em;
+  font-weight: 300;
+  line-height: 1.5em;
+}
+.infobox_icon {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f05a";
+  color: gray;
+}
+#demo_Infobox {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  text-align: center;
+  font-weight: 300;
+  font-family: sans-serif;
+  font-size: 0.8em;
+  padding: 3px 40px 3px 40px;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0d…g9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNsZXNzaGF0LWdlbmVyYXRlZCkiIC8+PC9zdmc+);
+  background-image: -webkit-linear-gradient(bottom, #dfd2a9 0%, rgba(255, 255, 255, 0) 80%);
+  background-image: -moz-linear-gradient(bottom, #dfd2a9 0%, rgba(255, 255, 255, 0) 80%);
+  background-image: -o-linear-gradient(bottom, #dfd2a9 0%, rgba(255, 255, 255, 0) 80%);
+  background-image: linear-gradient(to top, #dfd2a9 0%, rgba(255, 255, 255, 0) 80%);
+}
+#demo_Infobox a {
+  color: black;
+  font-weight: 500;
+}
+#demo_Infobox a:hover {
+  color: orangered;
+}
+#demo_Infobox .fa {
+  color: gray;
+}
+#demo_Infobox:before {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f05a";
+  color: gray;
+}
+#demo_Infobox:after {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f05a";
+  color: gray;
+}
+.addthis-smartlayers-desktop {
+  display: none;
+}

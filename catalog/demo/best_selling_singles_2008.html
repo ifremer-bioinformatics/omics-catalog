@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Best-selling singles of 2008</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    barChartWidth: 90,
+    leftPanelLabelWidth: 100,
+    rightPanelLabelWidth: 90,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdHBaN1lKYW5qUWthUDA0RDJXY1BLUFE',
+      tables: {name:"Singles", id:"Position"}
+    },
+    summaries: [
+      { name: "Genre" },
+      { name: "Country", panel: 'right', description: "Country of origin" },
+      { name: "Sex", panel: 'right' },
+      { name: "Age", panel: 'right' },
+      { name: "Type", panel: 'right' },
+      { name: "Race", panel: 'right' },
+      { name: "Label" }
+    ],
+    recordDisplay: {
+      sortColWidth: 45,
+      sortBy: { name: "Position", inverse: true},
+      textSearch: { name: "Artist & Track", value: function(){return this["Artist(s)"]+" "+this.Track; } },
+      recordView: function(){ return this["Artist(s)"]+" - "+this.Track; }
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  max-width: 890px;
+  max-height: 480px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

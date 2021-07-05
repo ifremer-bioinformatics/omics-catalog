@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Reuters 1987 News Dataset</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+
+function capitaliseFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+google.charts.setOnLoadCallback( function() {
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "News stories",
+    categoryTextWidth:150,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdE5hLTNCdWNHVUpFVmxuU0hXNGVzTVE',
+      tables: ["News" ,"People", {name:"Topics", id:"Code"}]
+    },
+    onLoad: function(){
+      kshf.Util.cellToArray(kshf.dt.News, ['People', 'Country', 'Topic'], /\b,/, false);
+    },
+    summaries: [
+      { name: "Category",
+        value: function(){
+          var topics = this.Topic;
+          if(topics===null) return;
+          var cats= {};
+          for(var i=0; i<topics.length; i++){
+            var t=topics[i];
+            var tDt=kshf.dt_id.Topics[t];
+            if(tDt) cats[tDt.data.Category] = true;
+          }
+          var toRet=[]
+          for(c in cats) toRet.push(c);
+          return toRet;
+        } },
+      { name: "Topic", },
+      { name: "Country", catLabel: function(){ return capitaliseFirstLetter(this.id); } },
+      { name: "People",
+        catLabel: function(){ return kshf.dt_id.People[this.id].data.Name; },
+        catTooltip: function(){ 
+          var p = kshf.dt_id.People[this.id];
+          return p.data.Name+", "+p.data.Role+", "+p.data.Location;
+        } },
+      { name: "Publish Time", panel: 'middle' }
+    ],
+    recordDisplay: {
+      sortColWidth: 70,
+      sortBy: 'Publish Time',
+      textSearch: 'title',
+      recordView: function(){
+        var j;
+        var str=this.title.replace("<","&lt;").replace(">","&gt;");
+        var cats = this.Topic;
+        if(cats !== null){
+          str+="<div class='iteminfo iteminfo_1'> Topics: " + cats + "</div>";
+        }
+        var ctrs = this.Country;
+        if(ctrs !== null){
+          str+="<div class='iteminfo iteminfo_1'> Countries: ";
+          for(j=0; j<ctrs.length; j++){
+            str+=capitaliseFirstLetter(ctrs[j]);
+            if(j!==ctrs.length-1) { str+=', '; }
+          }
+          str+="</div>";
+        }
+        return str;
+      }
+    }
+  });
+});
+        </script>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

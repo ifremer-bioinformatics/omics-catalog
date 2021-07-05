@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Failed Bank List - FDIC, US</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <!-- Demos - shared -->
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript" src="./js/moment.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    categoryTextWidth: 200,
+    rightPanelLabelWidth: 110,
+    source: {
+      gdocId: '0Ai6LdDWgaqgNdDJ2ZS11RE10SnBoX09PUC12TjhhR0E',
+      tables: ["Banks","States"]
+    },
+    summaries: [
+      { name: "Loss Share Type", catSplit: /\// },
+      { name: "State", value: "ST", catTableName: "States", catLabel: "name", panel: 'right', },
+      { name: "City", panel: 'right', },
+      { name: "Acquiring Institution" },
+      { name: "Closing Date", panel: 'bottom' }
+    ],
+    recordDisplay: {
+      sortColWidth: 90,
+      sorBy: {
+        title: 'Closing Date', inverse: true, label: function(){ return moment(this['Closing Date']).fromNow(); },
+      },
+      textSearch: "Bank Name",
+      recordView: "Bank Name"
+    }
+  });
+});
+    </script>
+<style id="kshfStyle">
+#demo_Browser {
+  width: 920px;
+  height: 650px;
+}
+</style>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_Browser"></div>
+      </div>
+  </body>
+</html>

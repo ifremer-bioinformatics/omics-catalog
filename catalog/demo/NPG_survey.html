@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Survey on &quot;Online collaboration: Scientists and the social network&quot;</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <!-- Demos - shared -->
+    <script type="text/javascript" src="../demo/js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../demo/css/demo.css"/ type="text/css">
+
+    <script type="text/javascript">
+var columns = [
+    "responseid",
+    "-filler-",
+    "status",
+    "interview_start",
+    "interview_end",
+    "last_touched",
+    "lastcomplete",
+    "CaptureLinkSource",
+    "q137 : Area of interest - Initially we want to ask about your subject area of interest, as not all questions will be appropriate for all participants.Which of the following best describes your area of interest?",
+    "q137_97_other : Area of interest - Initially we want to ask about your subject area of interest, as not all questions will be appropriate for all participants.Which of the following best describes your area of interest?",
+    "q137_98_other : Area of interest - Initially we want to ask about your subject area of interest, as not all questions will be appropriate for all participants.Which of the following best describes your area of interest?",
+    "q141 : Additional Comments - Please use the box below to tell us about any other comments you may have about the social networking sites that you use:",
+    "q101 : Age - Section 4: DemographicsćWhat is your age?",
+    "q104 : Continent - In which continent do you live?",
+    "q105 : Asia - Which country in Asia?",
+    "q106 : Australasia - Which country in Australasia?",
+    "q107 : Africa - Which country in Africa?",
+    "q108 : Europe - Which country in Europe?",
+    "q109 : North America - Which country in North America?",
+    "q110 : South America - Which country in South America?",
+    "q102 : Industry - Which category best describes your industry?",
+    "q102_97_other : Industry - Which category best describes your industry?",
+    "q103 : Job title - Which job title best applies to you?",
+    "q103_97_other : Job title - Which job title best applies to you?",
+    "q2 : Professional presence online - Section 1: ćYour professional presence onlineIs there a web page maintained within your institution or organization which aims to update visitors on your research, or the research work of your group?",
+    "q3 : Make edits - Do you personally edit/update this?",
+    "q5 : Write or written online posts - Do you write, or have you ever written, online posts of any type (e.g., blogs, social media comments, discussion groups, publisher websites) in which you discuss research or matters relating to it?",
+    "q6_1 : Twitter (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_2 : Facebook (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_3 : Frontiers (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_4 : Academia.edu (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_5 : ResearchGate (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_6 : LinkedIn (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_7 : BioMedExperts (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_8 : Google+ (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_9 : Mendeley (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_10 : Pubchase (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_11 : My Science Work (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_12 : Google Scholar (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_13 : Microsoft Academic Search (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_14 : ORCID (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_15 : ResearcherID (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_16 : Figshare (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q6_17 : MLA Commons (Awareness website or service - Please use the scale below to indicate your awareness of the following websites or services:)",
+    "q28_1 : Contact details (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_2 : Areas of expertise (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_3 : Details of publishing history (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_4 : Links to published articles (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_5 : Copies of published papers (final pdfs or accepted manuscripts) at own or institutional website, or social network (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_7 : Datasets related to published research (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_8 : Datasets related to unpublished research (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_97 : Other (please specify) (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q28_97_other : Other (please specify) (Info made available online - Section 3: Information you share onlineWhat professional information do you make publiclyĘavailable online?)",
+    "q139 : Viewing others profile - Please indicate the extent to which you agree with the following statement:\"Viewing other researchers' professional profiles on online networks is a useful way of determining what research I should be reading\"",
+    "q33_1 : \"I feel I should probably do more to promote my research using online networks\" (Agreement statements - Please indicate the extent to which you agree with the following statements:)",
+    "q33_2 : \"I don't think having a professional profile on an online network is very important for a researcher\" (Agreement statements - Please indicate the extent to which you agree with the following statements:)"
+];
+
+var likertSort = [ "Strongly agree", "Somewhat agree", "Neutral", "Somewhat disagree", "Strongly disagree", ];
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Participants",
+    categoryTextWidth:250,
+    leftPanelLabelWidth: 230,
+    rightPanelLabelWidth: 270,
+    source: {
+      gdocId: '12jV8FupDdNBTYcAPo8Ui27qPQ9pIz_6PN3w4RJdPkOg',
+      tables: {name:"Participants", id:'Participants'}
+    },
+    summaries: [
+      {   name: "Capture Link Source", collapsed: true, value: columns[7]
+      },{ name: "Area of Interest",
+          description: "Which of the following best describes your area of interest?",
+          value: function(){
+              var r=[];
+              if(this[columns[8]]!==null && this[columns[9]]===null && this[columns[10]]===null) r.push(this[columns[8]]);
+              if(this[columns[9]]!==null) r.push("Other NaturalSci.: "+this[columns[9]]);
+              if(this[columns[10]]!==null) r.push("Other SocialSci.: "+this[columns[10]]);
+              return r;
+          }
+      },{ name: "Age", value: columns[12],
+          description: "What is your age?",
+          catSortBy: [ "18 - 24", "25 - 34", "35 - 44", "45 - 54", "55 - 64", "65 or over" ]
+      },{ name: "Continent", value: columns[13], collapsed: true,
+          description: "In which continent do you live?",
+      },{ name: "Country",
+          description: "In which country do you live?",
+          value: function(){
+              var r=[];
+              if(this[columns[14]]!==null) r.push(this[columns[14]]);
+              if(this[columns[15]]!==null) r.push(this[columns[15]]);
+              if(this[columns[16]]!==null) r.push(this[columns[16]]);
+              if(this[columns[17]]!==null) r.push(this[columns[17]]);
+              if(this[columns[18]]!==null) r.push(this[columns[18]]);
+              if(this[columns[19]]!==null) r.push(this[columns[19]]);
+              return r;
+          }
+      },{ name: "Industry",
+          description: "Which category best describes your industry?",
+          value: function(){
+              var r=[];
+              if(this[columns[20]]!==null && this[columns[21]]===null) r.push(this[columns[20]]);
+              if(this[columns[21]]!==null) r.push("Other: "+this[columns[21]]);
+              return r;
+          }
+      },{ name: "Job Title",
+          description: "Which job name best applies to you?",
+          value: function(){
+              var r=[];
+              if(this[columns[22]]!==null && this[columns[23]]===null) r.push(this[columns[22]]);
+              if(this[columns[23]]!==null) r.push("Other: "+this[columns[23]]);
+              return r;
+          }
+      },{ name: "Research Webpage", value: columns[24], collapsed: true, panel: 'right',
+          description: "Is there a web page maintained within your institution or organization which aims to update visitors on your research, or the research work of your group?"
+      },{ name: "Self-Maintained R. Webpage", value: columns[25], collapsed: true, panel: 'right',
+          description: "Do you personally edit/update this? (research webpage)"
+      },{ name: "Written online research posts", value: columns[26], panel: 'right',
+          description: "Do you write, or have you ever written, online posts of any type (e.g., blogs, social media comments, discussion groups, publisher websites) in which you discuss research or matters relating to it?",
+      },{ name: "Social Network - Awareness", panel: 'right',
+          description: "\"I am aware of this site.\"",
+          value: function(){
+              var r=[];
+              if(this[columns[27]]!=="NotAware") r.push("Twitter");
+              if(this[columns[28]]!=="NotAware") r.push("Facebook");
+              if(this[columns[29]]!=="NotAware") r.push("Frontiers");
+              if(this[columns[30]]!=="NotAware") r.push("Academia.edu");
+              if(this[columns[31]]!=="NotAware") r.push("ResearchGate");
+              if(this[columns[32]]!=="NotAware") r.push("LinkedIn");
+              if(this[columns[33]]!=="NotAware") r.push("BioMedExperts");
+              if(this[columns[34]]!=="NotAware") r.push("Google+");
+              if(this[columns[35]]!=="NotAware") r.push("Mendeley");
+              if(this[columns[36]]!=="NotAware") r.push("Pubchase");
+              if(this[columns[37]]!=="NotAware") r.push("My Science Work");
+              if(this[columns[38]]!=="NotAware") r.push("Google Scholar");
+              if(this[columns[39]]!=="NotAware") r.push("Microsofot Academic Search");
+              if(this[columns[40]]!=="NotAware") r.push("ORCID");
+              if(this[columns[41]]!=="NotAware") r.push("ResearcherID");
+              if(this[columns[42]]!=="NotAware") r.push("Figshare");
+              if(this[columns[43]]!=="NotAware") r.push("MLA Commons");
+              return r;
+          }
+      },{ name: "Social Network - Regular Use", panel: 'right',
+          description: "\"I visit this site regularly.\"",
+          value: function(){
+              var r=[];
+              if(this[columns[27]]==="Aware,Regular") r.push("Twitter");
+              if(this[columns[28]]==="Aware,Regular") r.push("Facebook");
+              if(this[columns[29]]==="Aware,Regular") r.push("Frontiers");
+              if(this[columns[30]]==="Aware,Regular") r.push("Academia.edu");
+              if(this[columns[31]]==="Aware,Regular") r.push("ResearchGate");
+              if(this[columns[32]]==="Aware,Regular") r.push("LinkedIn");
+              if(this[columns[33]]==="Aware,Regular") r.push("BioMedExperts");
+              if(this[columns[34]]==="Aware,Regular") r.push("Google+");
+              if(this[columns[35]]==="Aware,Regular") r.push("Mendeley");
+              if(this[columns[36]]==="Aware,Regular") r.push("Pubchase");
+              if(this[columns[37]]==="Aware,Regular") r.push("My Science Work");
+              if(this[columns[38]]==="Aware,Regular") r.push("Google Scholar");
+              if(this[columns[39]]==="Aware,Regular") r.push("Microsofot Academic Search");
+              if(this[columns[40]]==="Aware,Regular") r.push("ORCID");
+              if(this[columns[41]]==="Aware,Regular") r.push("ResearcherID");
+              if(this[columns[42]]==="Aware,Regular") r.push("Figshare");
+              if(this[columns[43]]==="Aware,Regular") r.push("MLA Commons");
+              return r;
+          }
+      },{ name: "Comment Length",
+          value: function(){ 
+              if(this[columns[11]]===null) return;
+              if(this[columns[11]].length===0) return;
+              return this[columns[11]].length; 
+          },
+          unitName: "ch.",
+          panel: 'middle',
+          intervalScale: 'log'
+      },{ name: "Information Publicly Shared",
+          description: "What professional information do you make publicly available online?",
+          panel: 'right',
+          value: function(){
+              var r=[];
+              if(this[columns[44]]===1) r.push("Contact details");
+              if(this[columns[45]]===1) r.push("Areas of expertise");
+              if(this[columns[46]]===1) r.push("Publishing history");
+              if(this[columns[47]]===1) r.push("Links to published articles");
+              if(this[columns[48]]===1) r.push("Copies of published papers");
+              if(this[columns[49]]===1) r.push("Dataset (Published Research)");
+              if(this[columns[50]]===1) r.push("Dataset (Unpublised Research)");
+              if(this[columns[51]]===1) {
+                  r.push("Other");
+                  r.push("<i>Other</i> - "+this[columns[52]]);
+              }
+              return r;
+          }
+      },{ name: "\"... Profiles are useful\"", collapsed: true,
+          description: "\"Viewing other researchers' professional profiles on online networks is a useful way of determining what research I should be reading\"",
+          panel: 'right', value: columns[53], 
+          catSortBy: likertSort
+      },{ name: "\"... I need to promote more online\"", collapsed: true,
+          description: "\"I feel I should probably do more to promote my research using online networks\"",
+          panel: 'right', value: columns[54], 
+          catSortBy: likertSort
+      },{ name: "\"... Profiles are not important\"", value: columns[55], collapsed: true,
+          description: "\"I don't think having a professional profile on an online network is very important for a researcher\"",
+          panel: 'right',
+          catSortBy: likertSort
+      }
+    ],
+    recordDisplay: {
+      detailsToggle: "one",
+      textSearch: {name: "Comment", value: columns[11] },
+      sortBy: { 
+        name: "Comment length", 
+        value: function(){ if(this[columns[11]]!==null) return this[columns[11]].length;  }
+      },
+      recordView: function(){ 
+        if(this[columns[11]]===null) return "-";
+        return this[columns[11]];
+      },
+      onDOM: function(d){
+        d3.select(d.DOM.record).select(".content").on("click",function(){
+          this.parentNode.__data__.setRecordDetails(true);
+        });
+      }
+    }
+  });
+});
+
+</script>
+<style id="kshfStyle">
+.content {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  quotes: "\201C""\201D""\2018""\2019";
+  margin: 0px;
+  font-style: italic;
+  font-weight: 300;
+  text-align: justify;
+}
+.content:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  margin-right: 0.1em;
+  margin-left: -0.1em;
+  vertical-align: -0.5em;
+  line-height: 0px;
+}
+.content:hover:before {
+    color: gray;
+}
+.content:hover:after {
+    color: gray;
+}
+.content:after {
+  color: #ccc;
+  content: close-quote;
+  font-size: 4em;
+  margin-right: 0.1em;
+  margin-left: -0.1em;
+  vertical-align: -0.5em;
+  line-height: 0px;
+}
+.kshfRecord[details=true] .content{
+  overflow: visible;
+  white-space: normal;
+}
+.kshfRecord .content{
+  cursor: pointer;
+}
+</style>
+	</head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle">Online Collaboration Survey 2014, by Nature</div>
+      <div id="demo_Browser"></div>
+      </div>
+    
+    <div id="demo_Infobox" align="center">
+      This page uses the survey data from
+      <a href="http://www.nature.com/news/online-collaboration-scientists-and-the-social-network-1.15711" target="_blank">Online collaboration: Scientists and the social network</a>, by Richard Van Noorden, published at Nature, 13 August 2014.
+      </div>
+  </body>
+</html>

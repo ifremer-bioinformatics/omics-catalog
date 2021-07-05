@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>D.C. Metro Ridership Numbers - October 2014</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="../js/d3.4.2.6.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../keshif.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../keshif.css"/ type="text/css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+
+    <script type="text/javascript" src="./js/demo.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./css/demo.css" type="text/css">
+
+    <script type="text/javascript">
+var stations = {
+    "Union Station": {line: ["Red"]},
+    "Gallery Place-Chinatown": {line: ["Yellow","Green","Red"]},
+    "Metro Center": {line: ["Red","Blue","Silver","Orange"]},
+    "Foggy Bottom": {line: ["Orange","Blue"]},
+    "Farragut North": {line: ["Red"]},
+    "Dupont Circle": {line: ["Red"]},
+    "Farragut West": {line: ["Orange","Blue","Silver"]},
+    "L'Enfant Plaza": {line: ["Yellow","Green","Orange","Blue"]},
+    "Rosslyn": {line: ["Orange","Blue","Silver"]},
+    "Pentagon City": {line: ["Blue","Yellow"]},
+    "McPherson Square": {line: ["Orange","Blue","Silver"]},
+    "Pentagon": {line: ["Yellow","Blue"]},
+    "Columbia Heights": {line: ["Green","Yellow"]},
+    "Silver Spring": {line: ["Red"]},
+    "Ballston": {line: ["Orange","Blue"]},
+    "Crystal City": {line: ["Yellow","Blue"]},
+    "Shady Grove": {line: ["Red"]},
+    "Vienna": {line: ["Orange"]},
+    "Smithsonian": {line: ["Orange","Blue","Silver"]},
+    "Bethesda": {line: ["Red"]},
+    "Friendship Heights": {line: ["Red"]},
+    "New York Ave": {line: ["Red"]},
+    "King Street": {line: ["Yellow","Blue"]},
+    "U Street-Cardozo": {line: ["Green","Yellow"]},
+    "Archives-Navy Memorial": {line: ["Green","Yellow"]},
+    "Fort Totten": {line: ["Red","Green","Yellow"]},
+    "New Carrollton": {line: ["Orange"]},
+    "Federal Triangle": {line: ["Orange","Blue","Silver"]},
+    "Huntington": {line: ["Yellow"]},
+    "Court House": {line: ["Orange","Blue"]},
+    "Tenleytown-AU": {line: ["Red"]},
+    "Anacostia": {line: ["Green"]},
+    "Woodley Park-Zoo": {line: ["Red"]},
+    "Franconia-Springfield": {line: ["Blue"]},
+    "Reagan Washington National Airport": {line: ["Yellow","Blue"]},
+    "Judiciary Square": {line: ["Red"]},
+    "Wiehle": {line: ["Silver"]},
+    "Brookland": {line: ["Red"]},
+    "Navy Yard": {line: ["Green"]},
+    "Capitol South": {line: ["Orange","Blue","Silver"]},
+    "Eastern Market": {line: ["Orange","Blue","Silver"]},
+    "Van Ness-UDC": {line: ["Red"]},
+    "Georgia Avenue-Petworth": {line: ["Green","Yellow"]},
+    "Shaw-Howard University": {line: ["Green","Yellow"]},
+    "Rhode Island Avenue": {line: ["Red"]},
+    "Greenbelt": {line: ["Green"]},
+    "Branch Avenue": {line: ["Green"]},
+    "Glenmont": {line: ["Red"]},
+    "Takoma": {line: ["Red"]},
+    "Grosvenor": {line: ["Red"]},
+    "Prince George's Plaza": {line: ["Green"]},
+    "Mt. Vernon Square-UDC": {line: ["Green","Yellow"]},
+    "Suitland": {line: ["Green"]},
+    "Medical Center": {line: ["Red"]},
+    "Clarendon": {line: ["Orange","Blue"]},
+    "Southern Avenue": {line: ["Green"]},
+    "College Park-U of MD": {line: ["Green"]},
+    "Federal Center SW": {line: ["Orange","Blue","Silver"]},
+    "Braddock Road": {line: ["Yellow","Blue"]},
+    "Largo Town Center": {line: ["Silver","Blue"]},
+    "Cleveland Park": {line: ["Red"]},
+    "East Falls Church": {line: ["Orange","Blue"]},
+    "Dunn Loring": {line: ["Orange"]},
+    "Rockville": {line: ["Red"]},
+    "Twinbrook": {line: ["Red"]},
+    "Waterfront": {line: ["Green"]},
+    "Stadium-Armory": {line: ["Orange","Blue","Silver"]},
+    "Wheaton": {line: ["Red"]},
+    "West Hyattsville": {line: ["Green"]},
+    "Virginia Square-GMU": {line: ["Orange","Blue"]},
+    "Potomac Avenue": {line: ["Orange","Blue","Silver"]},
+    "White Flint": {line: ["Red"]},
+    "Addison Road": {line: ["Silver","Blue"]},
+    "Van Dorn Street": {line: ["Blue"]},
+    "West Falls Church": {line: ["Orange"]},
+    "Benning Road": {line: ["Silver","Blue"]},
+    "Tysons Corner": {line: ["Silver"]},
+    "Naylor Road": {line: ["Green"]},
+    "Minnesota Avenue": {line: ["Orange"]},
+    "Congress Heights": {line: ["Green"]},
+    "Morgan Blvd.": {line: ["Silver","Blue"]},
+    "Forest Glen": {line: ["Red"]},
+    "Capitol Heights": {line: ["Silver","Blue"]},
+    "Arlington Cemetery": {line: ["Blue"]},
+    "Landover": {line: ["Orange"]},
+    "Eisenhower Avenue": {line: ["Yellow"]},
+    "Deanwood": {line: ["Orange"]},
+    "McLean": {line: ["Silver"]},
+    "Cheverly": {line: ["Orange"]},
+    "Spring Hill": {line: ["Silver"]},
+    "Greensboro": {line: ["Silver"]}
+};
+
+
+// For future reference, here are the metro locations as lat-long geojson
+// -- https://github.com/benbalter/dc-maps/blob/master/maps/metro-stations-regional.geojson
+
+google.charts.setOnLoadCallback(function(){
+  browser = new kshf.Browser({
+    domID: "#demo_Browser",
+    recordName: "Metro Trips",
+    barChartWidth: 120,
+    leftPanelLabelWidth: 180,
+    rightPanelLabelWidth: 180,
+    middlePanelLabelWidth: 140,
+    source: {
+      gdocId: '1I2JxzR_dDN8Nl380chtmwaZWYpThC-0NhO3godx9hwc',
+      tables: "Time Periods",
+    },
+    metric: "# Riders",
+    summaries: [
+      { name: "Date-Holiday", panel: "middle" },
+      { name: "Day In Week", value: "Date-Service Type", panel: "middle" },
+      { name: "Entry Time Period", value: "Ent Time Period", panel: "middle",
+        catSortBy: [ 'AM Peak', 'Midday', 'PM Peak', 'Evening', 'Late Night Peak' ] },
+      { name: "Station - From", panel: "left" },
+      { name: "Line - From", panel: "middle",
+        description: "The line information of the station-from. A station can be on multiple lines.",
+        value: function(){ return stations[this["Station - From"]].line; } },
+      { name: "Station - To", panel: "right" },
+      { name: "Line - To", panel: "middle",
+        description: "The line information of the station-to. A station can be on multiple lines.",
+        value: function(){ return stations[this["Station - To"]].line; } },
+      { name: "Average Travel Minutes", panel: "bottom", unitname: "min",
+        value: function(){ return this['Total Travel Minutes']/this['# Riders']; } }
+    ]
+  });
+});
+    </script>
+  </head>
+  <body>
+    <div class="contents">
+      <div id="demo_PageTitle"><i class='fa fa-subway'></i> Metro Riders in Washington DC. Area, October 2014</div>
+      <div id="demo_Browser"></div>
+      </div>
+
+    <div id="demo_Infobox">
+      Data from <a href="http://planitmetro.com/2015/01/26/metrorail-data-download-october-2014/#comments"
+          target="_blank">D.C. Metro Planning Blog</a>, on <b>October 2014</b>. The numbers show the total number passangers.
+      </div>
+  </body>
+</html>
