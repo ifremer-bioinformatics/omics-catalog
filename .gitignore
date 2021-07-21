@@ -1,0 +1,12 @@
+#add the directory but not the data
+dataset/*
+
+# logfile
+*.log
+
+# Working directories
+gviewer/.nextflow/
+gviewer/work/
+
+# Singularity images
+*.sif
