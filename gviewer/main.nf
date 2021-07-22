@@ -99,6 +99,7 @@ checkHostname()
  * VERIFY AND SET UP WORKFLOW VARIABLES
  */
 
+include { get_test_data } from './modules/get_test_data.nf'
 include { index_fasta } from './modules/fasta.nf'
 include { index_bam } from './modules/bam.nf'
 include { index_vcf } from './modules/vcf.nf'
@@ -109,58 +110,55 @@ include { write_url } from './modules/write_url.nf'
 include { get_singularity_images } from './modules/get_singularity_images.nf'
 include { parse_json } from './modules/parse_json.nf'
 
-if (workflow.profile.contains('custom')) {
 
-        if (!params.fasta.isEmpty() && !workflow.profile.contains('test')) {
-        	channel
-                 .fromPath( params.fasta )
-                 .ifEmpty { error "Cannot find any fasta file matching: ${params.fasta}" }
-                 .set { fasta_file }
-	}
-	else {
-        	fasta_file=channel.value('0')
-	}	
+if (!params.fasta.isEmpty() && !workflow.profile.contains('test')) {
+	channel
+	 .fromPath( params.fasta )
+	 .ifEmpty { error "Cannot find any fasta file matching: ${params.fasta}" }
+	 .set { fasta_file }
+}
+else {
+	fasta_file=channel.value('0')
+}	
 
-        if (!params.bam.isEmpty()) {
-                channel
-                 .fromPath( params.bam )
-                 .ifEmpty { error "Cannot find any bam file matching: ${params.bam}" }
-                 .set { bam_file }
-        }
-        else {
-                bam_file=channel.value('0')
-        }
+if (!params.bam.isEmpty()) {
+	channel
+	 .fromPath( params.bam )
+	 .ifEmpty { error "Cannot find any bam file matching: ${params.bam}" }
+	 .set { bam_file }
+}
+else {
+	bam_file=channel.value('0')
+}
 
-        if (!params.vcf.isEmpty()) {
-                channel
-                 .fromPath( params.vcf )
-                 .ifEmpty { error "Cannot find any vcf file matching: ${params.vcf}" }
-                 .set { vcf_file }
-        }
-        else {
-                vcf_file=channel.value('0')
-        }
+if (!params.vcf.isEmpty()) {
+	channel
+	 .fromPath( params.vcf )
+	 .ifEmpty { error "Cannot find any vcf file matching: ${params.vcf}" }	
+	 .set { vcf_file }
+}
+else {
+	vcf_file=channel.value('0')
+}
 
-        if (!params.gff.isEmpty()) {
-                channel
-                 .fromPath( params.gff )
-                 .ifEmpty { error "Cannot find any gff file matching: ${params.gff}" }
-                 .set { gff_file }
-        }
-        else {
-                gff_file=channel.value('0')
-        }
+if (!params.gff.isEmpty()) {
+	channel
+	 .fromPath( params.gff )
+	 .ifEmpty { error "Cannot find any gff file matching: ${params.gff}" }
+	 .set { gff_file }
+}
+else {
+	gff_file=channel.value('0')
+}
 
-        if (!params.gff3.isEmpty()) {
-                channel
-                 .fromPath( params.gff3 )
-                 .ifEmpty { error "Cannot find any gff3 file matching: ${params.gff3}" }
-                 .set { gff3_file }
-        }
-        else {
-                gff3_file=channel.value('0')
-        }
-	
+if (!params.gff3.isEmpty()) {
+	channel
+	 .fromPath( params.gff3 )
+	 .ifEmpty { error "Cannot find any gff3 file matching: ${params.gff3}" }
+	 .set { gff3_file }
+}
+else {
+	gff3_file=channel.value('0')
 }
 
 if (params.config_json.isEmpty()) {
@@ -225,7 +223,6 @@ if (File2JSON.exists()){
 
 	// Access values in the dict
 	url_presence =  myConfig.jbrowse.JBROWSE
-	println url_presence
 }
 else {
 	url_presence = ""
