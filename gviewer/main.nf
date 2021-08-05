@@ -81,7 +81,7 @@ summary['Version'] = params.version
 summary['Genomes directory'] = params.genomesdir
 summary['Output dir'] = params.outdir
 summary['Catalog dir'] = params.catalogdir
-summary['FASTA File'] = params.fasta
+//summary['FASTA File'] = params.fasta
 summary['BAM File'] = params.bam
 summary['VCF File'] = params.vcf
 summary['GFF File'] = params.gff
@@ -110,7 +110,7 @@ include { write_url } from './modules/write_url.nf'
 include { get_singularity_images } from './modules/get_singularity_images.nf'
 include { parse_json } from './modules/parse_json.nf'
 
-
+/*
 if (!params.fasta.isEmpty() && !workflow.profile.contains('test')) {
 	channel
 	 .fromPath( params.fasta )
@@ -118,8 +118,18 @@ if (!params.fasta.isEmpty() && !workflow.profile.contains('test')) {
 	 .set { fasta_file }
 }
 else {
-	fasta_file=channel.value('0')
-}	
+        fasta_file=channel.value('0')
+}
+*/
+
+if (!workflow.profile.contains('test')) {
+        channel
+         //.fromPath( '/home/ref-bioinfo-public/ifremer/sebimer/genomes/organism-banks/OsHV-1/JM_Escoubas/*.fasta' )
+         .fromPath( params.outdir+'/*.fasta' )
+         .ifEmpty('0')
+         .set { fasta_file }
+
+}
 
 if (!params.bam.isEmpty()) {
 	channel
@@ -245,13 +255,22 @@ workflow {
 	else if  (!(assembly_presence.isEmpty()) || !(fasta_file.isEmpty())){
 		get_singularity_images()
 	
+		if (fasta_file != '0') {
+  	        	index_fasta(fasta_file, get_singularity_images.out.singularity_ok)
+        		fai_file=index_fasta.out.fai_file
+                }
+                else {
+                        fai_file=channel.value('0')
+                }
+
+		/*
 		if (!params.fasta.isEmpty()) {
 			index_fasta(fasta_file, get_singularity_images.out.singularity_ok)
 			fai_file=index_fasta.out.fai_file
 		}
 		 else {
 			fai_file=channel.value('0')
-		}
+		}*/
 
 		if (!params.bam.isEmpty()) {
 			index_bam(bam_file, get_singularity_images.out.singularity_ok)
