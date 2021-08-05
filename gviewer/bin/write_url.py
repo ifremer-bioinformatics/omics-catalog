@@ -23,16 +23,17 @@ def load_json(jsonfile):
 def write_url(path, viewer_url):
     databank_path=path+'/databank.json'
     d = load_json(databank_path)
+
+    # Complete url
     path = os.path.normpath(path)
     organism=path.split(os.sep)[-2]
     version=path.split(os.sep)[-1]
     url = {"JBROWSE": viewer_url+"/?config=DATA/"+organism+"/"+version+"/jbrowse2/config.json"}
+    
+    # Update 'JBROWSE' key
     d["jbrowse"].update(url)
-    new_d = OrderedDict()
-    new_d["main"]=d["main"]
-    new_d["jbrowse"]=d["jbrowse"]
     with open(databank_path, "w") as f:
-        f.write(json.dumps(new_d, f, indent=2))
+        json.dump(d, f, indent=2)
     
 
 def parse(args):
