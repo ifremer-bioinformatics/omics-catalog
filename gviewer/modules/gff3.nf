@@ -13,6 +13,7 @@ process index_gff3 {
         script:
         """
         gff3.sh ${gff3_track} >& gff3_index.log 2>&1
+	cp -i -u ${gff3_track} ${params.outdir} >& bam_cp.log 2>&1
         """
 }
 

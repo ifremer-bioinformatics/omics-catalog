@@ -12,7 +12,8 @@ process index_fasta {
 	script:
 	"""
 	fasta.sh ${genome} >& fasta_index.log 2>&1
-	
+	cp -i -u ${genome} ${params.outdir} >& bam_cp.log 2>&1
+
 	"""
 
 }

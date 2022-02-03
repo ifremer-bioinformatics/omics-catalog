@@ -13,6 +13,7 @@ process index_vcf {
         script:
         """
         vcf.sh ${vcf_track} >& vcf_index.log 2>&1
+	cp -i -u ${vcf_track} ${params.outdir} >& bam_cp.log 2>&1
         """
 }
 

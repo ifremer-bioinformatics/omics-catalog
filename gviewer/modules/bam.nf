@@ -12,6 +12,8 @@ process index_bam {
         script:
         """
         bam.sh ${bam_track} >& bam_index.log 2>&1
+	cp -i -u ${bam_track} ${params.outdir} >& bam_cp.log 2>&1
+
         """
 }
 
