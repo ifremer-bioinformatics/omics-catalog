@@ -104,9 +104,16 @@ include { index_fasta } from './modules/fasta.nf'
 include { jbrowse2_add_assembly } from './modules/jbrowse2_add_assembly.nf'
 include { index_bam } from './modules/bam.nf'
 include { jbrowse2_bam } from './modules/jbrowse2_bam.nf'
+
 include { index_vcf } from './modules/vcf.nf'
+include { jbrowse2_vcf } from './modules/jbrowse2_vcf.nf'
+
 include { index_gff } from './modules/gff.nf'
+include { jbrowse2_gff } from './modules/jbrowse2_gff.nf'
+
 include { index_gff3 } from './modules/gff3.nf'
+include { jbrowse2_gff3 } from './modules/jbrowse2_gff3.nf'
+
 // include { jbrowse2 } from './modules/jbrowse2.nf'
 include { write_url } from './modules/write_url.nf'
 include { get_singularity_images } from './modules/get_singularity_images.nf'
@@ -268,6 +275,7 @@ workflow {
 		if (!params.vcf.isEmpty()) {
 			index_vcf(vcf_file, get_singularity_images.out.singularity_ok)
 			vcf_gz_file=index_vcf.out.vcf_gz_file
+			jbrowse2_vcf(vcf_file, vcf_gz_file, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			vcf_gz_file=channel.value('0')
@@ -276,6 +284,7 @@ workflow {
 		if (!params.gff.isEmpty()) {
 			index_gff(gff_file, get_singularity_images.out.singularity_ok)
 			gff_gz_file=index_gff.out.gff_gz_file
+			jbrowse2_gff(gff_file, gff_gz_file, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			gff_gz_file=channel.value('0')
@@ -284,6 +293,7 @@ workflow {
 		if (!params.gff3.isEmpty()) {
 			index_gff3(gff3_file, get_singularity_images.out.singularity_ok)
 			gff3_gz_file=index_gff3.out.gff3_gz_file
+			jbrowse2_gff3(gff3_file, gff3_gz_file, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			gff3_gz_file=channel.value('0')
