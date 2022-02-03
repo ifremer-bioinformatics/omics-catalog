@@ -262,8 +262,7 @@ workflow {
 		else {
 			fai_file=channel.value('0')
 		}
-
-		if (!params.bam.isEmpty() && !(assembly_presence.isEmpty()) ) {
+		if (!params.bam.isEmpty() ) {
 			index_bam(bam_file, get_singularity_images.out.singularity_ok)
 			bai_file=index_bam.out.bai_file
 			jbrowse2_bam(bam_file, bai_file, get_singularity_images.out.singularity_ok)
