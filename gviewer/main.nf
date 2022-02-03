@@ -101,11 +101,13 @@ checkHostname()
 
 include { get_test_data } from './modules/get_test_data.nf'
 include { index_fasta } from './modules/fasta.nf'
+include { jbrowse2_add_assembly } from './modules/jbrowse2_add_assembly.nf'
 include { index_bam } from './modules/bam.nf'
+include { jbrowse2_bam } from './modules/jbrowse2_bam.nf'
 include { index_vcf } from './modules/vcf.nf'
 include { index_gff } from './modules/gff.nf'
 include { index_gff3 } from './modules/gff3.nf'
-include { jbrowse2 } from './modules/jbrowse2.nf'
+// include { jbrowse2 } from './modules/jbrowse2.nf'
 include { write_url } from './modules/write_url.nf'
 include { get_singularity_images } from './modules/get_singularity_images.nf'
 include { parse_json } from './modules/parse_json.nf'
@@ -248,14 +250,16 @@ workflow {
 		if (!params.fasta.isEmpty()) {
 			index_fasta(fasta_file, get_singularity_images.out.singularity_ok)
 			fai_file=index_fasta.out.fai_file
+			jbrowse2_add_assembly(get_singularity_images.out.singularity_ok, fasta_file, fai_file)
 		}
-		 else {
+		else {
 			fai_file=channel.value('0')
 		}
 
-		if (!params.bam.isEmpty()) {
+		if (!params.bam.isEmpty() && !(assembly_presence.isEmpty()) ) {
 			index_bam(bam_file, get_singularity_images.out.singularity_ok)
 			bai_file=index_bam.out.bai_file
+			jbrowse2_bam(bam_file, bai_file, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			bai_file=channel.value('0')
@@ -285,10 +289,11 @@ workflow {
 			gff3_gz_file=channel.value('0')
 		} 
 
-		jbrowse2(get_singularity_images.out.singularity_ok, fasta_file, bam_file, vcf_file, gff_file, gff3_file, fai_file, bai_file, vcf_gz_file, gff_gz_file, gff3_gz_file)
+		// jbrowse2(get_singularity_images.out.singularity_ok, fasta_file, bam_file, vcf_file, gff_file, gff3_file, fai_file, bai_file, vcf_gz_file, gff_gz_file, gff3_gz_file)
 				
 		if (url_presence.isEmpty()){
-			write_url(jbrowse2.out.adding_ok)
+			//write_url(jbrowse2.out.adding_ok)
+			write_url(jbrowse2_add_assembly.out.add_assembly_ok)
 			parse_json(write_url.out.url_ok)
 		}
 	}
