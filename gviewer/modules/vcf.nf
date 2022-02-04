@@ -13,7 +13,15 @@ process index_vcf {
         script:
         """
         vcf.sh ${vcf_track} >& vcf_index.log 2>&1
-	cp -i -u ${vcf_track} ${params.outdir} >& bam_cp.log 2>&1
+	
+        if  test -f "${params.outdir}/${vcf_track}"
+        then
+                echo "${params.outdir}/${vcf_track} already in ${params.outdir}:  do not copy it" >& already_vcf.log 2>&1
+        else
+	
+		cp -i -u ${vcf_track} ${params.outdir} >& bam_cp.log 2>&1
+	fi
+
         """
 }
 

@@ -267,7 +267,6 @@ workflow {
 			index_bam(bam_file, get_singularity_images.out.singularity_ok)
 			bai_file=index_bam.out.bai_file
 			jbrowse2_bam(bam_file, bai_file, jbrowse2_add_assembly.out.add_assembly_ok, get_singularity_images.out.singularity_ok)
-			//jbrowse2_bam(bam_file, bai_file, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			bai_file=channel.value('0')
@@ -276,7 +275,7 @@ workflow {
 		if (!params.vcf.isEmpty()) {
 			index_vcf(vcf_file, get_singularity_images.out.singularity_ok)
 			vcf_gz_file=index_vcf.out.vcf_gz_file
-			jbrowse2_vcf(vcf_file, vcf_gz_file, get_singularity_images.out.singularity_ok)
+			jbrowse2_vcf(vcf_file, vcf_gz_file, jbrowse2_add_assembly.out.add_assembly_ok, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			vcf_gz_file=channel.value('0')
@@ -285,7 +284,7 @@ workflow {
 		if (!params.gff.isEmpty()) {
 			index_gff(gff_file, get_singularity_images.out.singularity_ok)
 			gff_gz_file=index_gff.out.gff_gz_file
-			jbrowse2_gff(gff_file, gff_gz_file, get_singularity_images.out.singularity_ok)
+			jbrowse2_gff(gff_file, gff_gz_file, jbrowse2_add_assembly.out.add_assembly_ok, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			gff_gz_file=channel.value('0')
@@ -294,13 +293,12 @@ workflow {
 		if (!params.gff3.isEmpty()) {
 			index_gff3(gff3_file, get_singularity_images.out.singularity_ok)
 			gff3_gz_file=index_gff3.out.gff3_gz_file
-			jbrowse2_gff3(gff3_file, gff3_gz_file, get_singularity_images.out.singularity_ok)
+			jbrowse2_gff3(gff3_file, gff3_gz_file, jbrowse2_add_assembly.out.add_assembly_ok, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			gff3_gz_file=channel.value('0')
 		} 
 
-		// jbrowse2(get_singularity_images.out.singularity_ok, fasta_file, bam_file, vcf_file, gff_file, gff3_file, fai_file, bai_file, vcf_gz_file, gff_gz_file, gff3_gz_file)
 				
 		if (url_presence.isEmpty()){
 			//write_url(jbrowse2.out.adding_ok)

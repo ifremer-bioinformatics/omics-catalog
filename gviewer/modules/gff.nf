@@ -13,7 +13,14 @@ process index_gff {
         script:
         """
         gff.sh ${gff_track} >& gff_index.log 2>&1
-	cp -i -u ${gff_track} ${params.outdir} >& bam_cp.log 2>&1
-        """
+
+        if  test -f "${params.outdir}/${gff_track}"
+        then
+                echo "${params.outdir}/${gff_track} already in ${params.outdir}:  do not copy it" >& already_gff.log 2>&1
+        else
+		cp -i -u ${gff_track} ${params.outdir} >& bam_cp.log 2>&1
+        
+	fi
+	"""
 }
 
