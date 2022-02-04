@@ -3,9 +3,9 @@ process jbrowse2_bam {
 
 
         input:
-        path(bam_file)
+        each file(bam_file)
         path(bai_file)
-
+	val(add_assembly_ok)
         val(singularity_ok)
 
         output:

@@ -258,6 +258,7 @@ workflow {
 			index_fasta(fasta_file, get_singularity_images.out.singularity_ok)
 			fai_file=index_fasta.out.fai_file
 			jbrowse2_add_assembly(get_singularity_images.out.singularity_ok, fasta_file, fai_file)
+			// test= jbrowse2_add_assembly.out.test_file
 		}
 		else {
 			fai_file=channel.value('0')
@@ -265,7 +266,8 @@ workflow {
 		if (!params.bam.isEmpty() ) {
 			index_bam(bam_file, get_singularity_images.out.singularity_ok)
 			bai_file=index_bam.out.bai_file
-			jbrowse2_bam(bam_file, bai_file, get_singularity_images.out.singularity_ok)
+			jbrowse2_bam(bam_file, bai_file, jbrowse2_add_assembly.out.add_assembly_ok, get_singularity_images.out.singularity_ok)
+			//jbrowse2_bam(bam_file, bai_file, get_singularity_images.out.singularity_ok)
 		}
 		else {
 			bai_file=channel.value('0')
