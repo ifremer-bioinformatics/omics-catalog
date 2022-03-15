@@ -38,7 +38,7 @@ def load_json(jsonfile):
 def reads_write(csvname, directories):
     # Open output csv for databank infos
     d_csv = open(csvname, 'w')
-    d_csv.write('Name,CommonName,Submitter,Bioproject,Biosample,Accession,Version,Level,TaxID,Lineage,Kingdom,Phylum,Class,Order,Family,Genus,JBrowse,Genenotebook,NCBI,Image,Owner\n')
+    d_csv.write('Name,CommonName,Submitter,Bioproject,Biosample,Accession,Version,Level,TaxID,Lineage,Superkingdom,Phylum,Class,Order,Family,Genus,Species,JBrowse,Genenotebook,NCBI,Image,Owner\n')
     # Retrive all databank.json
     for root, dirs, files in directories:
         if 'databank.json' in files:
@@ -49,13 +49,14 @@ def reads_write(csvname, directories):
                     if k=='LINEAGE':
                         lineage=re.split(r';', v)
                         #print(lineage)
-                m['KINGDOM']=lineage[0]
+                m['SUPERKINGDOM']=lineage[0]
                 m['PHYLUM']=lineage[1]
                 m['CLASS']=lineage[2]
                 m['ORDER']=lineage[3]
                 m['FAMILY']=lineage[4]
                 m['GENUS']=lineage[5]
-                d_csv.write( '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}","{11}","{12}","{13}","{14}","{15}","{16}","{17}","{18}","{19}","{20}"\n'.format(m['SCIENTIFIC_NAME'],m['COMMON_NAME'],m['SUBMITTER'],m['BIOPROJECT'],m['BIOSAMPLE'],m['ACCESSION'],m['VERSION'],m['LEVEL'],m['TAXID'],m['LINEAGE'],m['KINGDOM'],m['PHYLUM'],m['CLASS'],m['ORDER'],m['FAMILY'],m['GENUS'],m['JBROWSE'],m['GENENOTEBOOK'],m['NCBI'],m['IMAGE'],m['OWNER']))
+                m['SPECIES']=lineage[6]
+                d_csv.write( '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}","{11}","{12}","{13}","{14}","{15}","{16}","{17}","{18}","{19}","{20}","{21}"\n'.format(m['SCIENTIFIC_NAME'],m['COMMON_NAME'],m['SUBMITTER'],m['BIOPROJECT'],m['BIOSAMPLE'],m['ACCESSION'],m['VERSION'],m['LEVEL'],m['TAXID'],m['LINEAGE'],m['SUPERKINGDOM'],m['PHYLUM'],m['CLASS'],m['ORDER'],m['FAMILY'],m['GENUS'],m['SPECIES'],m['JBROWSE'],m['GENENOTEBOOK'],m['NCBI'],m['IMAGE'],m['OWNER']))
     # Close files
     d_csv.close()
 

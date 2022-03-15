@@ -14,7 +14,7 @@ process jbrowse2_bam {
         script:
         """
 
-        if  test -f "${params.outdir}/jbrowse2/${bam_file}" 
+        if [ -f "${params.outdir}/jbrowse2/${bam_file}" ]
         then
                 echo "${params.outdir}/jbrowse2/${bam_file} already exists, do not add it to jborwse/" >& already_bam_jbrowse2.log 2>&1
         else

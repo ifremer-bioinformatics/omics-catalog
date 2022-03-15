@@ -3,17 +3,11 @@ process jbrowse2 {
 
         input:
 	val(singularity_ok)
-        file(fasta_file)
-        file(bam_file)
-        file(vcf_file)
-        file(gff_file)
-        file(gff3_file)
+        each path(fasta_file)
+        each path(bam_file)
 
-	file(fai_file)
-	file(bai_file)
-	file(vcf_gz_file)
-	file(gff_gz_file)
-	file(gff3_gz_file)
+	each path(fai_file)
+	each path(bai_file)
 
         output:
         path('*.log'), emit: adding_ok
@@ -28,32 +22,25 @@ process jbrowse2 {
 		
 	if [[ ${fasta_file} = *.fasta || ${fasta_file} = *.fna ]]
 	then
-        	/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${fasta_file} >& fasta_jbrowse2.log 2>&1
+	        if [ -f "${params.outdir}/jbrowse2/${fasta_file}" ]
+	        then
+        	        echo "${params.outdir}/jbrowse2/${fasta_file} already exists, do not add it to jborwse/" >& already_fasta_file_jbrowse2.log 2>&1
+        	else
+        		/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${fasta_file} >& fasta_jbrowse2.log 2>&1
+		fi
 	fi
 
 	if [[ ${bam_file} = *.bam ]]
 	then
-		/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${bam_file} >& bam_jbrowse2.log 2>&1
-		/opt/fix_symlink.sh /opt/jbrowse2/${params.projectName}/${params.version} ${bam_file} ${bam_file}.bai >& fix_bam_symlink.log 2>&1
+	        if [ -f "${params.outdir}/jbrowse2/${bam_file}" ]
+        	then
+                	echo "${params.outdir}/jbrowse2/${bam_file} already exists, do not add it to jborwse/" >& already_bam_jbrowse2.log 2>&1
+        	else
+			/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${bam_file} >& bam_jbrowse2.log 2>&1
+			/opt/fix_symlink.sh /opt/jbrowse2/${params.projectName}/${params.version} ${bam_file} ${bam_file}.bai >& fix_bam_symlink.log 2>&1
+		fi
 	fi
 	        
-	if [[ ${vcf_gz_file} = *.vcf.gz ]]
-	then
-        	/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${vcf_gz_file} >& vcf_jbrowse2.log 2>&1
-		/opt/fix_symlink.sh /opt/jbrowse2/${params.projectName}/${params.version} ${vcf_gz_file} ${vcf_gz_file}.tbi >& fix_vcf_symlink.log 2>&1
-	fi
-
-	if [[  ${gff_gz_file} = *.gff.gz ]]
-	then
-        	/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${gff_gz_file} >& gff_jbrowse2.log 2>&1
-		/opt/fix_symlink.sh /opt/jbrowse2/${params.projectName}/${params.version} ${gff_gz_file} ${gff_gz_file}.tbi >& fix_gff_symlink.log 2>&1
-	fi
-
-	if [[  ${gff3_gz_file} = *.gff3.gz ]]
-	then
-        	/opt/exec_jbrowse.sh /opt/jbrowse2/${params.projectName}/${params.version} ${gff3_gz_file} >& gff3_jbrowse2.log 2>&1
-		/opt/fix_symlink.sh /opt/jbrowse2/${params.projectName}/${params.version} ${gff3_gz_file} ${gff3_gz_file}.tbi >& fix_gff3_symlink.log 2>&1
-	fi
 
         """
 	

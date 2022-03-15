@@ -18,7 +18,7 @@ process index_gff3 {
         then
                 echo "${params.outdir}/${gff3_track} already in ${params.outdir}:  do not copy it" >& already_gff3.log 2>&1
         else
-		cp -i -u ${gff3_track} ${params.outdir} >& bam_cp.log 2>&1
+		cp -i -u ${gff3_track} ${params.outdir} >& gff3_cp.log 2>&1
 	fi
 	
         """

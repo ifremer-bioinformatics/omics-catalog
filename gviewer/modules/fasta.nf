@@ -12,8 +12,15 @@ process index_fasta {
 	script:
 	"""
 	fasta.sh ${genome} >& fasta_index.log 2>&1
-	cp -i -u ${genome} ${params.outdir} >& bam_cp.log 2>&1
 
+        if  test -f "${params.outdir}/${genome}"
+        then
+                echo "${params.outdir}/${genome} already in ${params.outdir}:  do not copy it" >& already_genome.log 2>&1
+        else
+
+		cp -i -u ${genome} ${params.outdir} >& genome_cp.log 2>&1
+
+	fi
 	"""
 
 }
