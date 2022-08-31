@@ -38,7 +38,7 @@ def load_json(jsonfile):
 def reads_write(csvname, directories):
     # Open output csv for databank infos
     d_csv = open(csvname, 'w')
-    d_csv.write('Name,CurrentName,CommonName,Submitter,Bioproject,Biosample,Accession,Version,Level,TaxID,Lineage,Superkingdom,Phylum,Class,Order,Family,Genus,Species,JBrowse,Genenotebook,NCBI,Image,Owner\n')
+    d_csv.write('Name,CommonName,Submitter,Submitter_Acronym,Bioproject,Biosample,DOI,Accession,Version,Level,Release_Date,TaxID,Lineage,Superkingdom,Phylum,Class,Order,Family,Genus,Species,Pub_Ref,JBrowse,Genenotebook,Accession_Link,Image,Owner\n')
     # Retrive all databank.json
     for root, dirs, files in directories:
         if 'databank.json' in files:
@@ -56,7 +56,7 @@ def reads_write(csvname, directories):
                 m['FAMILY']=lineage[4]
                 m['GENUS']=lineage[5]
                 m['SPECIES']=lineage[6]
-                d_csv.write( '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}","{11}","{12}","{13}","{14}","{15}","{16}","{17}","{18}","{19}","{20}","{21}","{22}"\n'.format(m['SCIENTIFIC_NAME'],m['CURRENT_NAME'],m['COMMON_NAME'],m['SUBMITTER'],m['BIOPROJECT'],m['BIOSAMPLE'],m['ACCESSION'],m['VERSION'],m['LEVEL'],m['TAXID'],m['LINEAGE'],m['SUPERKINGDOM'],m['PHYLUM'],m['CLASS'],m['ORDER'],m['FAMILY'],m['GENUS'],m['SPECIES'],m['JBROWSE'],m['GENENOTEBOOK'],m['NCBI'],m['IMAGE'],m['OWNER']))
+                d_csv.write( '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}","{11}","{12}","{13}","{14}","{15}","{16}","{17}","{18}","{19}","{20}","{21}","{22}","{23}","{24}","{25}"\n'.format(m['SCIENTIFIC_NAME'],m['COMMON_NAME'],m['SUBMITTER'],m['SUBMITTER_ACRONYM'],m['BIOPROJECT'],m['BIOSAMPLE'],m['DOI'],m['ACCESSION'],m['VERSION'],m['LEVEL'],m['RELEASE_DATE'],m['TAXID'],m['LINEAGE'],m['SUPERKINGDOM'],m['PHYLUM'],m['CLASS'],m['ORDER'],m['FAMILY'],m['GENUS'],m['SPECIES'],m['PUB_REF'],m['JBROWSE'],m['GENENOTEBOOK'],m['ACCESSION_LINK'],m['IMAGE'],m['OWNER']))
     # Close files
     d_csv.close()
 

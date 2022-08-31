@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#PBS -N omics_catalog
+#PBS -q sequentiel
+#PBS -m n
+#PBS -l walltime=01:00:00
+#PBS -l mem=10gb
+
+
+#activate nextflow environment
+. /etc/profile.d/modules.sh
+module purge
+. /appli/bioinfo/nextflow/20.10.0/env.sh
+module load singularity/3.4.1
+
+if [ "$1" != "-resume" ]
+then
+    #nextflow temp directory
+    export NXF_TEMP=$SCRATCH/.nxf_temp_jbrowse2
+    mkdir -p $NXF_TEMP
+fi
+
+TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+LOG_DIR=${HOME}/genome_browser/logs/INTRA/ONLY_CATALOG/${TIMESTAMP}
+mkdir -p $LOG_DIR
+
+##################################################################################################
+##### DONT FORGET TO CUSTOMIZE OMICS-CATALOG TO FIT YOUR DATASET                             #####
+##### NEED TO COMPLETE CUSTOM.CONFIG FILE BEFORE RUNNING OR ADD ARGUMENTS :                  #####
+##### HAVE A LOOK AT ...                                                                     #####
+##################################################################################################
+cd $HOME/omics-catalog/gviewer
+
+# For custom usage of OMICS-CATALOG
+nextflow -trace nextflow.executor run main.nf -profile custom,singularity -c /appli/bioinfo/genomebrowser/ifremer.config --logdir $LOG_DIR &> $LOG_DIR/omics_catalog.log 2>&1
+
+# For OMICS-CATALOG test
+#nextflow -trace nextflow.executor run main.nf -profile test,singularity -c /appli/bioinfo/genomebrowser/ifremer.config &> genomebrowser_test.log 2>&1
+
+#deactivate nextflow environment and module
+. /appli/bioinfo/nextflow/20.10.0/delenv.sh
+module purge

@@ -118,6 +118,7 @@ include { jbrowse2_gff3 } from './modules/jbrowse2_gff3.nf'
 include { write_url } from './modules/write_url.nf'
 include { get_singularity_images } from './modules/get_singularity_images.nf'
 include { parse_json } from './modules/parse_json.nf'
+include { add_general_config } from './modules/add_general_config.nf'
 
 
 if (!params.fasta.isEmpty() && !workflow.profile.contains('test')) {
@@ -258,6 +259,7 @@ workflow {
 			index_fasta(fasta_file, get_singularity_images.out.singularity_ok)
 			fai_file=index_fasta.out.fai_file
 			jbrowse2_add_assembly(get_singularity_images.out.singularity_ok, fasta_file, fai_file)
+                        add_general_config(jbrowse2_add_assembly.out.add_assembly_ok)
 		}
 		else {
 			fai_file=channel.value('0')

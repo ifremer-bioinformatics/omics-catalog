@@ -26,7 +26,7 @@ fi
 if [[ $FILE = *.fasta || $FILE = *.fna ]]
 then
 	jbrowse add-assembly ${DATA_DIRECTORY}/${FILE} --target ${DATA_DIRECTORY}/jbrowse2 --load symlink --overwrite
-	jbrowse set-default-session --name ${FILE%%.*} --view LinearGenomeView --target ${DATA_DIRECTORY}/jbrowse2
+	jbrowse set-default-session --name ${FILE%%.*} --view LinearGenomeView --target ${DATA_DIRECTORY}/jbrowse2 
 else 
 	jbrowse add-track ${DATA_DIRECTORY}/${FILE} --target ${DATA_DIRECTORY}/jbrowse2 --category=${file_type} --load symlink --overwrite
 fi

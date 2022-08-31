@@ -21,9 +21,10 @@ process jbrowse2_add_assembly {
 
 	if [ -f "${params.outdir}/jbrowse2/${fasta_file}.fai" ]  
 	then
-    		echo "${params.outdir}/jbrowse2/${fasta_file}.fai already exists, do not add it to jborwse/" >& already_fasta_jbrowse2.log 2>&1
+    		echo "${params.outdir}/jbrowse2/${fasta_file}.fai already exists, do not add it to jbrowse/" >& already_fasta_jbrowse2.log 2>&1
 	else
 		/opt/exec_jbrowse.sh ${params.outdir} ${fasta_file} >& fasta_jbrowse2.log 2>&1
+
 	fi
 		
 	
