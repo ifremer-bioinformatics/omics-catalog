@@ -51,7 +51,11 @@ This workflow comes with documentation about the pipeline, found in the `docs/` 
 
 Here is an overview of the many steps available in omics-catalog pipeline:
 
-![OMICS-CATALOG](gviewer/docs/images/OMICS-CATALOG_workflow.png)
+![OMICS-CATALOG](gviewer/docs/images/pipeline_omics_catalog.png)
+
+
+And here is an oversview of the catalog 
+![OMICS-CATALOG](gviewer/docs/images/overview_interface_genomes_catalog.png)
 
 ## Requirements
 
