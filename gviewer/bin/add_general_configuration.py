@@ -20,12 +20,11 @@ def add_general_configuration(config_path):
 
         config_data['theme'] = {
             "palette": {
-                "primary": { "main": '#084B8A'},
-                "secondary": { "main":'#0B173B' },
-                "tertiary": { "main": '#9F81F7' },
-                "quaternary": { "main": '#FE9A2E' },
-            },
-            "typography": { "fontSize":  10 },
+                "primary": { "main": '#414C6B'},
+                "secondary": { "main":'#1E80C1' },
+                "tertiary": { "main": '#5BAEB7' },
+                "quaternary": { "main": '#A5DEF2' },
+            }
         }
 
         config_json['configuration'].update(config_data)

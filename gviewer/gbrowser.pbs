@@ -20,7 +20,7 @@ then
 fi
 
 TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-LOG_DIR=${HOME}/genome_browser/logs/INTRA/ONLY_CATALOG/${TIMESTAMP}
+LOG_DIR=${HOME}/genome_browser/logs/Public/Tisochrysis_lutea/IFREMER_Institut_Pasteur_v1/${TIMESTAMP}
 mkdir -p $LOG_DIR
 
 ##################################################################################################
